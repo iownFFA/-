@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>郭彤彤</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            color: white;
+            padding: 20px;
+        }
+        
+        .container {
+            text-align: center;
+            max-width: 500px;
+            width: 100%;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            opacity: 0.9;
+        }
+        
+        .coin-container {
+            perspective: 1000px;
+            width: 200px;
+            height: 200px;
+            margin: 0 auto 40px;
+        }
+        
+        .coin {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 1.5s ease-in-out;
+        }
+        
+        .coin.flipping {
+            animation: flip 1.5s ease-in-out;
+        }
+        
+        .coin-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            backface-visibility: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 4rem;
+            font-weight: bold;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        }
+        
+        .coin-front {
+            background: linear-gradient(145deg, #ffd700, #daa520);
+            color: #8b6914;
+            border: 8px solid #b8860b;
+        }
+        
+        .coin-back {
+            background: linear-gradient(145deg, #ffd700, #daa520);
+            color: #8b6914;
+            border: 8px solid #b8860b;
+            transform: rotateY(180deg);
+        }
+        
+        .result {
+            font-size: 2rem;
+            margin: 20px 0;
+            min-height: 60px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .result-text {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 10px 20px;
+            border-radius: 50px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        button {
+            background: white;
+            color: #2575fc;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        button:active {
+            transform: translateY(1px);
+        }
+        
+        button:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 30px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 15px;
+            width: 100%;
+        }
+        
+        .stat {
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+        }
+        
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+        
+        @keyframes flip {
+            0% {
+                transform: rotateY(0);
+            }
+            50% {
+                transform: rotateY(1800deg);
+            }
+            100% {
+                transform: rotateY(1980deg);
+            }
+        }
+        
+        @media (max-width: 500px) {
+            .coin-container {
+                width: 150px;
+                height: 150px;
+            }
+            
+            .coin-face {
+                font-size: 3rem;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>欢迎小宝宝！</h1>
+        <p class="subtitle">这只是一件平常的小事，并不会决定你的运气宝宝。但如果它能给你一点点激励，那就是我最大的心愿。不管怎样，你永远是最棒的郭彤彤。我爱你。</p>
+        
+        <div class="coin-container">
+            <div class="coin" id="coin">
+                <div class="coin-face coin-front">A</div>
+                <div class="coin-face coin-back">B</div>
+            </div>
+        </div>
+        
+        <div class="result">
+            <div class="result-text" id="result">Click Flip to start!</div>
+        </div>
+        
+        <button id="flip-button">Flip Coin</button>
+        
+        <div class="stats">
+            <div class="stat">
+                <div class="stat-value" id="a-count">0</div>
+                <div class="stat-label">A's</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value" id="total-count">0</div>
+                <div class="stat-label">Total Flips</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value" id="b-count">0</div>
+                <div class="stat-label">B's</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const coin = document.getElementById('coin');
+            const flipButton = document.getElementById('flip-button');
+            const result = document.getElementById('result');
+            const aCount = document.getElementById('a-count');
+            const bCount = document.getElementById('b-count');
+            const totalCount = document.getElementById('total-count');
+            
+            let isFlipping = false;
+            let aCounter = 0;
+            let bCounter = 0;
+            let totalFlips = 0;
+            
+            flipButton.addEventListener('click', function() {
+                if (isFlipping) return;
+                
+                isFlipping = true;
+                flipButton.disabled = true;
+                coin.classList.add('flipping');
+                result.textContent = "Flipping...";
+                
+                // Randomly determine if it's A or B
+                const isA = Math.random() < 0.5;
+                
+                // Wait for animation to complete
+                setTimeout(() => {
+                    coin.classList.remove('flipping');
+                    
+                    if (isA) {
+                        result.innerHTML = "It's <strong>A</strong>!";
+                        aCounter++;
+                        aCount.textContent = aCounter;
+                    } else {
+                        result.innerHTML = "It's <strong>B</strong>!";
+                        bCounter++;
+                        bCount.textContent = bCounter;
+                    }
+                    
+                    totalFlips++;
+                    totalCount.textContent = totalFlips;
+                    
+                    isFlipping = false;
+                    flipButton.disabled = false;
+                }, 1500);
+            });
+        });
+    </script>
+</body>
+</html>
