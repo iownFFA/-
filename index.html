@@ -33,6 +33,7 @@ body {
     padding-right: env(safe-area-inset-right);
     font-family:'Inter',sans-serif;
     background: inherit;
+    margin: 0;
 }
 
 /* Frosted panel */
@@ -169,6 +170,8 @@ button{
     overflow:hidden;
     letter-spacing:0.5px;
     -webkit-tap-highlight-color:transparent;
+    z-index:2;
+    pointer-events:auto;
 }
 button::before{
     content:'';
@@ -276,12 +279,14 @@ button:disabled{opacity:0.7;cursor:not-allowed;transform:none;}
 
 <script>
 document.addEventListener('DOMContentLoaded', function(){
-    // Fix viewport for iOS PWA
-    function setVh() {
-        document.documentElement.style.setProperty('--vh', `${window.innerHeight / 100}px`);
+    // ✅ PWA-safe dynamic viewport
+    function updateVh() {
+        const vh = window.innerHeight * 0.01;
+        document.documentElement.style.setProperty('--vh', `${vh}px`);
     }
-    window.addEventListener('resize', setVh);
-    setVh();
+    window.addEventListener('resize', updateVh);
+    window.addEventListener('orientationchange', updateVh);
+    updateVh();
 
     const coin=document.getElementById('coin');
     const flipButton=document.getElementById('flip-button');
