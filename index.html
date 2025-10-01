@@ -26,8 +26,6 @@
             -moz-user-select: none;
             -ms-user-select: none;
             user-select: none;
-            position: fixed;
-            width: 100%;
         }
         
         body {
@@ -36,14 +34,14 @@
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            min-height: -webkit-fill-available;
             background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
             background-size: 400% 400%;
             animation: gradientShift 15s ease infinite;
             color: white;
-            padding: 0;
+            padding: 20px;
             font-family: 'Inter', sans-serif;
             overflow: hidden;
+            position: relative;
         }
         
         .container {
@@ -312,10 +310,10 @@
         /* Status bar padding for iOS */
         @supports (padding: max(0px)) {
             body {
-                padding-left: max(0px, env(safe-area-inset-left));
-                padding-right: max(0px, env(safe-area-inset-right));
-                padding-top: max(0px, env(safe-area-inset-top));
-                padding-bottom: max(0px, env(safe-area-inset-bottom));
+                padding-left: max(20px, env(safe-area-inset-left));
+                padding-right: max(20px, env(safe-area-inset-right));
+                padding-top: max(20px, env(safe-area-inset-top));
+                padding-bottom: max(20px, env(safe-area-inset-bottom));
             }
         }
     </style>
@@ -431,7 +429,9 @@
             
             // Prevent scrolling on iOS
             document.addEventListener('touchmove', function(e) {
-                e.preventDefault();
+                if (e.target.tagName !== 'BUTTON') {
+                    e.preventDefault();
+                }
             }, { passive: false });
             
             let lastTouchEnd = 0;
@@ -440,17 +440,6 @@
                 if (now - lastTouchEnd <= 300) event.preventDefault();
                 lastTouchEnd = now;
             }, false);
-            
-            // Prevent zooming on iOS
-            document.addEventListener('gesturestart', function(e) {
-                e.preventDefault();
-            });
-            document.addEventListener('gesturechange', function(e) {
-                e.preventDefault();
-            });
-            document.addEventListener('gestureend', function(e) {
-                e.preventDefault();
-            });
         });
     </script>
 </body>
