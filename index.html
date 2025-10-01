@@ -5,57 +5,45 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Coin Flip">
 <title>郭彤彤</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
-/* Reset */
-*{margin:0;padding:0;box-sizing:border-box;}
-html, body{height:100%;width:100%;background:linear-gradient(135deg,#1a2a6c,#b21f1f,#fdbb2d);background-size:400% 400%;animation:gradientShift 15s ease infinite;}
-
-/* Body layout fixed for PWA, notch-safe, prevent bottom white gap */
-body{
+/* Reset & body full screen */
+html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    min-height: -webkit-fill-available; /* iOS PWA full height */
+    overflow: hidden;
     position: fixed;
-    top:0;
-    left:0;
-    width:100%;
-    min-height: calc(100vh + env(safe-area-inset-bottom));
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    padding-top: env(safe-area-inset-top);
-    padding-bottom: env(safe-area-inset-bottom);
-    padding-left: env(safe-area-inset-left);
-    padding-right: env(safe-area-inset-right);
-    font-family:'Inter',sans-serif;
+    top: 0;
+    left: 0;
+    font-family: 'Inter', sans-serif;
+    background: linear-gradient(135deg,#1a2a6c,#b21f1f,#fdbb2d);
+    background-size: 400% 400%;
+    animation: gradientShift 15s ease infinite;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 /* Frosted panel */
-.container{
-    text-align:center;
-    max-width:350px;
-    width:100%;
-    background:rgba(255,255,255,0.12);
-    backdrop-filter:blur(12px);
-    -webkit-backdrop-filter:blur(12px);
-    border-radius:20px;
-    padding:30px 20px;
-    box-shadow:0 20px 40px rgba(0,0,0,0.2);
-    border:1px solid rgba(255,255,255,0.08);
-    position:relative;
-    z-index:1;
+.container {
+    position: relative;
+    margin: auto;
+    max-width: 350px;
+    width: 90%;
+    background: rgba(255,255,255,0.12);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-radius: 20px;
+    padding: 30px 20px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+    border: 1px solid rgba(255,255,255,0.08);
+    z-index: 1;
 }
-.container::before{
-    content:'';
-    position:absolute;
-    top:-50%;
-    left:-50%;
-    width:200%;
-    height:200%;
-    background:radial-gradient(circle, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 70%);
-    z-index:-1;
-}
-.container::after{
+.container::after {
     content:'';
     position:absolute;
     top:-20%;
@@ -69,13 +57,16 @@ body{
 }
 
 /* Creamy glowy text */
-h1, .subtitle, .result-text, .stat-value, .stat-label, .coin-letter{
-    color:#fff8e7;
-    text-shadow:0 0 2px rgba(255,248,231,0.3),0 0 4px rgba(255,248,231,0.2),0 0 6px rgba(255,248,231,0.15);
+h1, .subtitle, .result-text, .stat-value, .stat-label, .coin-letter {
+    color: #fff8e7;
+    text-shadow: 0 0 2px rgba(255,248,231,0.3),
+                 0 0 4px rgba(255,248,231,0.2),
+                 0 0 6px rgba(255,248,231,0.15);
 }
-.subtitle,.stat-label{ text-shadow:0 0 1px rgba(255,248,231,0.2); }
+.subtitle, .stat-label { text-shadow:0 0 1px rgba(255,248,231,0.2); }
 
-.subtitle{ font-size:1rem; margin-bottom:25px; line-height:1.5; font-weight:300; }
+/* Subtitle */
+.subtitle { font-size:1rem; margin-bottom:25px; line-height:1.5; font-weight:300; }
 
 /* Coin */
 .coin-container{ perspective:1000px; width:150px; height:150px; margin:0 auto 20px; position:relative; }
@@ -114,7 +105,7 @@ button:disabled{ opacity:0.7; cursor:not-allowed; transform:none; }
 .stat-label{ font-size:0.9rem; opacity:0.8; letter-spacing:0.5px; }
 
 /* Floating emojis */
-.floating-emojis{ position:fixed; width:100%; height:100%; top:0; left:0; pointer-events:none; z-index:0; opacity:0.7; }
+.floating-emojis{ position:absolute; width:100%; height:100%; top:0; left:0; pointer-events:none; z-index:0; opacity:0.7; }
 .emoji{ position:absolute; font-size:24px; opacity:0; animation:float 8s linear infinite; text-shadow:2px 2px 4px rgba(0,0,0,0.2);}
 .emoji:nth-child(3n){ animation-duration:10s; }
 .emoji:nth-child(3n+1){ animation-duration:12s; }
@@ -149,6 +140,8 @@ button:disabled{ opacity:0.7; cursor:not-allowed; transform:none; }
 </style>
 </head>
 <body>
+
+<div class="floating-emojis" id="emojis-container"></div>
 
 <div class="container">
     <h1>欢迎小宝宝！</h1>
@@ -193,8 +186,6 @@ button:disabled{ opacity:0.7; cursor:not-allowed; transform:none; }
     </div>
 </div>
 
-<div class="floating-emojis" id="emojis-container"></div>
-
 <script>
 document.addEventListener('DOMContentLoaded',function(){
     const coin=document.getElementById('coin');
@@ -208,22 +199,20 @@ document.addEventListener('DOMContentLoaded',function(){
     let isFlipping=false, aCounter=0, bCounter=0, totalFlips=0;
     const cuteEmojis=['❤️','✨','🌟','🥰','😊','🌸','💫','🎀','💖','🦋','🐰','🐱','🐶','🌈','🎈','🎵','💕','💝','💘','💓','💗','💞','💟','❣️','⭐','🌺','🌷','💐','🌼','🦄','🍀','🎂','🍬','🍭','🎁','🎀','👑','💎','🔮','🎵'];
 
-    function createEmojis(){
-        for(let i=0;i<25;i++){
-            const emoji=document.createElement('div');
-            emoji.className='emoji';
-            emoji.innerHTML=cuteEmojis[Math.floor(Math.random()*cuteEmojis.length)];
-            emoji.style.left=Math.random()*100+'vw';
-            emoji.style.animationDelay=Math.random()*8+'s';
-            emoji.style.fontSize=(Math.random()*20+15)+'px';
-            emoji.style.animation=`float ${8+Math.random()*6}s linear infinite`;
-            emojisContainer.appendChild(emoji);
-        }
+    // Create floating emojis
+    for(let i=0;i<25;i++){
+        const emoji=document.createElement('div');
+        emoji.className='emoji';
+        emoji.innerHTML=cuteEmojis[Math.floor(Math.random()*cuteEmojis.length)];
+        emoji.style.left=Math.random()*100+'vw';
+        emoji.style.animationDelay=Math.random()*8+'s';
+        emoji.style.fontSize=(Math.random()*20+15)+'px';
+        emoji.style.animation=`float ${8+Math.random()*6}s linear infinite`;
+        emojisContainer.appendChild(emoji);
     }
-    createEmojis();
 
     flipButton.addEventListener('click',function(){
-        if(isFlipping)return;
+        if(isFlipping) return;
         isFlipping=true;
         flipButton.disabled=true;
         coin.classList.add('flipping');
@@ -235,7 +224,7 @@ document.addEventListener('DOMContentLoaded',function(){
                 result.innerHTML="是 <strong>A</strong>！";
                 aCounter++; aCount.textContent=aCounter;
                 coin.style.transform='rotateY(0deg)';
-            }else{
+            } else {
                 result.innerHTML="是 <strong>B</strong>！";
                 bCounter++; bCount.textContent=bCounter;
                 coin.style.transform='rotateY(180deg)';
@@ -243,19 +232,19 @@ document.addEventListener('DOMContentLoaded',function(){
             result.classList.add('celebrate');
             setTimeout(()=>{result.classList.remove('celebrate');},500);
             totalFlips++; totalCount.textContent=totalFlips;
-            isFlipping=false; flipButton.disabled=false;
+            isFlipping=false;
+            flipButton.disabled=false;
         },1500);
     });
 
     // Prevent double-tap zoom
     let lastTouchEnd=0;
-    document.addEventListener('touchend',function(event){
+    document.addEventListener('touchend',function(e){
         const now=(new Date()).getTime();
-        if(now-lastTouchEnd<=300) event.preventDefault();
+        if(now-lastTouchEnd<=300){ e.preventDefault(); }
         lastTouchEnd=now;
     },false);
 });
 </script>
-
 </body>
 </html>
