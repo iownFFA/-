@@ -11,24 +11,30 @@
 <style>
 /* Reset */
 *{margin:0;padding:0;box-sizing:border-box;}
-html,body{height:100%;width:100%;overflow:hidden;position:fixed;top:0;left:0;}
 
-/* Use safe area insets */
-body{
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    padding-top:env(safe-area-inset-top);
-    padding-bottom:env(safe-area-inset-bottom);
-    padding-left:env(safe-area-inset-left);
-    padding-right:env(safe-area-inset-right);
-    background:linear-gradient(135deg,#1a2a6c,#b21f1f,#fdbb2d);
-    background-size:400% 400%;
-    animation:gradientShift 15s ease infinite;
+/* Gradient background on html and body to fix iOS PWA white issue */
+html, body {
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+    background: linear-gradient(135deg,#1a2a6c,#b21f1f,#fdbb2d);
+    background-size: 400% 400%;
+    animation: gradientShift 15s ease infinite;
+}
+
+/* Body layout fixed for PWA, notch-safe */
+body {
+    position: fixed;
+    top: 0;
+    left: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
     font-family:'Inter',sans-serif;
-    position:fixed;
-    width:100%;
-    height:100%;
 }
 
 /* Frosted panel */
@@ -57,7 +63,7 @@ body{
     z-index:-1;
 }
 
-/* Soothing creamy glowy text */
+/* Creamy glowy text */
 h1, .subtitle, .result-text, .stat-value, .stat-label, .coin-letter {
     color:#fff8e7;
     text-shadow:0 0 2px rgba(255,248,231,0.3), 0 0 4px rgba(255,248,231,0.2), 0 0 6px rgba(255,248,231,0.15);
