@@ -22,11 +22,13 @@ html, body {
     animation: gradientShift 15s ease infinite;
 }
 
-/* Body layout fixed for PWA, notch-safe */
+/* Body layout fixed for PWA, notch-safe, prevent bottom white gap */
 body {
     position: fixed;
     top: 0;
     left: 0;
+    width: 100%;
+    min-height: calc(100vh + env(safe-area-inset-bottom));
     display: flex;
     justify-content: center;
     align-items: center;
@@ -61,6 +63,19 @@ body {
     height:200%;
     background:radial-gradient(circle, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 70%);
     z-index:-1;
+}
+/* Pulsing glow behind panel */
+.container::after{
+    content:'';
+    position:absolute;
+    top:-20%;
+    left:-20%;
+    width:140%;
+    height:140%;
+    background: radial-gradient(circle, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0) 70%);
+    border-radius: 24px;
+    z-index:-2;
+    animation: pulseGlow 4s ease-in-out infinite;
 }
 
 /* Creamy glowy text */
@@ -209,6 +224,7 @@ button:disabled{opacity:0.7;cursor:not-allowed;transform:none;}
 @keyframes float{0%{transform:translateY(100vh) rotate(0deg);opacity:0;}10%{opacity:0.8;}90%{opacity:0.8;}100%{transform:translateY(-100px) rotate(360deg);opacity:0;}}
 @keyframes celebrate{0%{transform:scale(1);}50%{transform:scale(1.1);}100%{transform:scale(1);}}
 @keyframes metallicShine{0%,100%{transform:rotate(45deg) translateX(-100%);}50%{transform:rotate(45deg) translateX(100%);}}
+@keyframes pulseGlow{0%,100%{transform:scale(1);opacity:0.2;}50%{transform:scale(1.05);opacity:0.35;}}
 
 @media (max-width:500px){
     .container{padding:25px 15px;}
@@ -287,7 +303,8 @@ document.addEventListener('DOMContentLoaded', function(){
     const totalCount=document.getElementById('total-count');
     const emojisContainer=document.getElementById('emojis-container');
 
-    let isFlipping=false,aCounter=0,bCounter=0,totalFlips=0;
+    let isFlipping=false, aCounter=0, bCounter=0, totalFlips=0;
+
     const cuteEmojis=['❤️','✨','🌟','🥰','😊','🌸','💫','🎀','💖','🦋','🐰','🐱','🐶','🌈','🎈','🎵','💕','💝','💘','💓','💗','💞','💟','❣️','⭐','🌺','🌷','💐','🌼','🦄','🍀','🎂','🍬','🍭','🎁','🎀','👑','💎','🔮','🎵'];
 
     function createEmojis(){
@@ -330,5 +347,6 @@ document.addEventListener('DOMContentLoaded', function(){
     },false);
 });
 </script>
+
 </body>
 </html>
