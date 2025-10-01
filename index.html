@@ -2,28 +2,39 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Coin Flip">
-<meta name="theme-color" content="#1a2a6c">
 <title>郭彤彤</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
+/* Reset */
 *{margin:0;padding:0;box-sizing:border-box;}
-html,body{height:100%;overflow:visible;-webkit-touch-callout:none;-webkit-user-select:none;-khtml-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;}
-body{
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    min-height:100vh;
-    padding:20px;
-    background:linear-gradient(135deg,#1a2a6c,#b21f1f,#fdbb2d);
-    background-size:400% 400%;
-    animation:gradientShift 15s ease infinite;
+
+/* Gradient background on html and body to fix iOS PWA white issue */
+html, body {
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+    background: linear-gradient(135deg,#1a2a6c,#b21f1f,#fdbb2d);
+    background-size: 400% 400%;
+    animation: gradientShift 15s ease infinite;
+}
+
+/* Body layout fixed for PWA, notch-safe */
+body {
+    position: fixed;
+    top: 0;
+    left: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
     font-family:'Inter',sans-serif;
-    overflow:visible;
-    position:relative;
 }
 
 /* Frosted panel */
@@ -52,17 +63,21 @@ body{
     z-index:-1;
 }
 
-/* Glowy white text */
+/* Creamy glowy text */
 h1, .subtitle, .result-text, .stat-value, .stat-label, .coin-letter {
-    color: #fff8e7; /* soft cream color */
-    text-shadow:
-        0 0 2px rgba(255,248,231,0.3),
-        0 0 4px rgba(255,248,231,0.2),
-        0 0 6px rgba(255,248,231,0.15);
+    color:#fff8e7;
+    text-shadow:0 0 2px rgba(255,248,231,0.3), 0 0 4px rgba(255,248,231,0.2), 0 0 6px rgba(255,248,231,0.15);
+}
+.subtitle, .stat-label{
+    text-shadow:0 0 1px rgba(255,248,231,0.2);
 }
 
-.subtitle, .stat-label {
-    text-shadow: 0 0 1px rgba(255,248,231,0.2);
+/* Subtitle */
+.subtitle{
+    font-size:1rem;
+    margin-bottom:25px;
+    line-height:1.5;
+    font-weight:300;
 }
 
 /* Coin */
@@ -105,7 +120,7 @@ h1, .subtitle, .result-text, .stat-value, .stat-label, .coin-letter {
     left:-50%;
     width:200%;
     height:200%;
-    background:linear-gradient(45deg,transparent 30%, rgba(255,255,255,0.1) 50%, transparent 70%);
+    background:linear-gradient(45deg,transparent 30%, rgba(255, 255, 255, 0.1) 50%, transparent 70%);
     transform:rotate(45deg);
     animation:metallicShine 3s ease-in-out infinite;
 }
@@ -216,6 +231,7 @@ button:disabled{opacity:0.7;cursor:not-allowed;transform:none;}
 </style>
 </head>
 <body>
+
 <div class="container">
     <h1>欢迎小宝宝！</h1>
     <p class="subtitle">这只是一件平常的小事，并不会决定你的运气宝宝。但如果它能给你一点点激励，那就是我最大的心愿。不管怎样，你永远是最棒的郭彤彤。我爱你。</p>
@@ -281,7 +297,7 @@ document.addEventListener('DOMContentLoaded', function(){
             emoji.innerHTML=cuteEmojis[Math.floor(Math.random()*cuteEmojis.length)];
             emoji.style.left=Math.random()*100+'vw';
             emoji.style.animationDelay=Math.random()*8+'s';
-            const size=Math.random()*20+15; emoji.style.fontSize=size+'px';
+            emoji.style.fontSize=(Math.random()*20+15)+'px';
             emoji.style.animation=`float ${8+Math.random()*6}s linear infinite`;
             emojisContainer.appendChild(emoji);
         }
@@ -299,7 +315,8 @@ document.addEventListener('DOMContentLoaded', function(){
             coin.classList.remove('flipping');
             if(isA){ result.innerHTML="是 <strong>A</strong>！"; aCounter++; aCount.textContent=aCounter; coin.style.transform='rotateY(0deg)'; }
             else{ result.innerHTML="是 <strong>B</strong>！"; bCounter++; bCount.textContent=bCounter; coin.style.transform='rotateY(180deg)'; }
-            result.classList.add('celebrate'); setTimeout(()=>{result.classList.remove('celebrate');},500);
+            result.classList.add('celebrate');
+            setTimeout(()=>{result.classList.remove('celebrate');},500);
             totalFlips++; totalCount.textContent=totalFlips;
             isFlipping=false; flipButton.disabled=false;
         },1500);
