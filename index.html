@@ -1,15 +1,31 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Coin Flip">
+    <meta name="theme-color" content="#1a2a6c">
+    <link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTkyIiBoZWlnaHQ9IjE5MiIgdmlld0JveD0iMCAwIDE5MiAxOTIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxOTIiIGhlaWdodD0iMTkyIiByeD0iMzYiIGZpbGw9IiMxYTJhNmMiLz4KPHBhdGggZD0iTTk2IDU2Qzc0LjEzOTIgNTYgNTYgNzQuMTM5MiA1NiA5NkM1NiAxMTcuODYxIDc0LjEzOTIgMTM2IDk2IDEzNkMxMTcuODYxIDEzNiAxMzYgMTE3Ljg2MSAxMzYgOTZDMTM2IDc0LjEzOTIgMTE3Ljg2MSA1NiA5NiA1NloiIGZpbGw9IiNmZmZmZmYiLz4KPHBhdGggZD0iTTk2IDE0OEMxMTMuNjczIDE0OCAxMjggMTMzLjY3MyAxMjggMTE2QzEyOCAxMzMuNjczIDExMy42NzMgMTQ4IDk2IDE0OFoiIGZpbGw9IiNmZmZmZmYiLz4KPC9zdmc+Cg==">
     <title>郭彤彤</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        html, body {
+            height: 100%;
+            overflow: hidden;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            -khtml-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
         }
         
         body {
@@ -18,27 +34,59 @@
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
             color: white;
             padding: 20px;
+            font-family: 'Inter', sans-serif;
+            overflow: hidden;
         }
         
         .container {
             text-align: center;
             max-width: 500px;
             width: 100%;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 24px;
+            padding: 40px 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            position: relative;
+            overflow: hidden;
+            margin: 0 auto;
+        }
+        
+        .container::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 70%);
+            z-index: -1;
         }
         
         h1 {
-            font-size: 2.5rem;
-            margin-bottom: 10px;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            font-family: 'Playfair Display', serif;
+            font-size: 2.8rem;
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3);
+            font-weight: 600;
+            letter-spacing: 0.5px;
         }
         
         .subtitle {
-            font-size: 1.2rem;
-            margin-bottom: 30px;
+            font-size: 1.1rem;
+            margin-bottom: 40px;
             opacity: 0.9;
+            line-height: 1.6;
+            font-weight: 300;
+            max-width: 90%;
+            margin-left: auto;
+            margin-right: auto;
         }
         
         .coin-container {
@@ -46,6 +94,7 @@
             width: 200px;
             height: 200px;
             margin: 0 auto 40px;
+            position: relative;
         }
         
         .coin {
@@ -71,54 +120,162 @@
             align-items: center;
             font-size: 4rem;
             font-weight: bold;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            box-shadow: 
+                0 10px 25px rgba(0, 0, 0, 0.3),
+                inset 0 -8px 15px rgba(0, 0, 0, 0.4),
+                inset 0 8px 15px rgba(255, 255, 255, 0.4);
+            transition: all 0.3s ease;
+            background: linear-gradient(145deg, 
+                #ffd700 0%, 
+                #daa520 30%, 
+                #b8860b 70%, 
+                #ffec8b 100%);
+            border: 12px solid #8b6914;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            color: #5d4208;
+            overflow: hidden;
+        }
+        
+        .coin-face::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                45deg,
+                transparent 30%,
+                rgba(255, 255, 255, 0.1) 50%,
+                transparent 70%
+            );
+            transform: rotate(45deg);
+            animation: metallicShine 3s ease-in-out infinite;
+        }
+        
+        /* Enhanced coin design */
+        .coin-face::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0) 60%);
+            z-index: 1;
         }
         
         .coin-front {
-            background: linear-gradient(145deg, #ffd700, #daa520);
-            color: #8b6914;
-            border: 8px solid #b8860b;
+            z-index: 2;
         }
         
         .coin-back {
-            background: linear-gradient(145deg, #ffd700, #daa520);
-            color: #8b6914;
-            border: 8px solid #b8860b;
             transform: rotateY(180deg);
+        }
+        
+        /* Add intricate details to the coin */
+        .coin-detail {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(0, 0, 0, 0.1);
+            z-index: 2;
+        }
+        
+        .coin-detail-1 {
+            width: 80%;
+            height: 80%;
+            border: 2px solid rgba(139, 105, 20, 0.5);
+        }
+        
+        .coin-detail-2 {
+            width: 60%;
+            height: 60%;
+            border: 1px solid rgba(139, 105, 20, 0.3);
+        }
+        
+        .coin-detail-3 {
+            width: 40%;
+            height: 40%;
+            border: 1px solid rgba(139, 105, 20, 0.2);
+        }
+        
+        .coin-letter {
+            position: relative;
+            z-index: 3;
+            font-family: 'Playfair Display', serif;
+            font-weight: 700;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3),
+                         -1px -1px 0 rgba(255, 255, 255, 0.5);
+        }
+        
+        .coin:hover .coin-face {
+            transform: scale(1.03);
+            box-shadow: 
+                0 15px 30px rgba(0, 0, 0, 0.4),
+                inset 0 -8px 15px rgba(0, 0, 0, 0.4),
+                inset 0 8px 15px rgba(255, 255, 255, 0.4);
         }
         
         .result {
             font-size: 2rem;
-            margin: 20px 0;
-            min-height: 60px;
+            margin: 25px 0;
+            min-height: 70px;
             display: flex;
             justify-content: center;
             align-items: center;
         }
         
         .result-text {
-            background: rgba(255, 255, 255, 0.2);
-            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.15);
+            padding: 12px 25px;
             border-radius: 50px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .result-text.celebrate {
+            animation: celebrate 0.5s ease;
+            background: rgba(255, 255, 255, 0.25);
         }
         
         button {
-            background: white;
-            color: #2575fc;
+            background: linear-gradient(to right, #ffffff, #f0f0f0);
+            color: #1a2a6c;
             border: none;
-            padding: 15px 40px;
+            padding: 16px 45px;
             font-size: 1.2rem;
-            font-weight: bold;
+            font-weight: 500;
             border-radius: 50px;
             cursor: pointer;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            position: relative;
+            overflow: hidden;
+            letter-spacing: 0.5px;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            transition: 0.5s;
         }
         
         button:hover {
             transform: translateY(-3px);
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 12px 25px rgba(0, 0, 0, 0.3);
+        }
+        
+        button:hover::before {
+            left: 100%;
         }
         
         button:active {
@@ -134,25 +291,64 @@
         .stats {
             display: flex;
             justify-content: space-around;
-            margin-top: 30px;
-            background: rgba(255, 255, 255, 0.1);
-            padding: 15px;
-            border-radius: 15px;
+            margin-top: 35px;
+            background: rgba(255, 255, 255, 0.08);
+            padding: 20px;
+            border-radius: 18px;
             width: 100%;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
         }
         
         .stat {
             text-align: center;
+            position: relative;
+            padding: 0 10px;
+        }
+        
+        .stat::after {
+            content: '';
+            position: absolute;
+            right: 0;
+            top: 20%;
+            height: 60%;
+            width: 1px;
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        .stat:last-child::after {
+            display: none;
         }
         
         .stat-value {
-            font-size: 2rem;
+            font-size: 2.2rem;
             font-weight: bold;
+            margin-bottom: 5px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
         }
         
         .stat-label {
             font-size: 0.9rem;
             opacity: 0.8;
+            letter-spacing: 0.5px;
+        }
+        
+        .floating-emojis {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            z-index: -1;
+        }
+        
+        .emoji {
+            position: absolute;
+            font-size: 24px;
+            opacity: 0;
+            animation: float 8s linear infinite;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
         }
         
         @keyframes flip {
@@ -167,18 +363,107 @@
             }
         }
         
+        @keyframes gradientShift {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+        
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.8;
+            }
+            90% {
+                opacity: 0.8;
+            }
+            100% {
+                transform: translateY(-100px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+        
+        @keyframes celebrate {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.1);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+        
+        @keyframes metallicShine {
+            0%, 100% {
+                transform: rotate(45deg) translateX(-100%);
+            }
+            50% {
+                transform: rotate(45deg) translateX(100%);
+            }
+        }
+        
+        /* Different floating speeds for variety */
+        .emoji:nth-child(3n) {
+            animation-duration: 10s;
+        }
+        
+        .emoji:nth-child(3n+1) {
+            animation-duration: 12s;
+        }
+        
+        .emoji:nth-child(3n+2) {
+            animation-duration: 14s;
+        }
+        
         @media (max-width: 500px) {
+            .container {
+                padding: 30px 20px;
+            }
+            
+            h1 {
+                font-size: 2.2rem;
+            }
+            
             .coin-container {
-                width: 150px;
-                height: 150px;
+                width: 160px;
+                height: 160px;
             }
             
             .coin-face {
                 font-size: 3rem;
             }
             
-            h1 {
-                font-size: 2rem;
+            .stats {
+                padding: 15px;
+            }
+            
+            .stat-value {
+                font-size: 1.8rem;
+            }
+            
+            .emoji {
+                font-size: 20px;
+            }
+        }
+        
+        /* Status bar padding for iOS */
+        @supports (padding: max(0px)) {
+            body {
+                padding-left: max(20px, env(safe-area-inset-left));
+                padding-right: max(20px, env(safe-area-inset-right));
+                padding-top: max(20px, env(safe-area-inset-top));
+                padding-bottom: max(20px, env(safe-area-inset-bottom));
             }
         }
     </style>
@@ -190,32 +475,44 @@
         
         <div class="coin-container">
             <div class="coin" id="coin">
-                <div class="coin-face coin-front">A</div>
-                <div class="coin-face coin-back">B</div>
+                <div class="coin-face coin-front">
+                    <div class="coin-detail coin-detail-1"></div>
+                    <div class="coin-detail coin-detail-2"></div>
+                    <div class="coin-detail coin-detail-3"></div>
+                    <div class="coin-letter">A</div>
+                </div>
+                <div class="coin-face coin-back">
+                    <div class="coin-detail coin-detail-1"></div>
+                    <div class="coin-detail coin-detail-2"></div>
+                    <div class="coin-detail coin-detail-3"></div>
+                    <div class="coin-letter">B</div>
+                </div>
             </div>
         </div>
         
         <div class="result">
-            <div class="result-text" id="result">Click Flip to start!</div>
+            <div class="result-text" id="result">宝宝开始吧！</div>
         </div>
         
-        <button id="flip-button">Flip Coin</button>
+        <button id="flip-button">翻转硬币</button>
         
         <div class="stats">
             <div class="stat">
                 <div class="stat-value" id="a-count">0</div>
-                <div class="stat-label">A's</div>
+                <div class="stat-label">A面次数</div>
             </div>
             <div class="stat">
                 <div class="stat-value" id="total-count">0</div>
-                <div class="stat-label">Total Flips</div>
+                <div class="stat-label">总次数</div>
             </div>
             <div class="stat">
                 <div class="stat-value" id="b-count">0</div>
-                <div class="stat-label">B's</div>
+                <div class="stat-label">B面次数</div>
             </div>
         </div>
     </div>
+    
+    <div class="floating-emojis" id="emojis-container"></div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -225,11 +522,46 @@
             const aCount = document.getElementById('a-count');
             const bCount = document.getElementById('b-count');
             const totalCount = document.getElementById('total-count');
+            const emojisContainer = document.getElementById('emojis-container');
             
             let isFlipping = false;
             let aCounter = 0;
             let bCounter = 0;
             let totalFlips = 0;
+            
+            // Cute emojis collection
+            const cuteEmojis = [
+                '❤️', '✨', '🌟', '🥰', '😊', '🌸', '💫', '🎀', 
+                '💖', '🦋', '🐰', '🐱', '🐶', '🌈', '🎈', '🎵',
+                '💕', '💝', '💘', '💓', '💗', '💞', '💟', '❣️',
+                '⭐', '🌺', '🌷', '💐', '🌼', '🦄', '🍀', '🎂',
+                '🍬', '🍭', '🎁', '🎀', '👑', '💎', '🔮', '🎵'
+            ];
+            
+            // Create floating emojis
+            function createEmojis() {
+                const emojiCount = 25;
+                for (let i = 0; i < emojiCount; i++) {
+                    const emoji = document.createElement('div');
+                    emoji.className = 'emoji';
+                    
+                    const randomEmoji = cuteEmojis[Math.floor(Math.random() * cuteEmojis.length)];
+                    emoji.innerHTML = randomEmoji;
+                    
+                    emoji.style.left = Math.random() * 100 + 'vw';
+                    emoji.style.animationDelay = Math.random() * 8 + 's';
+                    
+                    const size = Math.random() * 20 + 15;
+                    emoji.style.fontSize = size + 'px';
+                    
+                    const rotationDirection = Math.random() > 0.5 ? 1 : -1;
+                    emoji.style.animation = `float ${8 + Math.random() * 6}s linear infinite`;
+                    
+                    emojisContainer.appendChild(emoji);
+                }
+            }
+            
+            createEmojis();
             
             flipButton.addEventListener('click', function() {
                 if (isFlipping) return;
@@ -237,24 +569,29 @@
                 isFlipping = true;
                 flipButton.disabled = true;
                 coin.classList.add('flipping');
-                result.textContent = "Flipping...";
+                result.textContent = "翻转中...";
                 
-                // Randomly determine if it's A or B
                 const isA = Math.random() < 0.5;
                 
-                // Wait for animation to complete
                 setTimeout(() => {
                     coin.classList.remove('flipping');
                     
                     if (isA) {
-                        result.innerHTML = "It's <strong>A</strong>!";
+                        result.innerHTML = "是 <strong>A</strong>！";
                         aCounter++;
                         aCount.textContent = aCounter;
+                        coin.style.transform = 'rotateY(0deg)';
                     } else {
-                        result.innerHTML = "It's <strong>B</strong>!";
+                        result.innerHTML = "是 <strong>B</strong>！";
                         bCounter++;
                         bCount.textContent = bCounter;
+                        coin.style.transform = 'rotateY(180deg)';
                     }
+                    
+                    result.classList.add('celebrate');
+                    setTimeout(() => {
+                        result.classList.remove('celebrate');
+                    }, 500);
                     
                     totalFlips++;
                     totalCount.textContent = totalFlips;
@@ -263,6 +600,16 @@
                     flipButton.disabled = false;
                 }, 1500);
             });
+            
+            // Prevent zoom on double-tap
+            let lastTouchEnd = 0;
+            document.addEventListener('touchend', function(event) {
+                const now = (new Date()).getTime();
+                if (now - lastTouchEnd <= 300) {
+                    event.preventDefault();
+                }
+                lastTouchEnd = now;
+            }, false);
         });
     </script>
 </body>
