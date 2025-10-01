@@ -1,446 +1,325 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="Coin Flip">
-    <meta name="theme-color" content="#1a2a6c">
-    <link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTkyIiBoZWlnaHQ9IjE5MiIgdmlld0JveD0iMCAwIDE5MiAxOTIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxOTIiIGhlaWdodD0iMTkyIiByeD0iMzYiIGZpbGw9IiMxYTJhNmMiLz4KPHBhdGggZD0iTTk2IDU2Qzc0LjEzOTIgNTYgNTYgNzQuMTM5MiA1NiA5NkM1NiAxMTcuODYxIDc0LjEzOTIgMTM2IDk2IDEzNkMxMTcuODYxIDEzNiAxMzYgMTE3Ljg2MSAxMzYgOTZDMTM2IDc0LjEzOTIgMTE3Ljg2MSA1NiA5NiA1NloiIGZpbGw9IiNmZmZmZmYiLz4KPHBhdGggZD0iTTk2IDE0OEMxMTMuNjczIDE0OCAxMjggMTMzLjY3MyAxMjggMTE2QzEyOCAxMzMuNjczIDExMy42NzMgMTQ4IDk2IDE0OFoiIGZpbGw9IiNmZmZmZmYiLz4KPC9zdmc+Cg==">
-    <title>郭彤彤</title>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        html, body {
-            height: 100%;
-            overflow: hidden;
-            -webkit-touch-callout: none;
-            -webkit-user-select: none;
-            -khtml-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
-            user-select: none;
-        }
-        
-        body {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
-            background-size: 400% 400%;
-            animation: gradientShift 15s ease infinite;
-            color: white;
-            padding: 20px;
-            font-family: 'Inter', sans-serif;
-            overflow: hidden;
-            position: relative;
-        }
-        
-        .container {
-            text-align: center;
-            max-width: 420px;
-            width: 90%;
-            background: rgba(255, 255, 255, 0.12);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border-radius: 24px;
-            padding: 30px 25px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            position: relative;
-            overflow: hidden;
-            margin: 0 auto;
-        }
-        
-        .container::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 70%);
-            z-index: -1;
-        }
-        
-        h1 {
-            font-family: 'Playfair Display', serif;
-            font-size: 2.5rem;
-            margin-bottom: 12px;
-            text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3);
-            font-weight: 600;
-            letter-spacing: 0.5px;
-        }
-        
-        .subtitle {
-            font-size: 1rem;
-            margin-bottom: 30px;
-            opacity: 0.9;
-            line-height: 1.5;
-            font-weight: 300;
-            max-width: 95%;
-            margin-left: auto;
-            margin-right: auto;
-        }
-        
-        .coin-container {
-            perspective: 1000px;
-            width: 180px;
-            height: 180px;
-            margin: 0 auto 30px;
-            position: relative;
-        }
-        
-        .coin {
-            width: 100%;
-            height: 100%;
-            position: relative;
-            transform-style: preserve-3d;
-            transition: transform 1.5s ease-in-out;
-        }
-        
-        .coin.flipping {
-            animation: flip 1.5s ease-in-out;
-        }
-        
-        .coin-face {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            backface-visibility: hidden;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 3.5rem;
-            font-weight: bold;
-            box-shadow: 
-                0 10px 25px rgba(0, 0, 0, 0.3),
-                inset 0 -8px 15px rgba(0, 0, 0, 0.4),
-                inset 0 8px 15px rgba(255, 255, 255, 0.4);
-            transition: all 0.3s ease;
-            background: linear-gradient(145deg, 
-                #ffd700 0%, 
-                #daa520 30%, 
-                #b8860b 70%, 
-                #ffec8b 100%);
-            border: 10px solid #8b6914;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-            color: #5d4208;
-            overflow: hidden;
-        }
-        
-        .coin-face::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: linear-gradient(
-                45deg,
-                transparent 30%,
-                rgba(255, 255, 255, 0.1) 50%,
-                transparent 70%
-            );
-            transform: rotate(45deg);
-            animation: metallicShine 3s ease-in-out infinite;
-        }
-        
-        .coin-face::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0) 60%);
-            z-index: 1;
-        }
-        
-        .coin-front { z-index: 2; }
-        .coin-back { transform: rotateY(180deg); }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Coin Flip">
+<meta name="theme-color" content="#1a2a6c">
+<title>郭彤彤</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{height:100%;overflow:visible;-webkit-touch-callout:none;-webkit-user-select:none;-khtml-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;}
+body{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    min-height:100vh;
+    padding:20px;
+    background:linear-gradient(135deg,#1a2a6c,#b21f1f,#fdbb2d);
+    background-size:400% 400%;
+    animation:gradientShift 15s ease infinite;
+    font-family:'Inter',sans-serif;
+    overflow:visible;
+    position:relative;
+}
 
-        .coin-detail { position: absolute; border-radius: 50%; background: rgba(0,0,0,0.1); z-index: 2; }
-        .coin-detail-1 { width: 80%; height: 80%; border: 2px solid rgba(139,105,20,0.5); }
-        .coin-detail-2 { width: 60%; height: 60%; border: 1px solid rgba(139,105,20,0.3); }
-        .coin-detail-3 { width: 40%; height: 40%; border: 1px solid rgba(139,105,20,0.2); }
+/* Frosted panel */
+.container{
+    text-align:center;
+    max-width:350px;
+    width:100%;
+    background:rgba(255,255,255,0.12);
+    backdrop-filter:blur(12px);
+    -webkit-backdrop-filter:blur(12px);
+    border-radius:20px;
+    padding:30px 20px;
+    box-shadow:0 20px 40px rgba(0,0,0,0.2);
+    border:1px solid rgba(255,255,255,0.08);
+    position:relative;
+    z-index:1;
+}
+.container::before{
+    content:'';
+    position:absolute;
+    top:-50%;
+    left:-50%;
+    width:200%;
+    height:200%;
+    background:radial-gradient(circle, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 70%);
+    z-index:-1;
+}
 
-        .coin-letter {
-            position: relative;
-            z-index: 3;
-            font-family: 'Playfair Display', serif;
-            font-weight: 700;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3), -1px -1px 0 rgba(255,255,255,0.5);
-        }
+/* Glowy white text */
+h1, .subtitle, .result-text, .stat-value, .stat-label, .coin-letter {
+    color: #fff8e7; /* soft cream color */
+    text-shadow:
+        0 0 2px rgba(255,248,231,0.3),
+        0 0 4px rgba(255,248,231,0.2),
+        0 0 6px rgba(255,248,231,0.15);
+}
 
-        .coin:hover .coin-face {
-            transform: scale(1.03);
-            box-shadow: 
-                0 15px 30px rgba(0, 0, 0, 0.4),
-                inset 0 -8px 15px rgba(0, 0, 0, 0.4),
-                inset 0 8px 15px rgba(255, 255, 255, 0.4);
-        }
+.subtitle, .stat-label {
+    text-shadow: 0 0 1px rgba(255,248,231,0.2);
+}
 
-        .result { font-size: 1.8rem; margin: 20px 0; min-height: 60px; display: flex; justify-content: center; align-items: center; }
-        .result-text {
-            background: rgba(255,255,255,0.15);
-            padding: 10px 20px;
-            border-radius: 50px;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
-            backdrop-filter: blur(5px);
-            border: 1px solid rgba(255,255,255,0.1);
-            transition: all 0.3s ease;
-        }
-        .result-text.celebrate { animation: celebrate 0.5s ease; background: rgba(255,255,255,0.25); }
+/* Subtitle */
+.subtitle{
+    font-size:1rem;
+    margin-bottom:25px;
+    line-height:1.5;
+    font-weight:300;
+}
 
-        button {
-            background: linear-gradient(to right, #ffffff, #f0f0f0);
-            color: #1a2a6c;
-            border: none;
-            padding: 14px 35px;
-            font-size: 1.1rem;
-            font-weight: 500;
-            border-radius: 50px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
-            position: relative;
-            overflow: hidden;
-            letter-spacing: 0.5px;
-            -webkit-tap-highlight-color: transparent;
-            margin-bottom: 10px;
-        }
-        button::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
-            transition: 0.5s;
-        }
-        button:hover { transform: translateY(-3px); box-shadow: 0 12px 25px rgba(0,0,0,0.3); }
-        button:hover::before { left: 100%; }
-        button:active { transform: translateY(1px); }
-        button:disabled { opacity: 0.7; cursor: not-allowed; transform: none; }
+/* Coin */
+.coin-container{
+    perspective:1000px;
+    width:150px;
+    height:150px;
+    margin:0 auto 20px;
+    position:relative;
+}
+.coin{
+    width:100%;
+    height:100%;
+    position:relative;
+    transform-style:preserve-3d;
+    transition:transform 1.5s ease-in-out;
+}
+.coin.flipping{animation:flip 1.5s ease-in-out;}
+.coin-face{
+    position:absolute;
+    width:100%;
+    height:100%;
+    border-radius:50%;
+    backface-visibility:hidden;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    font-size:3.5rem;
+    font-weight:bold;
+    box-shadow:0 10px 25px rgba(0,0,0,0.3), inset 0 -8px 15px rgba(0,0,0,0.4), inset 0 8px 15px rgba(255,255,255,0.4);
+    transition:all 0.3s ease;
+    background:linear-gradient(145deg,#ffd700 0%,#daa520 30%,#b8860b 70%,#ffec8b 100%);
+    border:10px solid #8b6914;
+    overflow:hidden;
+}
+.coin-face::before{
+    content:'';
+    position:absolute;
+    top:-50%;
+    left:-50%;
+    width:200%;
+    height:200%;
+    background:linear-gradient(45deg,transparent 30%, rgba(255,255,255,0.1) 50%, transparent 70%);
+    transform:rotate(45deg);
+    animation:metallicShine 3s ease-in-out infinite;
+}
+.coin-face::after{
+    content:'';
+    position:absolute;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    border-radius:50%;
+    background:radial-gradient(circle at 30% 30%, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0) 60%);
+    z-index:1;
+}
+.coin-front{z-index:2;}
+.coin-back{transform:rotateY(180deg);}
+.coin-detail{position:absolute;border-radius:50%;background:rgba(0,0,0,0.1);z-index:2;}
+.coin-detail-1{width:80%;height:80%;border:2px solid rgba(139,105,20,0.5);}
+.coin-detail-2{width:60%;height:60%;border:1px solid rgba(139,105,20,0.3);}
+.coin-detail-3{width:40%;height:40%;border:1px solid rgba(139,105,20,0.2);}
+.coin-letter{position:relative;z-index:3;font-family:'Playfair Display',serif;font-weight:700;}
 
-        .stats { 
-            display: flex; 
-            justify-content: space-around; 
-            margin-top: 25px; 
-            background: rgba(255,255,255,0.08); 
-            padding: 15px; 
-            border-radius: 18px; 
-            width: 100%; 
-            backdrop-filter: blur(5px); 
-            border: 1px solid rgba(255,255,255,0.05); 
-        }
-        .stat { text-align: center; position: relative; padding: 0 10px; }
-        .stat::after { content: ''; position: absolute; right: 0; top: 20%; height: 60%; width: 1px; background: rgba(255,255,255,0.2); }
-        .stat:last-child::after { display: none; }
-        .stat-value { font-size: 2rem; font-weight: bold; margin-bottom: 5px; text-shadow: 0 2px 4px rgba(0,0,0,0.2); }
-        .stat-label { font-size: 0.85rem; opacity: 0.8; letter-spacing: 0.5px; }
+/* Result */
+.result{font-size:1.8rem;margin:20px 0;min-height:60px;display:flex;justify-content:center;align-items:center;}
+.result-text{
+    background:rgba(255,255,255,0.15);
+    padding:10px 20px;
+    border-radius:50px;
+    box-shadow:0 8px 20px rgba(0,0,0,0.2);
+    backdrop-filter:blur(5px);
+    border:1px solid rgba(255,255,255,0.1);
+    transition:all 0.3s ease;
+}
+.result-text.celebrate{animation:celebrate 0.5s ease; background:rgba(255,255,255,0.25);}
 
-        .floating-emojis { 
-            position: fixed; 
-            width: 100%; 
-            height: 100%; 
-            top: 0; 
-            left: 0; 
-            pointer-events: none; 
-            z-index: -1; 
-        }
-        .emoji { 
-            position: absolute; 
-            font-size: 24px; 
-            opacity: 0; 
-            animation: float 8s linear infinite; 
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.2); 
-        }
+/* Button */
+button{
+    background:linear-gradient(to right,#fff,#f0f0f0);
+    color:#1a2a6c;
+    border:none;
+    padding:12px 35px;
+    font-size:1rem;
+    font-weight:500;
+    border-radius:50px;
+    cursor:pointer;
+    transition:all 0.3s ease;
+    box-shadow:0 8px 20px rgba(0,0,0,0.2);
+    position:relative;
+    overflow:hidden;
+    letter-spacing:0.5px;
+    -webkit-tap-highlight-color:transparent;
+}
+button::before{
+    content:'';
+    position:absolute;
+    top:0;
+    left:-100%;
+    width:100%;
+    height:100%;
+    background:linear-gradient(90deg,transparent,rgba(255,255,255,0.4),transparent);
+    transition:0.5s;
+}
+button:hover{transform:translateY(-3px); box-shadow:0 12px 25px rgba(0,0,0,0.3);}
+button:hover::before{left:100%;}
+button:active{transform:translateY(1px);}
+button:disabled{opacity:0.7;cursor:not-allowed;transform:none;}
 
-        @keyframes flip { 0% { transform: rotateY(0); } 50% { transform: rotateY(1800deg); } 100% { transform: rotateY(1980deg); } }
-        @keyframes gradientShift { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
-        @keyframes float { 0% { transform: translateY(100vh) rotate(0deg); opacity:0; } 10% { opacity:0.8; } 90% { opacity:0.8; } 100% { transform: translateY(-100px) rotate(360deg); opacity:0; } }
-        @keyframes celebrate { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
-        @keyframes metallicShine { 0%,100% { transform: rotate(45deg) translateX(-100%); } 50% { transform: rotate(45deg) translateX(100%); } }
+/* Stats */
+.stats{display:flex;justify-content:space-around;margin-top:15px;background:rgba(255,255,255,0.08);padding:15px;border-radius:18px;width:100%;backdrop-filter:blur(5px);border:1px solid rgba(255,255,255,0.05);}
+.stat{text-align:center;position:relative;padding:0 10px;}
+.stat::after{content:'';position:absolute;right:0;top:20%;height:60%;width:1px;background:rgba(255,255,255,0.2);}
+.stat:last-child::after{display:none;}
+.stat-value{font-size:2rem;font-weight:bold;margin-bottom:5px;}
+.stat-label{font-size:0.9rem;opacity:0.8;letter-spacing:0.5px;}
 
-        .emoji:nth-child(3n) { animation-duration: 10s; }
-        .emoji:nth-child(3n+1) { animation-duration: 12s; }
-        .emoji:nth-child(3n+2) { animation-duration: 14s; }
+/* Floating emojis */
+.floating-emojis{position:fixed;width:100%;height:100%;top:0;left:0;pointer-events:none;z-index:0;opacity:0.7;}
+.emoji{position:absolute;font-size:24px;opacity:0;animation:float 8s linear infinite;text-shadow:2px 2px 4px rgba(0,0,0,0.2);}
+.emoji:nth-child(3n){animation-duration:10s;}
+.emoji:nth-child(3n+1){animation-duration:12s;}
+.emoji:nth-child(3n+2){animation-duration:14s;}
 
-        @media (max-width: 500px) {
-            .container { padding: 25px 20px; max-width: 380px; }
-            h1 { font-size: 2rem; }
-            .coin-container { width: 150px; height: 150px; }
-            .coin-face { font-size: 2.8rem; }
-            .stats { padding: 12px; }
-            .stat-value { font-size: 1.7rem; }
-            .emoji { font-size: 20px; }
-        }
+/* Keyframes */
+@keyframes flip{0%{transform:rotateY(0);}50%{transform:rotateY(1800deg);}100%{transform:rotateY(1980deg);}}
+@keyframes gradientShift{0%{background-position:0% 50%;}50%{background-position:100% 50%;}100%{background-position:0% 50%;}}
+@keyframes float{0%{transform:translateY(100vh) rotate(0deg);opacity:0;}10%{opacity:0.8;}90%{opacity:0.8;}100%{transform:translateY(-100px) rotate(360deg);opacity:0;}}
+@keyframes celebrate{0%{transform:scale(1);}50%{transform:scale(1.1);}100%{transform:scale(1);}}
+@keyframes metallicShine{0%,100%{transform:rotate(45deg) translateX(-100%);}50%{transform:rotate(45deg) translateX(100%);}}
 
-        /* Landscape support */
-        @media screen and (orientation: landscape) {
-            body {
-                flex-direction: row;
-                justify-content: center;
-                align-items: center;
-            }
-            .container {
-                max-width: 65%;
-                padding: 20px;
-            }
-            h1 { font-size: 1.8rem; }
-            .coin-container { width: 130px; height: 130px; margin: 15px auto; }
-            .coin-face { font-size: 2rem; }
-            .stats { flex-direction: column; margin-top: 15px; padding: 12px; }
-            .stat-value { font-size: 1.6rem; }
-        }
+@media (max-width:500px){
+    .container{padding:25px 15px;}
+    h1{font-size:2rem;}
+    .coin-container{width:120px;height:120px;}
+    .coin-face{font-size:2.5rem;}
+    .stats{padding:10px;}
+    .stat-value{font-size:1.6rem;}
+    .emoji{font-size:18px;}
+}
 
-        /* Status bar padding for iOS */
-        @supports (padding: max(0px)) {
-            body {
-                padding-left: max(20px, env(safe-area-inset-left));
-                padding-right: max(20px, env(safe-area-inset-right));
-                padding-top: max(20px, env(safe-area-inset-top));
-                padding-bottom: max(20px, env(safe-area-inset-bottom));
-            }
-        }
-    </style>
+@media screen and (orientation: landscape){
+    body{flex-direction:row;justify-content:center;align-items:center;}
+    .container{max-width:300px;padding:20px;}
+    h1{font-size:1.8rem;}
+    .coin-container{width:120px;height:120px;margin:15px auto;}
+    .coin-face{font-size:2.2rem;}
+    .stats{flex-direction:column;margin-top:10px;}
+}
+</style>
 </head>
 <body>
-    <div class="container">
-        <h1>欢迎小宝宝！</h1>
-        <p class="subtitle">这只是一件平常的小事，并不会决定你的运气宝宝。但如果它能给你一点点激励，那就是我最大的心愿。不管怎样，你永远是最棒的郭彤彤。我爱你。</p>
-        
-        <div class="coin-container">
-            <div class="coin" id="coin">
-                <div class="coin-face coin-front">
-                    <div class="coin-detail coin-detail-1"></div>
-                    <div class="coin-detail coin-detail-2"></div>
-                    <div class="coin-detail coin-detail-3"></div>
-                    <div class="coin-letter">A</div>
-                </div>
-                <div class="coin-face coin-back">
-                    <div class="coin-detail coin-detail-1"></div>
-                    <div class="coin-detail coin-detail-2"></div>
-                    <div class="coin-detail coin-detail-3"></div>
-                    <div class="coin-letter">B</div>
-                </div>
+<div class="container">
+    <h1>欢迎小宝宝！</h1>
+    <p class="subtitle">这只是一件平常的小事，并不会决定你的运气宝宝。但如果它能给你一点点激励，那就是我最大的心愿。不管怎样，你永远是最棒的郭彤彤。我爱你。</p>
+
+    <div class="coin-container">
+        <div class="coin" id="coin">
+            <div class="coin-face coin-front">
+                <div class="coin-detail coin-detail-1"></div>
+                <div class="coin-detail coin-detail-2"></div>
+                <div class="coin-detail coin-detail-3"></div>
+                <div class="coin-letter">A</div>
             </div>
-        </div>
-        
-        <div class="result">
-            <div class="result-text" id="result">宝宝开始吧！</div>
-        </div>
-        
-        <button id="flip-button">翻转硬币</button>
-        
-        <div class="stats">
-            <div class="stat">
-                <div class="stat-value" id="a-count">0</div>
-                <div class="stat-label">A面次数</div>
-            </div>
-            <div class="stat">
-                <div class="stat-value" id="total-count">0</div>
-                <div class="stat-label">总次数</div>
-            </div>
-            <div class="stat">
-                <div class="stat-value" id="b-count">0</div>
-                <div class="stat-label">B面次数</div>
+            <div class="coin-face coin-back">
+                <div class="coin-detail coin-detail-1"></div>
+                <div class="coin-detail coin-detail-2"></div>
+                <div class="coin-detail coin-detail-3"></div>
+                <div class="coin-letter">B</div>
             </div>
         </div>
     </div>
-    
-    <div class="floating-emojis" id="emojis-container"></div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const coin = document.getElementById('coin');
-            const flipButton = document.getElementById('flip-button');
-            const result = document.getElementById('result');
-            const aCount = document.getElementById('a-count');
-            const bCount = document.getElementById('b-count');
-            const totalCount = document.getElementById('total-count');
-            const emojisContainer = document.getElementById('emojis-container');
-            
-            let isFlipping = false;
-            let aCounter = 0;
-            let bCounter = 0;
-            let totalFlips = 0;
-            
-            const cuteEmojis = ['❤️','✨','🌟','🥰','😊','🌸','💫','🎀','💖','🦋','🐰','🐱','🐶','🌈','🎈','🎵','💕','💝','💘','💓','💗','💞','💟','❣️','⭐','🌺','🌷','💐','🌼','🦄','🍀','🎂','🍬','🍭','🎁','🎀','👑','💎','🔮','🎵'];
-            
-            function createEmojis() {
-                const emojiCount = 30;
-                for (let i=0;i<emojiCount;i++) {
-                    const emoji = document.createElement('div');
-                    emoji.className = 'emoji';
-                    const randomEmoji = cuteEmojis[Math.floor(Math.random()*cuteEmojis.length)];
-                    emoji.innerHTML = randomEmoji;
-                    emoji.style.left = Math.random()*100 + 'vw';
-                    emoji.style.animationDelay = Math.random()*8 + 's';
-                    const size = Math.random()*20 + 15;
-                    emoji.style.fontSize = size + 'px';
-                    emoji.style.animation = `float ${8 + Math.random()*6}s linear infinite`;
-                    emojisContainer.appendChild(emoji);
-                }
-            }
-            createEmojis();
-            
-            flipButton.addEventListener('click', function() {
-                if (isFlipping) return;
-                isFlipping = true;
-                flipButton.disabled = true;
-                coin.classList.add('flipping');
-                result.textContent = "翻转中...";
-                const isA = Math.random() < 0.5;
-                setTimeout(() => {
-                    coin.classList.remove('flipping');
-                    if (isA) {
-                        result.innerHTML = "是 <strong>A</strong>！";
-                        aCounter++;
-                        aCount.textContent = aCounter;
-                        coin.style.transform = 'rotateY(0deg)';
-                    } else {
-                        result.innerHTML = "是 <strong>B</strong>！";
-                        bCounter++;
-                        bCount.textContent = bCounter;
-                        coin.style.transform = 'rotateY(180deg)';
-                    }
-                    result.classList.add('celebrate');
-                    setTimeout(()=>{result.classList.remove('celebrate');},500);
-                    totalFlips++;
-                    totalCount.textContent = totalFlips;
-                    isFlipping = false;
-                    flipButton.disabled = false;
-                }, 1500);
-            });
-            
-            // Prevent scrolling on iOS
-            document.addEventListener('touchmove', function(e) {
-                if (e.target.tagName !== 'BUTTON') {
-                    e.preventDefault();
-                }
-            }, { passive: false });
-            
-            let lastTouchEnd = 0;
-            document.addEventListener('touchend', function(event) {
-                const now = (new Date()).getTime();
-                if (now - lastTouchEnd <= 300) event.preventDefault();
-                lastTouchEnd = now;
-            }, false);
-        });
-    </script>
+    <div class="result">
+        <div class="result-text" id="result">宝宝开始吧！</div>
+    </div>
+
+    <button id="flip-button">翻转硬币</button>
+
+    <div class="stats">
+        <div class="stat">
+            <div class="stat-value" id="a-count">0</div>
+            <div class="stat-label">A面次数</div>
+        </div>
+        <div class="stat">
+            <div class="stat-value" id="total-count">0</div>
+            <div class="stat-label">总次数</div>
+        </div>
+        <div class="stat">
+            <div class="stat-value" id="b-count">0</div>
+            <div class="stat-label">B面次数</div>
+        </div>
+    </div>
+</div>
+
+<div class="floating-emojis" id="emojis-container"></div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function(){
+    const coin=document.getElementById('coin');
+    const flipButton=document.getElementById('flip-button');
+    const result=document.getElementById('result');
+    const aCount=document.getElementById('a-count');
+    const bCount=document.getElementById('b-count');
+    const totalCount=document.getElementById('total-count');
+    const emojisContainer=document.getElementById('emojis-container');
+
+    let isFlipping=false,aCounter=0,bCounter=0,totalFlips=0;
+    const cuteEmojis=['❤️','✨','🌟','🥰','😊','🌸','💫','🎀','💖','🦋','🐰','🐱','🐶','🌈','🎈','🎵','💕','💝','💘','💓','💗','💞','💟','❣️','⭐','🌺','🌷','💐','🌼','🦄','🍀','🎂','🍬','🍭','🎁','🎀','👑','💎','🔮','🎵'];
+
+    function createEmojis(){
+        for(let i=0;i<25;i++){
+            const emoji=document.createElement('div');
+            emoji.className='emoji';
+            emoji.innerHTML=cuteEmojis[Math.floor(Math.random()*cuteEmojis.length)];
+            emoji.style.left=Math.random()*100+'vw';
+            emoji.style.animationDelay=Math.random()*8+'s';
+            const size=Math.random()*20+15; emoji.style.fontSize=size+'px';
+            emoji.style.animation=`float ${8+Math.random()*6}s linear infinite`;
+            emojisContainer.appendChild(emoji);
+        }
+    }
+    createEmojis();
+
+    flipButton.addEventListener('click',function(){
+        if(isFlipping)return;
+        isFlipping=true;
+        flipButton.disabled=true;
+        coin.classList.add('flipping');
+        result.textContent="翻转中...";
+        const isA=Math.random()<0.5;
+        setTimeout(()=>{
+            coin.classList.remove('flipping');
+            if(isA){ result.innerHTML="是 <strong>A</strong>！"; aCounter++; aCount.textContent=aCounter; coin.style.transform='rotateY(0deg)'; }
+            else{ result.innerHTML="是 <strong>B</strong>！"; bCounter++; bCount.textContent=bCounter; coin.style.transform='rotateY(180deg)'; }
+            result.classList.add('celebrate'); setTimeout(()=>{result.classList.remove('celebrate');},500);
+            totalFlips++; totalCount.textContent=totalFlips;
+            isFlipping=false; flipButton.disabled=false;
+        },1500);
+    });
+
+    let lastTouchEnd=0;
+    document.addEventListener('touchend',function(event){
+        const now=(new Date()).getTime();
+        if(now-lastTouchEnd<=300)event.preventDefault();
+        lastTouchEnd=now;
+    },false);
+});
+</script>
 </body>
 </html>
