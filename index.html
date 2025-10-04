@@ -12,7 +12,7 @@
 /* Reset */
 *{margin:0;padding:0;box-sizing:border-box;}
 
-/* Gradient background on html and body to fix iOS PWA white issue */
+/* Gradient background */
 html, body {
     height: 100%;
     width: 100%;
@@ -22,7 +22,7 @@ html, body {
     animation: gradientShift 15s ease infinite;
 }
 
-/* Body layout fixed for PWA, notch-safe */
+/* Body layout fixed for PWA */
 body {
     position: fixed;
     top: 0;
@@ -101,69 +101,47 @@ h1, .subtitle, .result-text, .stat-value, .stat-label, .coin-letter {
     width:100%;
     height:100%;
     border-radius:50%;
-    backface-visibility:hidden;
     display:flex;
     justify-content:center;
     align-items:center;
     font-size:3.5rem;
     font-weight:bold;
-    box-shadow:0 10px 25px rgba(0,0,0,0.3), inset 0 -8px 15px rgba(0,0,0,0.4), inset 0 8px 15px rgba(255,255,255,0.4);
-    transition:all 0.3s ease;
+    box-shadow:0 10px 25px rgba(0,0,0,0.3),
+               inset 0 -8px 15px rgba(0,0,0,0.4),
+               inset 0 8px 15px rgba(255,255,255,0.4);
     background:linear-gradient(145deg,#ffd700 0%,#daa520 30%,#b8860b 70%,#ffec8b 100%);
     border:10px solid #8b6914;
     overflow:hidden;
+
+    /* Fix for iOS Safari */
+    backface-visibility:hidden;
+    -webkit-backface-visibility:hidden;
 }
-.coin-face::before{
-    content:'';
-    position:absolute;
-    top:-50%;
-    left:-50%;
-    width:200%;
-    height:200%;
-    background:linear-gradient(45deg,transparent 30%, rgba(255, 255, 255, 0.1) 50%, transparent 70%);
-    transform:rotate(45deg);
-    animation:metallicShine 3s ease-in-out infinite;
+.coin-front {
+    transform: rotateY(0deg); /* force Safari to treat as front */
+    z-index: 2;
 }
-.coin-face::after{
-    content:'';
-    position:absolute;
-    top:0;
-    left:0;
-    width:100%;
-    height:100%;
-    border-radius:50%;
-    background:radial-gradient(circle at 30% 30%, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0) 60%);
-    z-index:1;
+.coin-back {
+    transform: rotateY(180deg);
 }
-.coin-front{z-index:2;}
-.coin-back{transform:rotateY(180deg);}
-.coin-detail{position:absolute;border-radius:50%;background:rgba(0,0,0,0.1);z-index:2;}
-.coin-detail-1{width:80%;height:80%;border:2px solid rgba(139,105,20,0.5);}
-.coin-detail-2{width:60%;height:60%;border:1px solid rgba(139,105,20,0.5);}
-.coin-detail-3{width:40%;height:40%;border:1px solid rgba(139,105,20,0.5);}
-.coin-letter{position:relative;z-index:3;font-family:'Playfair Display',serif;font-weight:700;}
 
 .coin-image-container {
     width: 100%;
     height: 100%;
     border-radius: 50%;
-    overflow: hidden; /* ensure image is clipped to circle */
+    overflow: hidden;
     position: relative;
-    z-index: 2; /* above coin details */
+    z-index: 2;
 }
-
 .coin-image {
     width: 100%;
     height: 100%;
-    object-fit: cover; /* fills the circle without distortion */
+    object-fit: cover;
     display: block;
 }
 
-.coin-detail-2,
-.coin-detail-3 {
-  display: none !important;
-}
-
+/* Hide details for image coin */
+.coin-detail-2, .coin-detail-3 { display: none !important; }
 
 /* Result */
 .result{font-size:1.8rem;margin:20px 0;min-height:60px;display:flex;justify-content:center;align-items:center;}
@@ -230,7 +208,6 @@ button:disabled{opacity:0.7;cursor:not-allowed;transform:none;}
 @keyframes gradientShift{0%{background-position:0% 50%;}50%{background-position:100% 50%;}100%{background-position:0% 50%;}}
 @keyframes float{0%{transform:translateY(100vh) rotate(0deg);opacity:0;}10%{opacity:0.8;}90%{opacity:0.8;}100%{transform:translateY(-100px) rotate(360deg);opacity:0;}}
 @keyframes celebrate{0%{transform:scale(1);}50%{transform:scale(1.1);}100%{transform:scale(1);}}
-@keyframes metallicShine{0%,100%{transform:rotate(45deg) translateX(-100%);}50%{transform:rotate(45deg) translateX(100%);}}
 
 @media (max-width:500px){
     .container{padding:25px 15px;}
@@ -240,15 +217,6 @@ button:disabled{opacity:0.7;cursor:not-allowed;transform:none;}
     .stats{padding:10px;}
     .stat-value{font-size:1.6rem;}
     .emoji{font-size:18px;}
-}
-
-@media screen and (orientation: landscape){
-    body{flex-direction:row;justify-content:center;align-items:center;}
-    .container{max-width:300px;padding:20px;}
-    h1{font-size:1.8rem;}
-    .coin-container{width:120px;height:120px;margin:15px auto;}
-    .coin-face{font-size:2.2rem;}
-    .stats{flex-direction:column;margin-top:10px;}
 }
 </style>
 </head>
@@ -261,21 +229,13 @@ button:disabled{opacity:0.7;cursor:not-allowed;transform:none;}
     <div class="coin-container">
         <div class="coin" id="coin">
             <div class="coin-face coin-front">
-                <div class="coin-detail coin-detail-1"></div>
-                <div class="coin-detail coin-detail-2"></div>
-                <div class="coin-detail coin-detail-3"></div>
                 <div class="coin-image-container">
-                    <img src="A.png" class="coin-image" alt="Your Dog">
-                    <div class="coin-image-frame"></div>
+                    <img src="A.png" class="coin-image" alt="A Side">
                 </div>
             </div>
             <div class="coin-face coin-back">
-                <div class="coin-detail coin-detail-1"></div>
-                <div class="coin-detail coin-detail-2"></div>
-                <div class="coin-detail coin-detail-3"></div>
                 <div class="coin-image-container">
-                    <img src="B.png" class="coin-image" alt="Your Dog">
-                    <div class="coin-image-frame"></div>
+                    <img src="B.png" class="coin-image" alt="B Side">
                 </div>
             </div>
         </div>
@@ -341,8 +301,15 @@ document.addEventListener('DOMContentLoaded', function(){
         const isA=Math.random()<0.5;
         setTimeout(()=>{
             coin.classList.remove('flipping');
-            if(isA){ result.innerHTML="是 <strong>A</strong>！"; aCounter++; aCount.textContent=aCounter; coin.style.transform='rotateY(0deg)'; }
-            else{ result.innerHTML="是 <strong>B</strong>！"; bCounter++; bCount.textContent=bCounter; coin.style.transform='rotateY(180deg)'; }
+            if(isA){
+                result.innerHTML="是 <strong>A</strong>！";
+                aCounter++; aCount.textContent=aCounter;
+                coin.style.transform='rotateY(0deg)';
+            }else{
+                result.innerHTML="是 <strong>B</strong>！";
+                bCounter++; bCount.textContent=bCounter;
+                coin.style.transform='rotateY(180deg)';
+            }
             result.classList.add('celebrate');
             setTimeout(()=>{result.classList.remove('celebrate');},500);
             totalFlips++; totalCount.textContent=totalFlips;
@@ -350,6 +317,7 @@ document.addEventListener('DOMContentLoaded', function(){
         },1500);
     });
 
+    // Prevent double-tap zoom
     let lastTouchEnd=0;
     document.addEventListener('touchend',function(event){
         const now=(new Date()).getTime();
