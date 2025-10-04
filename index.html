@@ -8,322 +8,431 @@
 <meta name="apple-mobile-web-app-title" content="Coin Flip">
 <title>郭彤彤</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+
 <style>
 /* Reset */
-*{margin:0;padding:0;box-sizing:border-box;}
-
-/* Gradient background */
-html, body {
-    height: 100%;
-    width: 100%;
-    overflow: hidden;
-    background: linear-gradient(135deg,#1a2a6c,#b21f1f,#fdbb2d);
-    background-size: 400% 400%;
-    animation: gradientShift 15s ease infinite;
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
-/* Body layout fixed for PWA */
+/* Background fix for iOS */
+html {
+  height: 100%;
+  width: 100%;
+  background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+  background-size: 400% 400%;
+  animation: gradientShift 15s ease infinite;
+  margin: 0;
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+}
+
 body {
-    position: fixed;
-    top: 0;
-    left: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding-top: env(safe-area-inset-top);
-    padding-bottom: env(safe-area-inset-bottom);
-    padding-left: env(safe-area-inset-left);
-    padding-right: env(safe-area-inset-right);
-    font-family:'Inter',sans-serif;
+  height: 100%;
+  width: 100%;
+  background: transparent !important;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: 'Inter', sans-serif;
+  overflow: hidden;
+  margin: 0;
+  -webkit-touch-callout: none;
+  -webkit-text-size-adjust: 100%;
 }
 
 /* Frosted panel */
-.container{
-    text-align:center;
-    max-width:350px;
-    width:100%;
-    background:rgba(255,255,255,0.12);
-    backdrop-filter:blur(12px);
-    -webkit-backdrop-filter:blur(12px);
-    border-radius:20px;
-    padding:30px 20px;
-    box-shadow:0 20px 40px rgba(0,0,0,0.2);
-    border:1px solid rgba(255,255,255,0.08);
-    position:relative;
-    z-index:1;
+.container {
+  text-align: center;
+  max-width: 350px;
+  width: 100%;
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-radius: 20px;
+  padding: 30px 20px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  position: relative;
+  z-index: 1;
 }
-.container::before{
-    content:'';
-    position:absolute;
-    top:-50%;
-    left:-50%;
-    width:200%;
-    height:200%;
-    background:radial-gradient(circle, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 70%);
-    z-index:-1;
+.container::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0) 70%);
+  z-index: -1;
 }
 
 /* Creamy glowy text */
-h1, .subtitle, .result-text, .stat-value, .stat-label, .coin-letter {
-    color:#fff8e7;
-    text-shadow:0 0 2px rgba(255,248,231,0.3), 0 0 4px rgba(255,248,231,0.2), 0 0 6px rgba(255,248,231,0.15);
+h1,
+.subtitle,
+.result-text,
+.stat-value,
+.stat-label,
+.coin-letter {
+  color: #fff8e7;
+  text-shadow: 0 0 2px rgba(255, 248, 231, 0.3),
+               0 0 4px rgba(255, 248, 231, 0.2),
+               0 0 6px rgba(255, 248, 231, 0.15);
 }
-.subtitle, .stat-label{
-    text-shadow:0 0 1px rgba(255,248,231,0.2);
+.subtitle,
+.stat-label {
+  text-shadow: 0 0 1px rgba(255, 248, 231, 0.2);
 }
 
 /* Subtitle */
-.subtitle{
-    font-size:1rem;
-    margin-bottom:25px;
-    line-height:1.5;
-    font-weight:300;
+.subtitle {
+  font-size: 1rem;
+  margin-bottom: 25px;
+  line-height: 1.5;
+  font-weight: 300;
 }
 
 /* Coin */
-.coin-container{
-    perspective:1000px;
-    width:150px;
-    height:150px;
-    margin:0 auto 20px;
-    position:relative;
+.coin-container {
+  perspective: 1000px;
+  width: 150px;
+  height: 150px;
+  margin: 0 auto 20px;
+  position: relative;
 }
-.coin{
-    width:100%;
-    height:100%;
-    position:relative;
-    transform-style:preserve-3d;
-    transition:transform 1.5s ease-in-out;
+.coin {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  transform-style: preserve-3d;
+  transition: transform 1.5s ease-in-out;
 }
-.coin.flipping{animation:flip 1.5s ease-in-out;}
-.coin-face{
-    position:absolute;
-    width:100%;
-    height:100%;
-    border-radius:50%;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    font-size:3.5rem;
-    font-weight:bold;
-    box-shadow:0 10px 25px rgba(0,0,0,0.3),
-               inset 0 -8px 15px rgba(0,0,0,0.4),
-               inset 0 8px 15px rgba(255,255,255,0.4);
-    background:linear-gradient(145deg,#ffd700 0%,#daa520 30%,#b8860b 70%,#ffec8b 100%);
-    border:10px solid #8b6914;
-    overflow:hidden;
+.coin.flipping {
+  animation: flip 1.5s ease-in-out;
+}
+.coin-face {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 3.5rem;
+  font-weight: bold;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3),
+              inset 0 -8px 15px rgba(0, 0, 0, 0.4),
+              inset 0 8px 15px rgba(255, 255, 255, 0.4);
+  background: linear-gradient(145deg, #ffd700 0%, #daa520 30%, #b8860b 70%, #ffec8b 100%);
+  border: 10px solid #8b6914;
+  overflow: hidden;
 
-    /* Fix for iOS Safari */
-    backface-visibility:hidden;
-    -webkit-backface-visibility:hidden;
+  /* Fix for iOS Safari */
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
 }
 .coin-front {
-    transform: rotateY(0deg); /* force Safari to treat as front */
-    z-index: 2;
+  transform: rotateY(0deg);
+  z-index: 2;
 }
 .coin-back {
-    transform: rotateY(180deg);
+  transform: rotateY(180deg);
 }
-
 .coin-image-container {
-    width: 100%;
-    height: 100%;
-    border-radius: 50%;
-    overflow: hidden;
-    position: relative;
-    z-index: 2;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  overflow: hidden;
+  position: relative;
+  z-index: 2;
 }
 .coin-image {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
 }
 
 /* Hide details for image coin */
-.coin-detail-2, .coin-detail-3 { display: none !important; }
+.coin-detail-2,
+.coin-detail-3 {
+  display: none !important;
+}
 
 /* Result */
-.result{font-size:1.8rem;margin:20px 0;min-height:60px;display:flex;justify-content:center;align-items:center;}
-.result-text{
-    background:rgba(255,255,255,0.15);
-    padding:10px 20px;
-    border-radius:50px;
-    box-shadow:0 8px 20px rgba(0,0,0,0.2);
-    backdrop-filter:blur(5px);
-    border:1px solid rgba(255,255,255,0.1);
-    transition:all 0.3s ease;
+.result {
+  font-size: 1.8rem;
+  margin: 20px 0;
+  min-height: 60px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
-.result-text.celebrate{animation:celebrate 0.5s ease; background:rgba(255,255,255,0.25);}
+.result-text {
+  background: rgba(255, 255, 255, 0.15);
+  padding: 10px 20px;
+  border-radius: 50px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(5px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.3s ease;
+}
+.result-text.celebrate {
+  animation: celebrate 0.5s ease;
+  background: rgba(255, 255, 255, 0.25);
+}
 
 /* Button */
-button{
-    background:linear-gradient(to right,#fff,#f0f0f0);
-    color:#1a2a6c;
-    border:none;
-    padding:12px 35px;
-    font-size:1rem;
-    font-weight:500;
-    border-radius:50px;
-    cursor:pointer;
-    transition:all 0.3s ease;
-    box-shadow:0 8px 20px rgba(0,0,0,0.2);
-    position:relative;
-    overflow:hidden;
-    letter-spacing:0.5px;
-    -webkit-tap-highlight-color:transparent;
+button {
+  background: linear-gradient(to right, #fff, #f0f0f0);
+  color: #1a2a6c;
+  border: none;
+  padding: 12px 35px;
+  font-size: 1rem;
+  font-weight: 500;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+  position: relative;
+  overflow: hidden;
+  letter-spacing: 0.5px;
+  -webkit-tap-highlight-color: transparent;
 }
-button::before{
-    content:'';
-    position:absolute;
-    top:0;
-    left:-100%;
-    width:100%;
-    height:100%;
-    background:linear-gradient(90deg,transparent,rgba(255,255,255,0.4),transparent);
-    transition:0.5s;
+button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+  transition: 0.5s;
 }
-button:hover{transform:translateY(-3px); box-shadow:0 12px 25px rgba(0,0,0,0.3);}
-button:hover::before{left:100%;}
-button:active{transform:translateY(1px);}
-button:disabled{opacity:0.7;cursor:not-allowed;transform:none;}
+button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 25px rgba(0, 0, 0, 0.3);
+}
+button:hover::before {
+  left: 100%;
+}
+button:active {
+  transform: translateY(1px);
+}
+button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
+}
 
 /* Stats */
-.stats{display:flex;justify-content:space-around;margin-top:15px;background:rgba(255,255,255,0.08);padding:15px;border-radius:18px;width:100%;backdrop-filter:blur(5px);border:1px solid rgba(255,255,255,0.05);}
-.stat{text-align:center;position:relative;padding:0 10px;}
-.stat::after{content:'';position:absolute;right:0;top:20%;height:60%;width:1px;background:rgba(255,255,255,0.2);}
-.stat:last-child::after{display:none;}
-.stat-value{font-size:2rem;font-weight:bold;margin-bottom:5px;}
-.stat-label{font-size:0.9rem;opacity:0.8;letter-spacing:0.5px;}
+.stats {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 15px;
+  background: rgba(255, 255, 255, 0.08);
+  padding: 15px;
+  border-radius: 18px;
+  width: 100%;
+  backdrop-filter: blur(5px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+.stat {
+  text-align: center;
+  position: relative;
+  padding: 0 10px;
+}
+.stat::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: 20%;
+  height: 60%;
+  width: 1px;
+  background: rgba(255, 255, 255, 0.2);
+}
+.stat:last-child::after {
+  display: none;
+}
+.stat-value {
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+.stat-label {
+  font-size: 0.9rem;
+  opacity: 0.8;
+  letter-spacing: 0.5px;
+}
 
 /* Floating emojis */
-.floating-emojis{position:fixed;width:100%;height:100%;top:0;left:0;pointer-events:none;z-index:0;opacity:0.7;}
-.emoji{position:absolute;font-size:24px;opacity:0;animation:float 8s linear infinite;text-shadow:2px 2px 4px rgba(0,0,0,0.2);}
-.emoji:nth-child(3n){animation-duration:10s;}
-.emoji:nth-child(3n+1){animation-duration:12s;}
-.emoji:nth-child(3n+2){animation-duration:14s;}
+.floating-emojis {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.7;
+}
+.emoji {
+  position: absolute;
+  font-size: 24px;
+  opacity: 0;
+  animation: float 8s linear infinite;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+}
+.emoji:nth-child(3n) { animation-duration: 10s; }
+.emoji:nth-child(3n+1) { animation-duration: 12s; }
+.emoji:nth-child(3n+2) { animation-duration: 14s; }
 
-/* Keyframes */
-@keyframes flip{0%{transform:rotateY(0);}50%{transform:rotateY(1800deg);}100%{transform:rotateY(1980deg);}}
-@keyframes gradientShift{0%{background-position:0% 50%;}50%{background-position:100% 50%;}100%{background-position:0% 50%;}}
-@keyframes float{0%{transform:translateY(100vh) rotate(0deg);opacity:0;}10%{opacity:0.8;}90%{opacity:0.8;}100%{transform:translateY(-100px) rotate(360deg);opacity:0;}}
-@keyframes celebrate{0%{transform:scale(1);}50%{transform:scale(1.1);}100%{transform:scale(1);}}
+/* Animations */
+@keyframes flip {
+  0% { transform: rotateY(0); }
+  50% { transform: rotateY(1800deg); }
+  100% { transform: rotateY(1980deg); }
+}
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+@keyframes float {
+  0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+  10% { opacity: 0.8; }
+  90% { opacity: 0.8; }
+  100% { transform: translateY(-100px) rotate(360deg); opacity: 0; }
+}
+@keyframes celebrate {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
 
-@media (max-width:500px){
-    .container{padding:25px 15px;}
-    h1{font-size:2rem;}
-    .coin-container{width:120px;height:120px;}
-    .coin-face{font-size:2.5rem;}
-    .stats{padding:10px;}
-    .stat-value{font-size:1.6rem;}
-    .emoji{font-size:18px;}
+/* Mobile adjustments */
+@media (max-width: 500px) {
+  .container { padding: 25px 15px; }
+  h1 { font-size: 2rem; }
+  .coin-container { width: 120px; height: 120px; }
+  .coin-face { font-size: 2.5rem; }
+  .stats { padding: 10px; }
+  .stat-value { font-size: 1.6rem; }
+  .emoji { font-size: 18px; }
 }
 </style>
 </head>
+
 <body>
-
 <div class="container">
-    <h1>欢迎小宝宝！</h1>
-    <p class="subtitle">这只是一件平常的小事，并不会决定你的运气宝宝。但如果它能给你一点点激励，那就是我最大的心愿。不管怎样，你永远是最棒的郭彤彤。我爱你。</p>
+  <h1>欢迎小宝宝！</h1>
+  <p class="subtitle">
+    这只是一件平常的小事，并不会决定你的运气宝宝。但如果它能给你一点点激励，那就是我最大的心愿。
+    不管怎样，你永远是最棒的郭彤彤。我爱你。
+  </p>
 
-    <div class="coin-container">
-        <div class="coin" id="coin">
-            <div class="coin-face coin-front">
-                <div class="coin-image-container">
-                    <img src="A.png" class="coin-image" alt="A Side">
-                </div>
-            </div>
-            <div class="coin-face coin-back">
-                <div class="coin-image-container">
-                    <img src="B.png" class="coin-image" alt="B Side">
-                </div>
-            </div>
+  <div class="coin-container">
+    <div class="coin" id="coin">
+      <div class="coin-face coin-front">
+        <div class="coin-image-container">
+          <img src="A.png" class="coin-image" alt="A Side">
         </div>
+      </div>
+      <div class="coin-face coin-back">
+        <div class="coin-image-container">
+          <img src="B.png" class="coin-image" alt="B Side">
+        </div>
+      </div>
     </div>
+  </div>
 
-    <div class="result">
-        <div class="result-text" id="result">宝宝开始吧！</div>
+  <div class="result">
+    <div class="result-text" id="result">宝宝开始吧！</div>
+  </div>
+
+  <button id="flip-button">翻转硬币</button>
+
+  <div class="stats">
+    <div class="stat">
+      <div class="stat-value" id="a-count">0</div>
+      <div class="stat-label">A面次数</div>
     </div>
-
-    <button id="flip-button">翻转硬币</button>
-
-    <div class="stats">
-        <div class="stat">
-            <div class="stat-value" id="a-count">0</div>
-            <div class="stat-label">A面次数</div>
-        </div>
-        <div class="stat">
-            <div class="stat-value" id="total-count">0</div>
-            <div class="stat-label">总次数</div>
-        </div>
-        <div class="stat">
-            <div class="stat-value" id="b-count">0</div>
-            <div class="stat-label">B面次数</div>
-        </div>
+    <div class="stat">
+      <div class="stat-value" id="total-count">0</div>
+      <div class="stat-label">总次数</div>
     </div>
+    <div class="stat">
+      <div class="stat-value" id="b-count">0</div>
+      <div class="stat-label">B面次数</div>
+    </div>
+  </div>
 </div>
 
 <div class="floating-emojis" id="emojis-container"></div>
 
 <script>
 document.addEventListener('DOMContentLoaded', function(){
-    const coin=document.getElementById('coin');
-    const flipButton=document.getElementById('flip-button');
-    const result=document.getElementById('result');
-    const aCount=document.getElementById('a-count');
-    const bCount=document.getElementById('b-count');
-    const totalCount=document.getElementById('total-count');
-    const emojisContainer=document.getElementById('emojis-container');
+  const coin = document.getElementById('coin');
+  const flipButton = document.getElementById('flip-button');
+  const result = document.getElementById('result');
+  const aCount = document.getElementById('a-count');
+  const bCount = document.getElementById('b-count');
+  const totalCount = document.getElementById('total-count');
+  const emojisContainer = document.getElementById('emojis-container');
 
-    let isFlipping=false,aCounter=0,bCounter=0,totalFlips=0;
-    const cuteEmojis=['❤️','✨','🌟','🥰','😊','🌸','💫','🎀','💖','🦋','🐰','🐱','🐶','🌈','🎈','🎵','💕','💝','💘','💓','💗','💞','💟','❣️','⭐','🌺','🌷','💐','🌼','🦄','🍀','🎂','🍬','🍭','🎁','🎀','👑','💎','🔮','🎵'];
+  let isFlipping = false, aCounter = 0, bCounter = 0, totalFlips = 0;
+  const cuteEmojis = ['❤️','✨','🌟','🥰','😊','🌸','💫','🎀','💖','🦋','🐰','🐱','🐶','🌈','🎈','🎵','💕','💝','💘','💓','💗','💞','💟','❣️','⭐','🌺','🌷','💐','🌼','🦄','🍀','🎂','🍬','🍭','🎁','🎀','👑','💎','🔮','🎵'];
 
-    function createEmojis(){
-        for(let i=0;i<25;i++){
-            const emoji=document.createElement('div');
-            emoji.className='emoji';
-            emoji.innerHTML=cuteEmojis[Math.floor(Math.random()*cuteEmojis.length)];
-            emoji.style.left=Math.random()*100+'vw';
-            emoji.style.animationDelay=Math.random()*8+'s';
-            emoji.style.fontSize=(Math.random()*20+15)+'px';
-            emoji.style.animation=`float ${8+Math.random()*6}s linear infinite`;
-            emojisContainer.appendChild(emoji);
-        }
+  function createEmojis() {
+    for (let i = 0; i < 25; i++) {
+      const emoji = document.createElement('div');
+      emoji.className = 'emoji';
+      emoji.innerHTML = cuteEmojis[Math.floor(Math.random() * cuteEmojis.length)];
+      emoji.style.left = Math.random() * 100 + 'vw';
+      emoji.style.animationDelay = Math.random() * 8 + 's';
+      emoji.style.fontSize = (Math.random() * 20 + 15) + 'px';
+      emoji.style.animation = `float ${8 + Math.random() * 6}s linear infinite`;
+      emojisContainer.appendChild(emoji);
     }
-    createEmojis();
+  }
+  createEmojis();
 
-    flipButton.addEventListener('click',function(){
-        if(isFlipping)return;
-        isFlipping=true;
-        flipButton.disabled=true;
-        coin.classList.add('flipping');
-        result.textContent="翻转中...";
-        const isA=Math.random()<0.5;
-        setTimeout(()=>{
-            coin.classList.remove('flipping');
-            if(isA){
-                result.innerHTML="是 <strong>A</strong>！";
-                aCounter++; aCount.textContent=aCounter;
-                coin.style.transform='rotateY(0deg)';
-            }else{
-                result.innerHTML="是 <strong>B</strong>！";
-                bCounter++; bCount.textContent=bCounter;
-                coin.style.transform='rotateY(180deg)';
-            }
-            result.classList.add('celebrate');
-            setTimeout(()=>{result.classList.remove('celebrate');},500);
-            totalFlips++; totalCount.textContent=totalFlips;
-            isFlipping=false; flipButton.disabled=false;
-        },1500);
-    });
+  flipButton.addEventListener('click', function() {
+    if (isFlipping) return;
+    isFlipping = true;
+    flipButton.disabled = true;
+    coin.classList.add('flipping');
+    result.textContent = "翻转中...";
+    const isA = Math.random() < 0.5;
+    setTimeout(() => {
+      coin.classList.remove('flipping');
+      if (isA) {
+        result.innerHTML = "是 <strong>A</strong>！";
+        aCounter++; aCount.textContent = aCounter;
+        coin.style.transform = 'rotateY(0deg)';
+      } else {
+        result.innerHTML = "是 <strong>B</strong>！";
+        bCounter++; bCount.textContent = bCounter;
+        coin.style.transform = 'rotateY(180deg)';
+      }
+      result.classList.add('celebrate');
+      setTimeout(() => { result.classList.remove('celebrate'); }, 500);
+      totalFlips++; totalCount.textContent = totalFlips;
+      isFlipping = false; flipButton.disabled = false;
+    }, 1500);
+  });
 
-    // Prevent double-tap zoom
-    let lastTouchEnd=0;
-    document.addEventListener('touchend',function(event){
-        const now=(new Date()).getTime();
-        if(now-lastTouchEnd<=300)event.preventDefault();
-        lastTouchEnd=now;
-    },false);
+  // Prevent double-tap zoom
+  let lastTouchEnd = 0;
+  document.addEventListener('touchend', function(event) {
+    const now = (new Date()).getTime();
+    if (now - lastTouchEnd <= 300) event.preventDefault();
+    lastTouchEnd = now;
+  }, false);
 });
 </script>
 </body>
