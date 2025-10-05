@@ -408,25 +408,39 @@ document.addEventListener('DOMContentLoaded', function(){
     if (isFlipping) return;
     isFlipping = true;
     flipButton.disabled = true;
-    coin.classList.add('flipping');
     result.textContent = "翻转中...";
+
     const isA = Math.random() < 0.5;
+    const fullSpins = 5; // number of full rotations
+    const finalAngle = isA ? 0 : 180;
+    const totalRotation = 360 * fullSpins + finalAngle;
+
+    coin.style.transition = 'transform 2s cubic-bezier(0.25, 1, 0.5, 1)';
+    coin.style.transform = `rotateY(${totalRotation}deg)`;
+
     setTimeout(() => {
-      coin.classList.remove('flipping');
+      // Reset transform to smaller equivalent to avoid overflow rotation
+      coin.style.transition = 'none';
+      coin.style.transform = `rotateY(${finalAngle}deg)`;
+
       if (isA) {
         result.innerHTML = "是 <strong>A</strong>！";
         aCounter++; aCount.textContent = aCounter;
-        coin.style.transform = 'rotateY(0deg)';
       } else {
         result.innerHTML = "是 <strong>B</strong>！";
         bCounter++; bCount.textContent = bCounter;
-        coin.style.transform = 'rotateY(180deg)';
       }
+
       result.classList.add('celebrate');
       setTimeout(() => { result.classList.remove('celebrate'); }, 500);
       totalFlips++; totalCount.textContent = totalFlips;
-      isFlipping = false; flipButton.disabled = false;
-    }, 1500);
+
+      // Re-enable button
+      setTimeout(() => {
+        isFlipping = false;
+        flipButton.disabled = false;
+      }, 300);
+    }, 2000);
   });
 
   // Prevent double-tap zoom
@@ -440,3 +454,4 @@ document.addEventListener('DOMContentLoaded', function(){
 </script>
 </body>
 </html>
+
