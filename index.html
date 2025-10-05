@@ -74,6 +74,30 @@ body {
   z-index: -1;
 }
 
+.mute-btn {
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  background: transparent;
+  border: none;
+  padding: 6px;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.25s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+.mute-btn:hover {
+  background: rgba(255, 255, 255, 0.15);
+  transform: scale(1.05);
+}
+.mute-btn svg {
+  transition: opacity 0.25s ease;
+}
+
+
 /* Creamy glowy text */
 h1,
 .subtitle,
@@ -332,6 +356,18 @@ button:disabled {
 
 <body>
 <div class="container">
+  <button class="mute-btn" id="mute-btn" aria-label="Toggle sound">
+    <svg id="unmute-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#fff8e7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="22" height="22">
+      <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+      <path d="M19 5c1.5 1.5 2 3.5 2 5s-.5 3.5-2 5"></path>
+    </svg>
+    <svg id="mute-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#fff8e7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="22" height="22" style="display:none;">
+      <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+      <line x1="23" y1="9" x2="17" y2="15"></line>
+      <line x1="17" y1="9" x2="23" y2="15"></line>
+    </svg>
+  </button>
+
   <h1>欢迎小宝宝！</h1>
   <p class="subtitle">
     这只是一件平常的小事，并不会决定你的运气宝宝。但如果它能给你一点点激励，那就是我最大的心愿。
@@ -356,7 +392,6 @@ button:disabled {
   <div class="result">
     <div class="result-text" id="result">宝宝开始吧！</div>
   </div>
-
   <button id="flip-button">翻转硬币</button>
 
   <div class="stats">
@@ -377,6 +412,10 @@ button:disabled {
 
 <div class="floating-emojis" id="emojis-container"></div>
 
+<audio id="flip-sound" preload="auto">
+  <source src="coin-flip-shimmer-85750.mp3" type="audio/mpeg">
+</audio>
+
 <script>
 document.addEventListener('DOMContentLoaded', function(){
   const coin = document.getElementById('coin');
@@ -386,6 +425,24 @@ document.addEventListener('DOMContentLoaded', function(){
   const bCount = document.getElementById('b-count');
   const totalCount = document.getElementById('total-count');
   const emojisContainer = document.getElementById('emojis-container');
+  const flipSound = document.getElementById('flip-sound');
+  const muteBtn = document.getElementById('mute-btn');
+  const muteIcon = document.getElementById('mute-icon');
+  const unmuteIcon = document.getElementById('unmute-icon');
+  let isMuted = false;
+
+  muteBtn.addEventListener('click', () => {
+    isMuted = !isMuted;
+    if (isMuted) {
+      muteIcon.style.display = 'block';
+      unmuteIcon.style.display = 'none';
+    } else {
+      muteIcon.style.display = 'none';
+      unmuteIcon.style.display = 'block';
+    }
+  });
+
+
 
   let isFlipping = false, aCounter = 0, bCounter = 0, totalFlips = 0;
   const cuteEmojis = ['❤️','✨','🌟','🥰','😊','🌸','💫','🎀','💖','🦋','🐰','🐱','🐶','🌈','🎈','🎵','💕','💝','💘','💓','💗','💞','💟','❣️','⭐','🌺','🌷','💐','🌼','🦄','🍀','🎂','🍬','🍭','🎁','🎀','👑','💎','🔮','🎵'];
@@ -409,6 +466,13 @@ document.addEventListener('DOMContentLoaded', function(){
     isFlipping = true;
     flipButton.disabled = true;
     result.textContent = "翻转中...";
+
+    if (!isMuted) {
+      flipSound.currentTime = 0;
+      flipSound.play().catch(err => console.log("Audio play blocked:", err));
+    }
+
+
 
     const isA = Math.random() < 0.5;
     const fullSpins = 5; // number of full rotations
@@ -452,6 +516,6 @@ document.addEventListener('DOMContentLoaded', function(){
   }, false);
 });
 </script>
+
 </body>
 </html>
-
