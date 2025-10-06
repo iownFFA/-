@@ -185,7 +185,9 @@ h1,
               rgba(255,255,255,0.4) 180deg,
               transparent 270deg,
               rgba(255,255,255,0.4) 360deg);
-  mix-blend-mode: overlay;
+  /* Replace mix-blend-mode with opacity for better iOS compatibility */
+  opacity: 0.7;
+  /* mix-blend-mode: overlay; */ /* Remove this line */
   animation: spinGleam 6s linear infinite;
   pointer-events: none;
   border-radius: 50%;
