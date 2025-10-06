@@ -10,7 +10,8 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="GTT">
 <title>郭彤彤</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/lxgw-wenkai-webfont@1.7.0/lxgwwenkai-regular.min.css" rel="stylesheet">
+
 
 <style>
 /* Reset */
@@ -41,7 +42,7 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  font-family: 'Inter', sans-serif;
+  font-family: 'LXGW WenKai', 'Inter', 'PingFang SC', sans-serif;
   overflow: hidden;
   margin: 0;
   -webkit-touch-callout: none;
@@ -392,15 +393,19 @@ button:disabled {
 <body>
 <div class="container">
   <button class="mute-btn" id="mute-btn" aria-label="Toggle sound">
-    <svg id="unmute-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#fff8e7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="22" height="22">
-      <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
-      <path d="M19 5c1.5 1.5 2 3.5 2 5s-.5 3.5-2 5"></path>
-    </svg>
+    
     <svg id="mute-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#fff8e7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="22" height="22" style="display:none;">
-      <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
-      <line x1="23" y1="9" x2="17" y2="15"></line>
-      <line x1="17" y1="9" x2="23" y2="15"></line>
+      <path d="M11 5L6 9H2V15H6L11 19V5Z" />
+      <line x1="23" y1="9" x2="17" y2="15" />
+      <line x1="17" y1="9" x2="23" y2="15" />
     </svg>
+    
+    <svg id="unmute-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#fff8e7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="22" height="22" style="display:block;">
+      <path d="M11 5L6 9H2V15H6L11 19V5Z" />
+      <path d="M15.54 8.46C16.4774 9.39764 17.004 10.6692 17.004 12C17.004 13.3308 16.4774 14.6024 15.54 15.54" />
+      <path d="M19.07 4.93C20.9447 6.80528 21.9979 9.34836 21.9979 12C21.9979 14.6516 20.9447 17.1947 19.07 19.07" />
+    </svg>
+    
   </button>
 
   <h1>欢迎小宝宝！</h1>
