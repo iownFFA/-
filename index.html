@@ -416,6 +416,10 @@ button:disabled {
   <source src="coin-flip-shimmer-85750.mp3" type="audio/mpeg">
 </audio>
 
+<audio id="bgm" loop preload="auto">
+  <source src="S.mp3" type="audio/mpeg">
+</audio>
+
 <script>
 document.addEventListener('DOMContentLoaded', function(){
   const coin = document.getElementById('coin');
@@ -431,15 +435,29 @@ document.addEventListener('DOMContentLoaded', function(){
   const unmuteIcon = document.getElementById('unmute-icon');
   let isMuted = false;
 
+  function tryPlayBgm() {
+    bgm.volume = 0.5;
+    bgm.play().catch(() => {
+      // if blocked, wait for first user action
+      const resume = () => {
+        bgm.play().catch(()=>{});
+        document.removeEventListener('touchstart', resume);
+        document.removeEventListener('click', resume);
+      };
+      document.addEventListener('touchstart', resume, { once: true });
+      document.addEventListener('click', resume, { once: true });
+    });
+  }
+
+  tryPlayBgm();
+
+  // --- Mute toggle button ---
   muteBtn.addEventListener('click', () => {
     isMuted = !isMuted;
-    if (isMuted) {
-      muteIcon.style.display = 'block';
-      unmuteIcon.style.display = 'none';
-    } else {
-      muteIcon.style.display = 'none';
-      unmuteIcon.style.display = 'block';
-    }
+    muteIcon.style.display = isMuted ? 'block' : 'none';
+    unmuteIcon.style.display = isMuted ? 'none' : 'block';
+    flipSound.muted = isMuted;
+    bgm.muted = isMuted;
   });
 
 
