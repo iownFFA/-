@@ -667,7 +667,7 @@ document.addEventListener('DOMContentLoaded', function() {
       confetti.style.animationDelay = (Math.random() * 0.8) + 's';
       confetti.style.animationDuration = (2.5 + Math.random() * 1.5) + 's';
       document.body.appendChild(confetti);
-      setTimeout(() => confetti.remove(), 4000);
+      setTimeout(() => confetti.remove(), 2500);
     }
   }
 
@@ -701,7 +701,7 @@ document.addEventListener('DOMContentLoaded', function() {
         document.body.classList.remove('raining');
         rainContainer.remove();
       }, 400);
-    }, 4200);
+    }, 2500);
   }
 
   // --- COIN FLIP ---
