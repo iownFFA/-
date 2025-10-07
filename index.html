@@ -697,6 +697,23 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // --- COIN FLIP ---
   let isFlipping = false, aCounter = 0, bCounter = 0, totalFlips = 0;
+  
+  const cuteEmojis=['❤️','✨','🌟','🥰','😊','🌸','💫','🎀','💖','🦋','🐰','🐱','🐶','🌈','🎈','🎵','💕','💝','💘','💓','💗','💞','💟','❣️','⭐','🌺','🌷','💐','🌼','🦄','🍀','🎂','🍬','🍭','🎁','🎀','👑','💎','🔮','🎵'];
+
+    function createEmojis(){
+        for(let i=0;i<25;i++){
+            const emoji=document.createElement('div');
+            emoji.className='emoji';
+            emoji.innerHTML=cuteEmojis[Math.floor(Math.random()*cuteEmojis.length)];
+            emoji.style.left=Math.random()*100+'vw';
+            emoji.style.animationDelay=Math.random()*8+'s';
+            emoji.style.fontSize=(Math.random()*20+15)+'px';
+            emoji.style.animation=`float ${8+Math.random()*6}s linear infinite`;
+            emojisContainer.appendChild(emoji);
+        }
+    }
+  createEmojis();
+  
   flipButton.addEventListener('click', function() {
     if (isFlipping) return;
     isFlipping = true;
