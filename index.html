@@ -10,6 +10,8 @@
 <meta name="apple-mobile-web-app-title" content="GTT">
 <title>郭彤彤</title>
 <link href="https://cdn.jsdelivr.net/npm/lxgw-wenkai-webfont@1.7.0/lxgwwenkai-regular.min.css" rel="stylesheet">
+<link rel="preload" as="audio" href="coin-flip-shimmer-85750.mp3" type="audio/mpeg">
+
 
 <style>
   /* === iOS-compatible dimming overlay === */
@@ -120,6 +122,10 @@
   }
   .mute-btn svg {
     transition: opacity 0.25s ease;
+  }
+  .mute-btn.active {
+  background: rgba(255, 255, 255, 0.2);
+  box-shadow: 0 0 6px rgba(255, 255, 255, 0.6);
   }
 
   .effect-btn {
@@ -651,6 +657,7 @@ document.addEventListener('DOMContentLoaded', function() {
     isMuted = !isMuted;
     muteIcon.style.display = isMuted ? 'block' : 'none';
     unmuteIcon.style.display = isMuted ? 'none' : 'block';
+    muteBtn.classList.toggle('active', !isMuted);
     flipSound.muted = isMuted;
     bgm.muted = isMuted;
   });
@@ -757,8 +764,10 @@ document.addEventListener('DOMContentLoaded', function() {
     result.textContent = "翻转中...";
 
     if (!isMuted) {
+      flipSound.pause();
       flipSound.currentTime = 0;
-      flipSound.play().catch(()=>{});
+      // Force a small reflow tick to ensure reset on iOS
+      requestAnimationFrame(() => flipSound.play().catch(()=>{}));
     }
 
     const isA = Math.random() < 0.5;
@@ -769,26 +778,34 @@ document.addEventListener('DOMContentLoaded', function() {
     coin.style.transform = `rotateY(${totalRotation}deg)`;
 
     setTimeout(() => {
-      coin.style.transition = 'none';
-      coin.style.transform = `rotateY(${finalAngle}deg)`;
-      if (isA) {
-        result.innerHTML = "是 <strong>A</strong>！";
-        aCounter++; aCount.textContent = aCounter;
-        if (effectsEnabled) createConfetti();
-      } else {
-        result.innerHTML = "是 <strong>傻B :(</strong>";
-        bCounter++; bCount.textContent = bCounter;
-        if (effectsEnabled) createRainScene();
-      }
-      result.classList.add('celebrate');
-      setTimeout(() => result.classList.remove('celebrate'), 500);
-      totalFlips++; totalCount.textContent = totalFlips;
+  coin.style.transition = 'none';
+  coin.style.transform = `rotateY(${finalAngle}deg)`;
+  if (isA) {
+    result.innerHTML = "是 <strong>A</strong>！";
+    aCounter++; aCount.textContent = aCounter;
+    if (effectsEnabled) createConfetti();
+  } else {
+    result.innerHTML = "是 <strong>傻B :(</strong>";
+    bCounter++; bCount.textContent = bCounter;
+    if (effectsEnabled) createRainScene();
+  }
+  result.classList.add('celebrate');
+  setTimeout(() => result.classList.remove('celebrate'), 500);
+  totalFlips++; totalCount.textContent = totalFlips;
 
-      setTimeout(() => {
-        isFlipping = false;
-        flipButton.disabled = false;
-      }, 300);
-    }, 2000);
+  // Enable button immediately if effects are disabled
+  if (!effectsEnabled) {
+    isFlipping = false;
+    flipButton.disabled = false;
+  }
+  // If effects are enabled, wait for animation to end
+  else {
+    setTimeout(() => {
+      isFlipping = false;
+      flipButton.disabled = false;
+    }, 3000); // Wait longer for effects to finish
+  }
+}, 2000);
   });
 
   // --- Prevent iOS double-tap zoom ---
