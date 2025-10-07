@@ -3,7 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#1a2a6c">
 <link rel="apple-touch-icon" href="ChatGPT Image Oct 5, 2025, 12_37_25 AM.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -12,73 +11,113 @@
 <title>郭彤彤</title>
 <link href="https://cdn.jsdelivr.net/npm/lxgw-wenkai-webfont@1.7.0/lxgwwenkai-regular.min.css" rel="stylesheet">
 
-
 <style>
-/* Reset */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
+  /* === iOS-compatible dimming overlay === */
+  #dim-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    z-index: 800;
+    pointer-events: none;
+  }
+  
+  body.raining #dim-overlay {
+    opacity: 1;
+  }
+  
+  /* Reset */
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
 
-/* Background fix for iOS */
-html {
-  height: 100%;
-  width: 100%;
-  background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
-  background-size: 400% 400%;
-  animation: gradientShift 15s ease infinite;
-  margin: 0;
-  padding-top: env(safe-area-inset-top);
-  padding-bottom: env(safe-area-inset-bottom);
-  padding-left: env(safe-area-inset-left);
-  padding-right: env(safe-area-inset-right);
-}
+  /* Background fix for iOS */
+  html {
+    height: 100%;
+    width: 100%;
+    background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+    background-size: 400% 400%;
+    animation: gradientShift 15s ease infinite;
+    margin: 0;
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+  }
 
-body {
-  height: 100%;
-  width: 100%;
-  background: transparent !important;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-family: 'LXGW WenKai', 'Inter', 'PingFang SC', sans-serif;
-  overflow: hidden;
-  margin: 0;
-  -webkit-touch-callout: none;
-  -webkit-text-size-adjust: 100%;
-}
+  body {
+    height: 100%;
+    width: 100%;
+    background: transparent !important;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: 'LXGW WenKai', 'Inter', 'PingFang SC', sans-serif;
+    overflow: hidden;
+    margin: 0;
+    -webkit-touch-callout: none;
+    -webkit-text-size-adjust: 100%;
+  }
 
-/* Frosted panel */
-.container {
-  text-align: center;
-  max-width: 350px;
-  width: 100%;
-  background: rgba(255, 255, 255, 0.12);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border-radius: 20px;
-  padding: 30px 20px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  position: relative;
-  z-index: 1;
-}
-.container::before {
-  content: '';
-  position: absolute;
-  top: -50%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
-  background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0) 70%);
-  z-index: -1;
-}
+  /* Frosted panel */
+  .container {
+    text-align: center;
+    max-width: 350px;
+    width: 100%;
+    background: rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-radius: 20px;
+    padding: 30px 20px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    position: relative;
+    z-index: 1;
+  }
+  .container::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0) 70%);
+    z-index: -1;
+  }
 
-.mute-btn {
+  .mute-btn {
+    position: absolute;
+    top: 10px;
+    right: 12px;
+    background: transparent;
+    border: none;
+    padding: 6px;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.25s ease;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .mute-btn:hover {
+    background: rgba(255, 255, 255, 0.15);
+    transform: scale(1.05);
+  }
+  .mute-btn svg {
+    transition: opacity 0.25s ease;
+  }
+
+  .effect-btn {
   position: absolute;
   top: 10px;
-  right: 12px;
+  right: 50px; /* sits left of mute button */
   background: transparent;
   border: none;
   padding: 6px;
@@ -89,309 +128,394 @@ body {
   justify-content: center;
   transition: all 0.25s ease;
   -webkit-tap-highlight-color: transparent;
-}
-.mute-btn:hover {
-  background: rgba(255, 255, 255, 0.15);
+  }
+  .effect-btn:hover {
+  background: rgba(255, 255, 255, 0.12);
   transform: scale(1.05);
-}
-.mute-btn svg {
-  transition: opacity 0.25s ease;
-}
-
-
-/* Creamy glowy text */
-h1,
-.subtitle,
-.result-text,
-.stat-value,
-.stat-label,
-.coin-letter {
-  color: #fff8e7;
-  text-shadow: 0 0 2px rgba(255, 248, 231, 0.3),
-               0 0 4px rgba(255, 248, 231, 0.2),
-               0 0 6px rgba(255, 248, 231, 0.15);
-}
-.subtitle,
-.stat-label {
-  text-shadow: 0 0 1px rgba(255, 248, 231, 0.2);
-}
-
-/* Subtitle */
-.subtitle {
-  font-size: 1rem;
-  margin-bottom: 25px;
-  line-height: 1.5;
-  font-weight: 300;
-}
-
-/* Coin */
-.coin-container {
-  perspective: 1000px;
-  width: 150px;
-  height: 150px;
-  margin: 0 auto 20px;
-  position: relative;
-}
-.coin {
-  width: 100%;
-  height: 100%;
-  position: relative;
-  transform-style: preserve-3d;
-  transition: transform 1.5s ease-in-out;
-}
-.coin.flipping {
-  animation: flip 1.5s ease-in-out;
-}
-.coin-face {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  border-radius: 50%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-size: 3.5rem;
-  font-weight: bold;
-  overflow: hidden;
-
-  /* keep backface visibility so the 3D flip works exactly as before */
-  backface-visibility: hidden;
-  -webkit-backface-visibility: hidden;
-
-  /* Silver metallic look (keeps the same lighting direction and shadows
-     as your original gold coin so the flip animation behaves identically) */
-  background: linear-gradient(145deg,
-              #f6f7f8 0%,
-              #e6e8ea 28%,
-              #c3c7cb 60%,
-              #9fa4a8 100%);
-  border: 5px solid #9a9a9a;
-
-  /* keep the same inset & outer shadows as the gold version (only colors adjusted) */
-  box-shadow:
-    0 10px 25px rgba(0, 0, 0, 0.3),
-    inset 0 -8px 15px rgba(0, 0, 0, 0.4),
-    inset 0 8px 15px rgba(255, 255, 255, 0.45);
-}
-.coin-face::after {
-  content: '';
-  position: absolute;
-  top: -50%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
-  background: conic-gradient(from 0deg, 
-              rgba(255,255,255,0.4) 0deg,
-              transparent 90deg,
-              rgba(255,255,255,0.4) 180deg,
-              transparent 270deg,
-              rgba(255,255,255,0.4) 360deg);
-  /* Replace mix-blend-mode with opacity for better iOS compatibility */
-  opacity: 0.7;
-  /* mix-blend-mode: overlay; */ /* Remove this line */
-  animation: spinGleam 6s linear infinite;
-  pointer-events: none;
-  border-radius: 50%;
-  z-index: 2;
-}
-@keyframes spinGleam {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
-.coin-front {
-  transform: rotateY(0deg);
-  z-index: 2;
-}
-.coin-back {
-  transform: rotateY(180deg);
-}
-.coin-image-container {
-  width: 100%;
-  height: 100%;
-  border-radius: 50%;
-  overflow: hidden;
-  position: relative;
-  z-index: 2;
-}
-.coin-image {
-  width: 100%;
-  height: 90%;
-  object-fit: cover;
-  display: block;
-}
-
-/* Hide details for image coin */
-.coin-detail-2,
-.coin-detail-3 {
-  display: none !important;
-}
-
-/* Result */
-.result {
-  font-size: 1.8rem;
-  margin: 20px 0;
-  min-height: 60px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-.result-text {
-  background: rgba(255, 255, 255, 0.15);
-  padding: 10px 20px;
-  border-radius: 50px;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-  backdrop-filter: blur(5px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  transition: all 0.3s ease;
-}
-.result-text.celebrate {
-  animation: celebrate 0.5s ease;
-  background: rgba(255, 255, 255, 0.25);
-}
-
-/* Button */
-button {
-  background: linear-gradient(to right, #fff, #f0f0f0);
-  color: #1a2a6c;
-  border: none;
-  padding: 12px 35px;
-  font-size: 1rem;
-  font-weight: 500;
-  border-radius: 50px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-  position: relative;
-  overflow: hidden;
-  letter-spacing: 0.5px;
-  -webkit-tap-highlight-color: transparent;
-}
-button::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
-  transition: 0.5s;
-}
-button:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 12px 25px rgba(0, 0, 0, 0.3);
-}
-button:hover::before {
-  left: 100%;
-}
-button:active {
-  transform: translateY(1px);
-}
-button:disabled {
-  opacity: 0.7;
-  cursor: not-allowed;
-  transform: none;
-}
-
-/* Stats */
-.stats {
-  display: flex;
-  justify-content: space-around;
-  margin-top: 15px;
-  background: rgba(255, 255, 255, 0.08);
-  padding: 15px;
-  border-radius: 18px;
-  width: 100%;
-  backdrop-filter: blur(5px);
-  border: 1px solid rgba(255, 255, 255, 0.05);
-}
-.stat {
-  text-align: center;
-  position: relative;
-  padding: 0 10px;
-}
-.stat::after {
-  content: '';
-  position: absolute;
-  right: 0;
-  top: 20%;
-  height: 60%;
-  width: 1px;
+  }
+  .effect-btn.active {
   background: rgba(255, 255, 255, 0.2);
-}
-.stat:last-child::after {
-  display: none;
-}
-.stat-value {
-  font-size: 2rem;
-  font-weight: bold;
-  margin-bottom: 5px;
-}
-.stat-label {
-  font-size: 0.9rem;
-  opacity: 0.8;
-  letter-spacing: 0.5px;
-}
+  box-shadow: 0 0 6px rgba(255, 255, 255, 0.6);
+  }
 
-/* Floating emojis */
-.floating-emojis {
-  position: fixed;
-  width: 100%;
-  height: 100%;
-  top: 0;
-  left: 0;
-  pointer-events: none;
-  z-index: 0;
-  opacity: 0.7;
-}
-.emoji {
-  position: absolute;
-  font-size: 24px;
-  opacity: 0;
-  animation: float 8s linear infinite;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
-}
-.emoji:nth-child(3n) { animation-duration: 10s; }
-.emoji:nth-child(3n+1) { animation-duration: 12s; }
-.emoji:nth-child(3n+2) { animation-duration: 14s; }
+  /* Creamy glowy text */
+  h1,
+  .subtitle,
+  .result-text,
+  .stat-value,
+  .stat-label,
+  .coin-letter {
+    color: #fff8e7;
+    text-shadow: 0 0 2px rgba(255, 248, 231, 0.3),
+                 0 0 4px rgba(255, 248, 231, 0.2),
+                 0 0 6px rgba(255, 248, 231, 0.15);
+  }
+  .subtitle,
+  .stat-label {
+    text-shadow: 0 0 1px rgba(255, 248, 231, 0.2);
+  }
 
-/* Animations */
-@keyframes flip {
-  0% { transform: rotateY(0); }
-  50% { transform: rotateY(1800deg); }
-  100% { transform: rotateY(1980deg); }
-}
-@keyframes gradientShift {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
-}
-@keyframes float {
-  0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
-  10% { opacity: 0.8; }
-  90% { opacity: 0.8; }
-  100% { transform: translateY(-100px) rotate(360deg); opacity: 0; }
-}
-@keyframes celebrate {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.1); }
-  100% { transform: scale(1); }
-}
+  /* Subtitle */
+  .subtitle {
+    font-size: 1rem;
+    margin-bottom: 25px;
+    line-height: 1.5;
+    font-weight: 300;
+  }
 
-/* Mobile adjustments */
-@media (max-width: 500px) {
-  .container { padding: 25px 15px; }
-  h1 { font-size: 2rem; }
-  .coin-container { width: 120px; height: 120px; }
-  .coin-face { font-size: 2.5rem; }
-  .stats { padding: 10px; }
-  .stat-value { font-size: 1.6rem; }
-  .emoji { font-size: 18px; }
-}
+  /* Enhanced Coin Design */
+  .coin-container {
+    perspective: 1000px;
+    width: 150px;
+    height: 150px;
+    margin: 0 auto 20px;
+    position: relative;
+  }
+  .coin {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    transform-style: preserve-3d;
+    transition: transform 1.5s ease-in-out;
+  }
+  .coin.flipping {
+    animation: flip 1.5s ease-in-out;
+  }
+  .coin-face {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 3.5rem;
+    font-weight: bold;
+    overflow: hidden;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    
+    /* Enhanced metallic look with better shine */
+    background: radial-gradient(circle at 30% 30%, 
+                #f9f9f9 0%, 
+                #e8e8e8 15%, 
+                #c9c9c9 40%, 
+                #a8a8a8 70%, 
+                #8a8a8a 100%);
+    border: 6px solid #d4d4d4;
+    
+    /* Enhanced shadows for more depth */
+    box-shadow:
+      0 12px 30px rgba(0, 0, 0, 0.4),
+      inset 0 -10px 20px rgba(0, 0, 0, 0.5),
+      inset 0 10px 20px rgba(255, 255, 255, 0.6);
+  }
+
+  /* Enhanced gleam effect */
+  .coin-face::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: 50%;
+    background: radial-gradient(circle at 30% 30%, 
+                rgba(255, 255, 255, 0.8) 0%, 
+                rgba(255, 255, 255, 0.4) 20%, 
+                rgba(255, 255, 255, 0.2) 40%, 
+                transparent 70%);
+    z-index: 1;
+    pointer-events: none;
+  }
+
+  .coin-face::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: conic-gradient(from 0deg, 
+                rgba(255, 255, 255, 0.8) 0deg,
+                rgba(255, 255, 255, 0.4) 60deg,
+                rgba(255, 255, 255, 0.2) 120deg,
+                rgba(255, 255, 255, 0.1) 180deg,
+                rgba(255, 255, 255, 0.2) 240deg,
+                rgba(255, 255, 255, 0.4) 300deg,
+                rgba(255, 255, 255, 0.8) 360deg);
+    opacity: 0.6;
+    animation: spinGleam 4s linear infinite;
+    pointer-events: none;
+    border-radius: 50%;
+    z-index: 2;
+  }
+
+  @keyframes spinGleam {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+
+  .coin-front {
+    transform: rotateY(0deg);
+    z-index: 2;
+  }
+  .coin-back {
+    transform: rotateY(180deg);
+  }
+  .coin-image-container {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    overflow: hidden;
+    position: relative;
+    z-index: 3;
+    box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.3);
+  }
+  .coin-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  /* Fallback coin design if images don't load */
+  .coin-fallback {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    font-size: 2.5rem;
+    color: #1a2a6c;
+    font-weight: bold;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+  }
+
+  /* Result */
+  .result {
+    font-size: 1.8rem;
+    margin: 20px 0;
+    min-height: 60px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .result-text {
+    background: rgba(255, 255, 255, 0.15);
+    padding: 10px 20px;
+    border-radius: 50px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(5px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+  }
+  .result-text.celebrate {
+    animation: celebrate 0.5s ease;
+    background: rgba(255, 255, 255, 0.25);
+  }
+
+  /* Button */
+  button {
+    background: linear-gradient(to right, #fff, #f0f0f0);
+    color: #1a2a6c;
+    border: none;
+    padding: 12px 35px;
+    font-size: 1rem;
+    font-weight: 500;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    position: relative;
+    overflow: hidden;
+    letter-spacing: 0.5px;
+    -webkit-tap-highlight-color: transparent;
+  }
+  button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+    transition: 0.5s;
+  }
+  button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 25px rgba(0, 0, 0, 0.3);
+  }
+  button:hover::before {
+    left: 100%;
+  }
+  button:active {
+    transform: translateY(1px);
+  }
+  button:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  /* Stats */
+  .stats {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 15px;
+    background: rgba(255, 255, 255, 0.08);
+    padding: 15px;
+    border-radius: 18px;
+    width: 100%;
+    backdrop-filter: blur(5px);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+  }
+  .stat {
+    text-align: center;
+    position: relative;
+    padding: 0 10px;
+  }
+  .stat::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: 20%;
+    height: 60%;
+    width: 1px;
+    background: rgba(255, 255, 255, 0.2);
+  }
+  .stat:last-child::after {
+    display: none;
+  }
+  .stat-value {
+    font-size: 2rem;
+    font-weight: bold;
+    margin-bottom: 5px;
+  }
+  .stat-label {
+    font-size: 0.9rem;
+    opacity: 0.8;
+    letter-spacing: 0.5px;
+  }
+
+  /* Floating emojis */
+  .floating-emojis {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.7;
+  }
+  .emoji {
+    position: absolute;
+    font-size: 24px;
+    opacity: 0;
+    animation: float 8s linear infinite;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+  }
+  .emoji:nth-child(3n) { animation-duration: 10s; }
+  .emoji:nth-child(3n+1) { animation-duration: 12s; }
+  .emoji:nth-child(3n+2) { animation-duration: 14s; }
+
+  /* Animations */
+  @keyframes flip {
+    0% { transform: rotateY(0); }
+    50% { transform: rotateY(1800deg); }
+    100% { transform: rotateY(1980deg); }
+  }
+  @keyframes gradientShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+  @keyframes float {
+    0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+    10% { opacity: 0.8; }
+    90% { opacity: 0.8; }
+    100% { transform: translateY(-100px) rotate(360deg); opacity: 0; }
+  }
+  @keyframes celebrate {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+  }
+
+  /* Mobile adjustments */
+  @media (max-width: 500px) {
+    .container { padding: 25px 15px; }
+    h1 { font-size: 2rem; }
+    .coin-container { width: 120px; height: 120px; }
+    .coin-face { font-size: 2.5rem; }
+    .stats { padding: 10px; }
+    .stat-value { font-size: 1.6rem; }
+    .emoji { font-size: 18px; }
+  }
+  
+  /* === Confetti animation === */
+  .confetti {
+    position: fixed;
+    width: 10px;
+    height: 14px;
+    opacity: 0.9;
+    border-radius: 2px;
+    z-index: 9999;
+    animation: confettiFall 3s ease-out forwards;
+  }
+  @keyframes confettiFall {
+    0% {
+      transform: translateY(-10vh) translateX(0) rotate(0deg);
+      opacity: 1;
+    }
+    100% {
+      transform: translateY(110vh) translateX(var(--xShift)) rotate(720deg);
+      opacity: 0;
+    }
+  }
+
+  /* === Raindrops (reverted to original) === */
+  .raindrop {
+    position: fixed;
+    top: -20px;
+    width: 2px;
+    height: 18px;
+    background: linear-gradient(to bottom, rgba(255,255,255,0.9), rgba(255,255,255,0));
+    border-radius: 1px;
+    opacity: 0.7;
+    z-index: 950;
+    animation: fall 1.2s linear infinite;
+  }
+  @keyframes fall {
+    0% { transform: translateY(0); opacity: 1; }
+    100% { transform: translateY(100vh); opacity: 0; }
+  }
+
 </style>
 </head>
 
 <body>
+<div id="dim-overlay"></div>
 <div class="container">
+  <!-- Effect Toggle Button -->
+<button class="effect-btn" id="effect-btn" aria-label="Toggle visual effects">
+  <!-- Cloud OFF (outline) -->
+  <svg id="effect-off" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+       fill="none" stroke="#fff8e7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+       width="22" height="22" style="display:block;">
+    <path d="M17.5 19a4.5 4.5 0 0 0 0-9 5.5 5.5 0 0 0-10.9 1A4 4 0 0 0 7 19h10.5z"/>
+  </svg>
+
+  <!-- Cloud ON (filled + glow) -->
+  <svg id="effect-on" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+       fill="#fff8e7" stroke="#fff8e7" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"
+       width="22" height="22" style="display:none; filter: drop-shadow(0 0 6px rgba(255,255,255,0.8));">
+    <path d="M17.5 19a4.5 4.5 0 0 0 0-9 5.5 5.5 0 0 0-10.9 1A4 4 0 0 0 7 19h10.5z"/>
+  </svg>
+</button>
+
+
   <button class="mute-btn" id="mute-btn" aria-label="Toggle sound">
     
     <svg id="mute-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#fff8e7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="22" height="22" style="display:none;">
@@ -407,6 +531,7 @@ button:disabled {
     </svg>
     
   </button>
+  
 
   <h1>欢迎小宝宝！</h1>
   <p class="subtitle">
@@ -418,12 +543,14 @@ button:disabled {
     <div class="coin" id="coin">
       <div class="coin-face coin-front">
         <div class="coin-image-container">
-          <img src="A.png" class="coin-image" alt="A Side">
+          <img src="A.png" class="coin-image" alt="A Side" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+          <div class="coin-fallback" style="display:none;">A</div>
         </div>
       </div>
       <div class="coin-face coin-back">
         <div class="coin-image-container">
-          <img src="B.png" class="coin-image" alt="B Side">
+          <img src="B.png" class="coin-image" alt="B Side" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+          <div class="coin-fallback" style="display:none;">B</div>
         </div>
       </div>
     </div>
@@ -461,7 +588,7 @@ button:disabled {
 </audio>
 
 <script>
-document.addEventListener('DOMContentLoaded', function(){
+document.addEventListener('DOMContentLoaded', function() {
   const coin = document.getElementById('coin');
   const flipButton = document.getElementById('flip-button');
   const result = document.getElementById('result');
@@ -473,17 +600,32 @@ document.addEventListener('DOMContentLoaded', function(){
   const muteBtn = document.getElementById('mute-btn');
   const muteIcon = document.getElementById('mute-icon');
   const unmuteIcon = document.getElementById('unmute-icon');
-  let isMuted = true; // start muted
+  const bgm = document.getElementById('bgm');
+  const dimOverlay = document.getElementById('dim-overlay');
+
+  const effectBtn = document.getElementById('effect-btn');
+  const effectOn = document.getElementById('effect-on');
+  const effectOff = document.getElementById('effect-off');
+
+  let effectsEnabled = false; // start OFF every time
+  let isMuted = true;
   flipSound.muted = true;
   bgm.muted = true;
   muteIcon.style.display = 'block';
   unmuteIcon.style.display = 'none';
 
+  // --- EFFECT TOGGLE ---
+  effectBtn.addEventListener('click', () => {
+  effectsEnabled = !effectsEnabled;
+  effectOn.style.display = effectsEnabled ? 'block' : 'none';
+  effectOff.style.display = effectsEnabled ? 'none' : 'block';
+  effectBtn.classList.toggle('active', effectsEnabled);
+});
 
+  // --- BGM AUTOPLAY ---
   function tryPlayBgm() {
     bgm.volume = 0.07;
     bgm.play().catch(() => {
-      // if blocked, wait for first user action
       const resume = () => {
         bgm.play().catch(()=>{});
         document.removeEventListener('touchstart', resume);
@@ -493,10 +635,9 @@ document.addEventListener('DOMContentLoaded', function(){
       document.addEventListener('click', resume, { once: true });
     });
   }
-
   tryPlayBgm();
 
-  // --- Mute toggle button ---
+  // --- MUTE BUTTON ---
   muteBtn.addEventListener('click', () => {
     isMuted = !isMuted;
     muteIcon.style.display = isMuted ? 'block' : 'none';
@@ -505,25 +646,57 @@ document.addEventListener('DOMContentLoaded', function(){
     bgm.muted = isMuted;
   });
 
-
-
-  let isFlipping = false, aCounter = 0, bCounter = 0, totalFlips = 0;
-  const cuteEmojis = ['❤️','✨','🌟','🥰','😊','🌸','💫','🎀','💖','🦋','🐰','🐱','🐶','🌈','🎈','🎵','💕','💝','💘','💓','💗','💞','💟','❣️','⭐','🌺','🌷','💐','🌼','🦄','🍀','🎂','🍬','🍭','🎁','🎀','👑','💎','🔮','🎵'];
-
-  function createEmojis() {
-    for (let i = 0; i < 25; i++) {
-      const emoji = document.createElement('div');
-      emoji.className = 'emoji';
-      emoji.innerHTML = cuteEmojis[Math.floor(Math.random() * cuteEmojis.length)];
-      emoji.style.left = Math.random() * 100 + 'vw';
-      emoji.style.animationDelay = Math.random() * 8 + 's';
-      emoji.style.fontSize = (Math.random() * 20 + 15) + 'px';
-      emoji.style.animation = `float ${8 + Math.random() * 6}s linear infinite`;
-      emojisContainer.appendChild(emoji);
+  // --- CONFETTI ---
+  function createConfetti() {
+    for (let i = 0; i < 120; i++) {
+      const confetti = document.createElement('div');
+      confetti.classList.add('confetti');
+      confetti.style.left = Math.random() * 100 + 'vw';
+      confetti.style.top = '-10vh';
+      confetti.style.backgroundColor = `hsl(${Math.random() * 360}, 80%, 60%)`;
+      confetti.style.setProperty('--xShift', (Math.random() * 200 - 100) + 'px');
+      confetti.style.animationDelay = (Math.random() * 0.8) + 's';
+      confetti.style.animationDuration = (2.5 + Math.random() * 1.5) + 's';
+      document.body.appendChild(confetti);
+      setTimeout(() => confetti.remove(), 4000);
     }
   }
-  createEmojis();
 
+  // --- RAIN ---
+  const thunderAudio = new Audio('thunder-soft.mp3');
+  thunderAudio.volume = 0.3;
+  function createRainScene() {
+    document.body.classList.add('raining');
+    dimOverlay.style.opacity = '1';
+    const rainContainer = document.createElement('div');
+    rainContainer.classList.add('rain-container');
+    document.body.appendChild(rainContainer);
+
+    for (let i = 0; i < 70; i++) {
+      const drop = document.createElement('div');
+      drop.classList.add('raindrop');
+      drop.style.left = Math.random() * 100 + 'vw';
+      drop.style.animationDuration = (0.7 + Math.random() * 0.6) + 's';
+      drop.style.animationDelay = Math.random() + 's';
+      rainContainer.appendChild(drop);
+    }
+
+    if (!isMuted) {
+      thunderAudio.currentTime = 0;
+      thunderAudio.play().catch(()=>{});
+    }
+
+    setTimeout(() => {
+      dimOverlay.style.opacity = '0';
+      setTimeout(() => {
+        document.body.classList.remove('raining');
+        rainContainer.remove();
+      }, 400);
+    }, 4200);
+  }
+
+  // --- COIN FLIP ---
+  let isFlipping = false, aCounter = 0, bCounter = 0, totalFlips = 0;
   flipButton.addEventListener('click', function() {
     if (isFlipping) return;
     isFlipping = true;
@@ -532,37 +705,32 @@ document.addEventListener('DOMContentLoaded', function(){
 
     if (!isMuted) {
       flipSound.currentTime = 0;
-      flipSound.play().catch(err => console.log("Audio play blocked:", err));
+      flipSound.play().catch(()=>{});
     }
 
-
-
     const isA = Math.random() < 0.5;
-    const fullSpins = 5; // number of full rotations
+    const fullSpins = 5;
     const finalAngle = isA ? 0 : 180;
     const totalRotation = 360 * fullSpins + finalAngle;
-
     coin.style.transition = 'transform 2s cubic-bezier(0.25, 1, 0.5, 1)';
     coin.style.transform = `rotateY(${totalRotation}deg)`;
 
     setTimeout(() => {
-      // Reset transform to smaller equivalent to avoid overflow rotation
       coin.style.transition = 'none';
       coin.style.transform = `rotateY(${finalAngle}deg)`;
-
       if (isA) {
         result.innerHTML = "是 <strong>A</strong>！";
         aCounter++; aCount.textContent = aCounter;
+        if (effectsEnabled) createConfetti();
       } else {
-        result.innerHTML = "是 <strong>B</strong>！";
+        result.innerHTML = "是 <strong>傻B :(</strong>";
         bCounter++; bCount.textContent = bCounter;
+        if (effectsEnabled) createRainScene();
       }
-
       result.classList.add('celebrate');
-      setTimeout(() => { result.classList.remove('celebrate'); }, 500);
+      setTimeout(() => result.classList.remove('celebrate'), 500);
       totalFlips++; totalCount.textContent = totalFlips;
 
-      // Re-enable button
       setTimeout(() => {
         isFlipping = false;
         flipButton.disabled = false;
@@ -570,7 +738,7 @@ document.addEventListener('DOMContentLoaded', function(){
     }, 2000);
   });
 
-  // Prevent double-tap zoom
+  // --- Prevent iOS double-tap zoom ---
   let lastTouchEnd = 0;
   document.addEventListener('touchend', function(event) {
     const now = (new Date()).getTime();
@@ -580,6 +748,6 @@ document.addEventListener('DOMContentLoaded', function(){
 });
 </script>
 
+
 </body>
 </html>
-
