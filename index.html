@@ -630,6 +630,7 @@ document.addEventListener('DOMContentLoaded', function() {
   unmuteIcon.style.display = 'none';
   effectOn.style.display = 'block';
   effectOff.style.display = 'none';
+  effectBtn.classList.toggle('active', effectsEnabled);
 
   // --- EFFECT TOGGLE ---
   effectBtn.addEventListener('click', () => {
@@ -823,3 +824,4 @@ document.addEventListener('DOMContentLoaded', function() {
 
 </body>
 </html>
+
