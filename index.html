@@ -622,12 +622,14 @@ document.addEventListener('DOMContentLoaded', function() {
   const effectOn = document.getElementById('effect-on');
   const effectOff = document.getElementById('effect-off');
 
-  let effectsEnabled = false; // start OFF every time
+  let effectsEnabled = true; // start OFF every time
   let isMuted = true;
   flipSound.muted = true;
   bgm.muted = true;
   muteIcon.style.display = 'block';
   unmuteIcon.style.display = 'none';
+  effectOn.style.display = 'block';
+  effectOff.style.display = 'none';
 
   // --- EFFECT TOGGLE ---
   effectBtn.addEventListener('click', () => {
