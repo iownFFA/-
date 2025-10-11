@@ -921,32 +921,26 @@
   
   /* Redesigned back button for game */
   .back-btn {
-    position: fixed;
-    top: 10px;
-    left: 12px;
-    background: rgba(255, 255, 255, 0.15);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    padding: 8px 12px;
-    border-radius: 12px;
+    position: absolute;
+    top: 60px;
+    left: 10px; /* sits left of mute button */
+    background: transparent;
+    border: none;
+    padding: 6px;
+    border-radius: 8px;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: all 0.3s ease;
+    transition: all 0.25s ease;
     -webkit-tap-highlight-color: transparent;
-    z-index: 1001;
-    color: #fff8e7;
-    font-weight: 500;
-    font-size: 14px;
-    gap: 6px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  }
-  
-  .back-btn:hover {
-    background: rgba(255, 255, 255, 0.25);
+}
+
+.back-btn:hover {
+    background: rgba(255, 255, 255, 0.12); /* Reduced from 0.18 to 0.12 */
     transform: translateY(-2px);
     box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
-  }
+}
   
   .back-btn:active {
     transform: translateY(0);
@@ -1071,7 +1065,6 @@
       <line x1="19" y1="12" x2="5" y2="12"></line>
       <polyline points="12 19 5 12 12 5"></polyline>
     </svg>
-    返回
   </button>
   
   <!-- Game controls - removed effects and volume buttons -->
@@ -1082,17 +1075,17 @@
   <div class="app" id="appRoot">
     <!-- Controls Panel -->
     <div class="panel controls" id="controlsPanel">
-      <label for="roomId">Room code</label>
-      <input id="roomId" placeholder="Create or paste room code" type="text" autocomplete="off" inputmode="text" />
+      <label for="roomId">房间代码</label>
+      <input id="roomId" placeholder="创建或粘贴房间代码" type="text" autocomplete="off" inputmode="text" />
       <div class="btn-row" id="initialButtons">
-        <button id="createBtn" class="small">Create Room</button>
-        <button id="joinBtn" class="small">Join Room</button>
+        <button id="createBtn" class="small">创建房间</button>
+        <button id="joinBtn" class="small"> 加入房间</button>
       </div>
 
       <!-- shown only when in-room -->
       <div class="btn-row" id="inRoomButtons" style="display:none">
-        <button id="resetBtn" class="small">Reset Board</button>
-        <button id="leaveBtn" class="small">Leave Room</button>
+        <button id="resetBtn" class="small">重置棋盘</button>
+        <button id="leaveBtn" class="small">离开房间</button>
         <!-- Undo button added here -->
         <button id="undoBtn" class="small undo-btn" disabled>
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -1105,13 +1098,13 @@
 
       <div style="height:6px"></div>
       <div class="status-row">
-        <div id="status">Not connected</div>
+        <div id="status">未连接</div>
       </div>
       <div style="height:6px"></div>
-      <div class="muted" id="players">Players: -</div>
+      <div class="muted" id="players">玩家: -</div>
       <div style="height:8px"></div>
-      <div class="muted" id="turnIndicator">Turn: —</div>
-      <div class="muted" id="youIndicator">You: —</div>
+      <div class="muted" id="turnIndicator">回合: —</div>
+      <div class="muted" id="youIndicator">你的角色: —</div>
     </div>
 
     <!-- Board Panel -->
@@ -1468,7 +1461,7 @@ let undoRequested = false; // Track if an undo request is active
 /* ---------- Authentication ---------- */
 signInAnonymously(auth).catch(console.error);
 onAuthStateChanged(auth, user => {
-  if (user) { localUID = user.uid; statusEl.textContent = "Connected (anon) — ready"; }
+  if (user) { localUID = user.uid; statusEl.textContent = "宝宝我爱你"; }
   else { localUID = null; statusEl.textContent = "Not connected"; }
 });
 
@@ -1562,10 +1555,10 @@ function onCellClick(e){
   const r = +e.currentTarget.dataset.r, c = +e.currentTarget.dataset.c;
   if(status !== "playing"){ 
     if(status && status.endsWith("-won")) showToast("Game over — reset to play again");
-    else showToast("Join or create a room first"); 
+    else showToast("请先加入或创建房间"); 
     return; 
   }
-  if(role !== turn){ showToast("Not your turn"); return; }
+  if(role !== turn){ showToast("还没轮到宝宝呢"); return; }
   if(board[r][c]) return;
   const path = `rooms/${roomId}/moves`;
   const moveRef = push(ref(db, path));
@@ -1744,10 +1737,10 @@ async function createRoom(id){
   const rRef = ref(db, `rooms/${id}`);
   const snap = await get(rRef);
   if(snap.exists()){
-    showToast("Room exists, joining…");
+    showToast("房间已存在，正在加入…");
   } else {
     await set(rRef, emptyRoom({ owner: localUID }));
-    showToast("Room created");
+    showToast("房间创建成功");
   }
   await joinRoom(id);
 }
@@ -1837,10 +1830,10 @@ async function leaveRoom(){
 
   // Clear inputs / indicators
   roomInput.value = "";
-  playersEl.textContent = "Players: -";
-  turnEl.textContent = "Turn: —";
-  youEl.textContent = "You: —";
-  statusEl.textContent = "Connected (anon) — ready";
+  playersEl.textContent = "玩家: -";
+  turnEl.textContent = "回合: —";
+  youEl.textContent = "你的角色: —";
+  statusEl.textContent = "宝宝我爱你";
 
   showToast("Left room");
 }
@@ -1936,7 +1929,7 @@ function count(bd, r, c, dR, dC, color){
 
 /* Update status text */
 function updateStatus(){
-  statusEl.textContent = (status === "playing") ? "In Room" : (status && status.endsWith("-won") ? `Ended: ${status.replace("-won"," won")}` : "Connected (anon) — ready");
+  statusEl.textContent = (status === "playing") ? "在房间中" : (status && status.endsWith("-won") ? `Ended: ${status.replace("-won"," won")}` : "宝宝我爱你");
 }
 
 /* initial render */
