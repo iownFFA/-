@@ -12,7 +12,6 @@
 <link href="https://cdn.jsdelivr.net/npm/lxgw-wenkai-webfont@1.7.0/lxgwwenkai-regular.min.css" rel="stylesheet">
 <link rel="preload" as="audio" href="coin-flip-shimmer-85750.mp3" type="audio/mpeg">
 
-
 <style>
   /* === iOS-compatible dimming overlay === */
   #dim-overlay {
@@ -99,6 +98,34 @@
     height: 200%;
     background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0) 70%);
     z-index: -1;
+  }
+
+  /* Game button */
+  .game-btn {
+    position: absolute;
+    top: 10px;
+    left: 12px;
+    background: transparent;
+    border: none;
+    padding: 6px;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.25s ease;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .game-btn:hover {
+    background: rgba(255, 255, 255, 0.15);
+    transform: scale(1.05);
+  }
+  .game-btn svg {
+    transition: opacity 0.25s ease;
+  }
+  .game-btn.active {
+    background: rgba(255, 255, 255, 0.2);
+    box-shadow: 0 0 6px rgba(255, 255, 255, 0.6);
   }
 
   .mute-btn {
@@ -466,6 +493,7 @@
     .stats { padding: 10px; }
     .stat-value { font-size: 1.6rem; }
     .emoji { font-size: 18px; }
+    #game-app :root { --cell-size: 24px; }
   }
   
   /* === Confetti animation === */
@@ -506,6 +534,307 @@
     100% { transform: translateY(100vh); opacity: 0; }
   }
 
+  /* === Game App Styles === */
+  #game-app {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1000;
+    display: none;
+    background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+    background-size: 400% 400%;
+    animation: gradientShift 15s ease infinite;
+    padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+  }
+  
+  #game-app .app {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+    justify-content: center;
+    width: 100%;
+    max-width: 1100px;
+    padding: 12px;
+    margin: 0 auto;
+    height: 100%;
+  }
+  
+  #game-app .panel {
+    background: rgba(255,255,255,0.08);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-radius: 16px;
+    padding: 10px;
+    box-shadow: 0 14px 30px rgba(0,0,0,0.25);
+    border: 1px solid rgba(255,255,255,0.06);
+    color: #fff8e7;
+  }
+  
+  #game-app .controls {
+    width: 220px;
+    min-width: 160px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: stretch;
+  }
+  
+  #game-app label { 
+    font-size: 13px; 
+    color: rgba(255,255,255,0.9); 
+    display: block; 
+  }
+  
+  #game-app input[type="text"], 
+  #game-app input[type="tel"], 
+  #game-app input {
+    padding: 8px 10px;
+    border-radius: 10px;
+    border: 1px solid rgba(255,255,255,0.06);
+    background: rgba(255,255,255,0.03);
+    color: #fff8e7;
+    font-size: 16px;
+    outline: none;
+  }
+  
+  #game-app .btn-row { 
+    display: flex; 
+    gap: 8px; 
+  }
+  
+  #game-app button {
+    padding: 8px 12px;
+    font-size: 13px;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+    background: linear-gradient(90deg, rgba(255,255,255,0.95), rgba(240,240,240,0.95));
+    color: #12213a;
+    box-shadow: 0 6px 16px rgba(0,0,0,0.22);
+    transition: transform .12s ease, box-shadow .12s ease;
+    flex: 1 1 auto;
+  }
+  
+  #game-app button.small {
+    padding: 6px 10px;
+    font-size: 12px;
+    border-radius: 8px;
+  }
+  
+  #game-app button:active { 
+    transform: translateY(1px); 
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2); 
+  }
+  
+  #game-app button:disabled { 
+    opacity: 0.6; 
+    cursor: not-allowed; 
+    transform: none; 
+    box-shadow: none; 
+  }
+  
+  #game-app .board-panel {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  #game-app .board-container {
+    position: relative;
+    width: calc(var(--cell-size) * (var(--board-size) - 1));
+    height: calc(var(--cell-size) * (var(--board-size) - 1));
+    background-color: var(--board-color);
+    margin: 0 auto;
+    border-radius: 6px;
+    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.3);
+  }
+  
+  #game-app .grid-lines, 
+  #game-app .intersections {
+    position: absolute;
+    top: 0; 
+    left: 0;
+    width: 100%; 
+    height: 100%;
+  }
+  
+  #game-app .grid-line { 
+    position: absolute; 
+    background-color: var(--grid-color); 
+  }
+  
+  #game-app .grid-line.horizontal { 
+    width: 100%; 
+    height: 1px; 
+  }
+  
+  #game-app .grid-line.vertical { 
+    height: 100%; 
+    width: 1px; 
+  }
+  
+  #game-app .intersections {
+    display: grid;
+    grid-template-columns: repeat(var(--board-size), var(--cell-size));
+    grid-template-rows: repeat(var(--board-size), var(--cell-size));
+    margin-left: calc(var(--cell-size) / -2);
+    margin-top: calc(var(--cell-size) / -2);
+  }
+  
+  #game-app .intersection {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: transform 0.08s ease;
+  }
+  
+  #game-app .intersection:hover:not(.disabled) { 
+    transform: scale(1.1); 
+  }
+  
+  #game-app .intersection.disabled { 
+    pointer-events: none; 
+    opacity: 0.95; 
+  }
+  
+  #game-app .stone {
+    width: calc(var(--cell-size) * 0.82);
+    height: calc(var(--cell-size) * 0.82);
+    border-radius: 50%;
+    z-index: 2;
+    box-shadow: inset 0 -6px 12px rgba(0,0,0,0.25), 0 2px 6px rgba(0,0,0,0.18);
+  }
+  
+  #game-app .stone.black { 
+    background: radial-gradient(circle at 30% 30%, #444, #000); 
+  }
+  
+  #game-app .stone.white { 
+    background: radial-gradient(circle at 30% 30%, #fff, #ccc); 
+  }
+  
+  #game-app .star-point {
+    position: absolute;
+    width: var(--star-point-size);
+    height: var(--star-point-size);
+    background: #000;
+    border-radius: 50%;
+    z-index: 1;
+  }
+  
+  #game-app .status-row { 
+    display: flex; 
+    gap: 10px; 
+    align-items: center; 
+    font-size: 13px; 
+    color: rgba(255,255,255,0.95); 
+  }
+  
+  #game-app .muted { 
+    color: rgba(255,255,255,0.78); 
+    font-size: 12px; 
+  }
+  
+  #game-app #toast {
+    position: fixed;
+    left: 50%;
+    bottom: 18px;
+    transform: translateX(-50%) translateY(8px);
+    padding: 10px 14px;
+    border-radius: 12px;
+    background: rgba(255,255,255,0.08);
+    backdrop-filter: blur(8px) saturate(120%);
+    -webkit-backdrop-filter: blur(8px) saturate(120%);
+    border: 1px solid rgba(255,255,255,0.12);
+    color: #fff;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .36s ease, transform .36s ease;
+    z-index: 9999;
+  }
+  
+  #game-app #toast.show { 
+    opacity: 1; 
+    transform: translateX(-50%) translateY(0); 
+    pointer-events: auto; 
+  }
+  
+  @media (max-width: 900px) {
+    #game-app .app { 
+      flex-direction: column; 
+      align-items: center; 
+      gap: 12px; 
+      padding: 8px; 
+    }
+    
+    #game-app .controls { 
+      width: 100%; 
+      max-width: 420px; 
+    }
+    
+    #game-app .panel { 
+      width: 100%; 
+      max-width: 420px; 
+    }
+  }
+  
+  @media (max-width: 420px) {
+    #game-app :root { 
+      --star-point-size: 3px; 
+    }
+    
+    #game-app .controls { 
+      gap: 8px; 
+    }
+    
+    #game-app input, 
+    #game-app button { 
+      font-size: 13px; 
+    }
+  }
+  
+  /* Back button for game */
+  .back-btn {
+    position: fixed;
+    top: 10px;
+    left: 12px;
+    background: transparent;
+    border: none;
+    padding: 6px;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.25s ease;
+    -webkit-tap-highlight-color: transparent;
+    z-index: 1001;
+  }
+  
+  .back-btn:hover {
+    background: rgba(255, 255, 255, 0.15);
+    transform: scale(1.05);
+  }
+  
+  /* Game controls in game app */
+  .game-controls {
+    position: fixed;
+    top: 10px;
+    right: 12px;
+    display: flex;
+    gap: 8px;
+    z-index: 1001;
+  }
+  
+  .game-controls .mute-btn,
+  .game-controls .effect-btn {
+    position: static;
+  }
 </style>
 </head>
 
@@ -513,23 +842,31 @@
 <div id="dim-overlay"></div>
 <canvas id="splash-particles"></canvas>
 <div class="container">
+  <!-- Game Button -->
+  <button class="game-btn" id="game-btn" aria-label="Play Gomoku game">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#fff8e7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="22" height="22">
+      <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+      <line x1="3" y1="9" x2="21" y2="9"></line>
+      <line x1="9" y1="21" x2="9" y2="9"></line>
+    </svg>
+  </button>
+
   <!-- Effect Toggle Button -->
-<button class="effect-btn" id="effect-btn" aria-label="Toggle visual effects">
-  <!-- Cloud OFF (outline) -->
-  <svg id="effect-off" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
-       fill="none" stroke="#fff8e7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-       width="22" height="22" style="display:block;">
-    <path d="M17.5 19a4.5 4.5 0 0 0 0-9 5.5 5.5 0 0 0-10.9 1A4 4 0 0 0 7 19h10.5z"/>
-  </svg>
+  <button class="effect-btn" id="effect-btn" aria-label="Toggle visual effects">
+    <!-- Cloud OFF (outline) -->
+    <svg id="effect-off" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+         fill="none" stroke="#fff8e7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+         width="22" height="22" style="display:block;">
+      <path d="M17.5 19a4.5 4.5 0 0 0 0-9 5.5 5.5 0 0 0-10.9 1A4 4 0 0 0 7 19h10.5z"/>
+    </svg>
 
-  <!-- Cloud ON (filled + glow) -->
-  <svg id="effect-on" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
-       fill="#fff8e7" stroke="#fff8e7" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"
-       width="22" height="22" style="display:none; filter: drop-shadow(0 0 6px rgba(255,255,255,0.8));">
-    <path d="M17.5 19a4.5 4.5 0 0 0 0-9 5.5 5.5 0 0 0-10.9 1A4 4 0 0 0 7 19h10.5z"/>
-  </svg>
-</button>
-
+    <!-- Cloud ON (filled + glow) -->
+    <svg id="effect-on" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+         fill="#fff8e7" stroke="#fff8e7" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"
+         width="22" height="22" style="display:none; filter: drop-shadow(0 0 6px rgba(255,255,255,0.8));">
+      <path d="M17.5 19a4.5 4.5 0 0 0 0-9 5.5 5.5 0 0 0-10.9 1A4 4 0 0 0 7 19h10.5z"/>
+    </svg>
+  </button>
 
   <button class="mute-btn" id="mute-btn" aria-label="Toggle sound">
     
@@ -594,6 +931,83 @@
 
 <div class="floating-emojis" id="emojis-container"></div>
 
+<!-- Game App (Hidden by default) -->
+<div id="game-app">
+  <button class="back-btn" id="back-btn" aria-label="Go back to coin app">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#fff8e7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="22" height="22">
+      <line x1="19" y1="12" x2="5" y2="12"></line>
+      <polyline points="12 19 5 12 12 5"></polyline>
+    </svg>
+  </button>
+  
+  <div class="game-controls">
+    <button class="effect-btn" id="game-effect-btn" aria-label="Toggle visual effects">
+      <svg id="game-effect-off" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+           fill="none" stroke="#fff8e7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+           width="22" height="22" style="display:block;">
+        <path d="M17.5 19a4.5 4.5 0 0 0 0-9 5.5 5.5 0 0 0-10.9 1A4 4 0 0 0 7 19h10.5z"/>
+      </svg>
+      <svg id="game-effect-on" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+           fill="#fff8e7" stroke="#fff8e7" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"
+           width="22" height="22" style="display:none; filter: drop-shadow(0 0 6px rgba(255,255,255,0.8));">
+        <path d="M17.5 19a4.5 4.5 0 0 0 0-9 5.5 5.5 0 0 0-10.9 1A4 4 0 0 0 7 19h10.5z"/>
+      </svg>
+    </button>
+
+    <button class="mute-btn" id="game-mute-btn" aria-label="Toggle sound">
+      <svg id="game-mute-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#fff8e7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="22" height="22" style="display:none;">
+        <path d="M11 5L6 9H2V15H6L11 19V5Z" />
+        <line x1="23" y1="9" x2="17" y2="15" />
+        <line x1="17" y1="9" x2="23" y2="15" />
+      </svg>
+      <svg id="game-unmute-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#fff8e7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="22" height="22" style="display:block;">
+        <path d="M11 5L6 9H2V15H6L11 19V5Z" />
+        <path d="M15.54 8.46C16.4774 9.39764 17.004 10.6692 17.004 12C17.004 13.3308 16.4774 14.6024 15.54 15.54" />
+        <path d="M19.07 4.93C20.9447 6.80528 21.9979 9.34836 21.9979 12C21.9979 14.6516 20.9447 17.1947 19.07 19.07" />
+      </svg>
+    </button>
+  </div>
+
+  <div class="app" id="appRoot">
+    <!-- Controls Panel -->
+    <div class="panel controls" id="controlsPanel">
+      <label for="roomId">Room code</label>
+      <input id="roomId" placeholder="Create or paste room code" type="text" autocomplete="off" inputmode="text" />
+      <div class="btn-row" id="initialButtons">
+        <button id="createBtn" class="small">Create Room</button>
+        <button id="joinBtn" class="small">Join Room</button>
+      </div>
+
+      <!-- shown only when in-room -->
+      <div class="btn-row" id="inRoomButtons" style="display:none">
+        <button id="resetBtn" class="small">Reset Board</button>
+        <button id="leaveBtn" class="small">Leave Room</button>
+      </div>
+
+      <div style="height:6px"></div>
+      <div class="status-row">
+        <div id="status">Not connected</div>
+      </div>
+      <div style="height:6px"></div>
+      <div class="muted" id="players">Players: -</div>
+      <div style="height:8px"></div>
+      <div class="muted" id="turnIndicator">Turn: —</div>
+      <div class="muted" id="youIndicator">You: —</div>
+    </div>
+
+    <!-- Board Panel -->
+    <div class="panel board-panel" id="boardPanel">
+      <div class="board-container" id="boardContainer">
+        <div class="grid-lines" id="gridLines"></div>
+        <div class="intersections" id="board"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div id="toast" role="status" aria-live="polite"></div>
+</div>
+
 <audio id="flip-sound" preload="auto">
   <source src="coin-flip-shimmer-85750.mp3" type="audio/mpeg">
 </audio>
@@ -622,6 +1036,17 @@ document.addEventListener('DOMContentLoaded', function() {
   const effectOn = document.getElementById('effect-on');
   const effectOff = document.getElementById('effect-off');
 
+  // Game app elements
+  const gameApp = document.getElementById('game-app');
+  const gameBtn = document.getElementById('game-btn');
+  const backBtn = document.getElementById('back-btn');
+  const gameMuteBtn = document.getElementById('game-mute-btn');
+  const gameMuteIcon = document.getElementById('game-mute-icon');
+  const gameUnmuteIcon = document.getElementById('game-unmute-icon');
+  const gameEffectBtn = document.getElementById('game-effect-btn');
+  const gameEffectOn = document.getElementById('game-effect-on');
+  const gameEffectOff = document.getElementById('game-effect-off');
+
   let effectsEnabled = true; // start OFF every time
   let isMuted = true;
   flipSound.muted = true;
@@ -632,13 +1057,41 @@ document.addEventListener('DOMContentLoaded', function() {
   effectOff.style.display = 'none';
   effectBtn.classList.toggle('active', effectsEnabled);
 
+  // Game app mute and effect state
+  gameMuteIcon.style.display = 'block';
+  gameUnmuteIcon.style.display = 'none';
+  gameEffectOn.style.display = 'block';
+  gameEffectOff.style.display = 'none';
+  gameEffectBtn.classList.toggle('active', effectsEnabled);
+
+  // --- GAME APP TOGGLE ---
+  gameBtn.addEventListener('click', () => {
+    gameApp.style.display = 'block';
+    // Initialize the game if not already done
+    if (typeof initGame === 'function') {
+      initGame();
+    }
+  });
+
+  backBtn.addEventListener('click', () => {
+    gameApp.style.display = 'none';
+  });
+
   // --- EFFECT TOGGLE ---
-  effectBtn.addEventListener('click', () => {
-  effectsEnabled = !effectsEnabled;
-  effectOn.style.display = effectsEnabled ? 'block' : 'none';
-  effectOff.style.display = effectsEnabled ? 'none' : 'block';
-  effectBtn.classList.toggle('active', effectsEnabled);
-});
+  function toggleEffects() {
+    effectsEnabled = !effectsEnabled;
+    effectOn.style.display = effectsEnabled ? 'block' : 'none';
+    effectOff.style.display = effectsEnabled ? 'none' : 'block';
+    effectBtn.classList.toggle('active', effectsEnabled);
+    
+    // Sync with game app effects
+    gameEffectOn.style.display = effectsEnabled ? 'block' : 'none';
+    gameEffectOff.style.display = effectsEnabled ? 'none' : 'block';
+    gameEffectBtn.classList.toggle('active', effectsEnabled);
+  }
+
+  effectBtn.addEventListener('click', toggleEffects);
+  gameEffectBtn.addEventListener('click', toggleEffects);
 
   // --- BGM AUTOPLAY ---
   function tryPlayBgm() {
@@ -656,14 +1109,22 @@ document.addEventListener('DOMContentLoaded', function() {
   tryPlayBgm();
 
   // --- MUTE BUTTON ---
-  muteBtn.addEventListener('click', () => {
+  function toggleMute() {
     isMuted = !isMuted;
     muteIcon.style.display = isMuted ? 'block' : 'none';
     unmuteIcon.style.display = isMuted ? 'none' : 'block';
     muteBtn.classList.toggle('active', !isMuted);
     flipSound.muted = isMuted;
     bgm.muted = isMuted;
-  });
+    
+    // Sync with game app mute
+    gameMuteIcon.style.display = isMuted ? 'block' : 'none';
+    gameUnmuteIcon.style.display = isMuted ? 'none' : 'block';
+    gameMuteBtn.classList.toggle('active', !isMuted);
+  }
+
+  muteBtn.addEventListener('click', toggleMute);
+  gameMuteBtn.addEventListener('click', toggleMute);
 
   // --- CONFETTI ---
   function createConfetti() {
@@ -819,9 +1280,345 @@ document.addEventListener('DOMContentLoaded', function() {
     lastTouchEnd = now;
   }, false);
 });
+
+// Game initialization function
+function initGame() {
+  // Set CSS variables for the game
+  document.documentElement.style.setProperty('--cell-size', '28px');
+  document.documentElement.style.setProperty('--board-size', '15');
+  document.documentElement.style.setProperty('--grid-color', '#6d4c2b');
+  document.documentElement.style.setProperty('--board-color', '#e2c49f');
+  document.documentElement.style.setProperty('--star-point-size', '4px');
+  document.documentElement.style.setProperty('--panel-pad', '10px');
+  document.documentElement.style.setProperty('--control-w', '220px');
+  
+  // Initialize the game here
+  // This would contain the entire Gomoku game code from your original file
+  // For brevity, I'm not including the full Firebase integration here
+  // but it would be placed in this function
+}
 </script>
 
+<!-- Firebase and Gomoku game script -->
+<script type="module">
+// Firebase imports
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
+import { getDatabase, ref, set, onValue, update, get, push, runTransaction, onDisconnect, off } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-database.js";
+import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-auth.js";
+
+/* ---------- Firebase config (unchanged) ---------- */
+const firebaseConfig = {
+  apiKey: "AIzaSyCUkxMlN4UH7viDG65qUwHlpJPyX4HrG_k",
+  authDomain: "gomoku-f5642.firebaseapp.com",
+  databaseURL: "https://gomoku-f5642-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "gomoku-f5642",
+  storageBucket: "gomoku-f5642.firebasestorage.app",
+  messagingSenderId: "565669580117",
+  appId: "1:565669580117:web:6ffc82f164aa55bf0f73dc",
+  measurementId: "G-1KXD1TVC8S"
+};
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+const auth = getAuth(app);
+
+/* ---------- UI refs ---------- */
+const boardEl = document.getElementById("board");
+const gridLinesEl = document.getElementById("gridLines");
+const statusEl = document.getElementById("status");
+const playersEl = document.getElementById("players");
+const turnEl = document.getElementById("turnIndicator");
+const youEl = document.getElementById("youIndicator");
+const roomInput = document.getElementById("roomId");
+const createBtn = document.getElementById("createBtn");
+const joinBtn = document.getElementById("joinBtn");
+const resetBtn = document.getElementById("resetBtn");
+const leaveBtn = document.getElementById("leaveBtn");
+const toast = document.getElementById("toast");
+const initialButtons = document.getElementById("initialButtons");
+const inRoomButtons = document.getElementById("inRoomButtons");
+const boardContainer = document.getElementById("boardContainer");
+
+const SIZE = 15;
+
+/* ---------- state ---------- */
+let localUID = null, roomId = null, unsubscribeRoom = null;
+let role = null, board = Array(SIZE).fill(null).map(()=>Array(SIZE).fill(null));
+let turn = "black", status = "idle";
+let roomOwner = null;
+
+/* ---------- Authentication ---------- */
+signInAnonymously(auth).catch(console.error);
+onAuthStateChanged(auth, user => {
+  if (user) { localUID = user.uid; statusEl.textContent = "Connected (anon) — ready"; }
+  else { localUID = null; statusEl.textContent = "Not connected"; }
+});
+
+/* ---------- Toast helper ---------- */
+let toastTimer = null;
+function showToast(msg, time=2200){
+  if(toastTimer) clearTimeout(toastTimer);
+  toast.textContent = msg;
+  toast.classList.add("show");
+  toastTimer = setTimeout(()=> toast.classList.remove("show"), time);
+}
+
+/* ---------- Responsive cell size calculation ---------- */
+function fitBoardToViewport(){
+  // Determine space for board so entire UI fits (controls panel on left or stacked)
+  const safeW = window.innerWidth - 24; // padding
+  const safeH = window.innerHeight - 24;
+  // measure controls width (computed)
+  const controlsRect = document.querySelector('.controls').getBoundingClientRect();
+  const controlsW = (window.innerWidth > 900) ? controlsRect.width + 24 : 0; // when side-by-side, subtract controls
+  // available for board
+  const availableW = Math.max(120, safeW - controlsW - 40); // 40 margin between panels
+  const availableH = safeH - 120; // leave some vertical space for header/status
+  const avail = Math.min(availableW, availableH);
+  // board dimension is (SIZE - 1) * cell
+  const cell = Math.floor(avail / (SIZE - 1));
+  const finalCell = Math.max(12, Math.min(32, cell)); // clamp to reasonable size
+  document.documentElement.style.setProperty('--cell-size', finalCell + 'px');
+  // also ensure board container uses this size (CSS uses var so reactive)
+}
+window.addEventListener('resize', fitBoardToViewport);
+window.addEventListener('orientationchange', fitBoardToViewport);
+setTimeout(fitBoardToViewport, 50);
+
+/* ---------- Render board ---------- */
+function renderBoard() {
+  gridLinesEl.innerHTML = "";
+  for(let i=0;i<SIZE-1;i++){
+    const h=document.createElement("div");
+    h.className="grid-line horizontal"; h.style.top=`calc(${i} * var(--cell-size))`;
+    gridLinesEl.appendChild(h);
+    const v=document.createElement("div");
+    v.className="grid-line vertical"; v.style.left=`calc(${i} * var(--cell-size))`;
+    gridLinesEl.appendChild(v);
+  }
+
+  boardEl.innerHTML = "";
+  const stars=[[3,3],[3,11],[7,7],[11,3],[11,11]];
+  for(let r=0;r<SIZE;r++){
+    for(let c=0;c<SIZE;c++){
+      const intersection=document.createElement("div");
+      intersection.className="intersection"; intersection.dataset.r=r; intersection.dataset.c=c;
+      if(stars.some(([rr,cc])=>rr===r&&cc===c)){
+        const sp=document.createElement("div"); sp.className="star-point"; intersection.appendChild(sp);
+      }
+      const val=board[r][c];
+      if(val){
+        const s=document.createElement("div"); s.className="stone "+val; intersection.appendChild(s);
+        intersection.classList.add("disabled");
+      }
+      intersection.addEventListener("click",onCellClick);
+      boardEl.appendChild(intersection);
+    }
+  }
+  turnEl.textContent="Turn: "+(turn||"—");
+  youEl.textContent="You: "+(role||"—");
+}
+
+/* ---------- Cell click handler (keeps firebase logic intact) ---------- */
+function onCellClick(e){
+  const r = +e.currentTarget.dataset.r, c = +e.currentTarget.dataset.c;
+  if(status !== "playing"){ 
+    if(status && status.endsWith("-won")) showToast("Game over — reset to play again");
+    else showToast("Join or create a room first"); 
+    return; 
+  }
+  if(role !== turn){ showToast("Not your turn"); return; }
+  if(board[r][c]) return;
+  // push move to firebase (exactly like before)
+  const path = `rooms/${roomId}/moves`;
+  set(push(ref(db, path)), { r, c, color: role, by: localUID, ts: Date.now() });
+}
+
+/* ---------- Room lifecycle ---------- */
+createBtn.onclick = async () => { const id = genCode(); roomInput.value = id; await createRoom(id); };
+joinBtn.onclick = async () => { const id = roomInput.value.trim(); if(!id){ showToast("Enter a room code"); return;} await joinRoom(id); };
+resetBtn.onclick = async () => {
+  if(!roomId){ showToast("No active room"); return; }
+  if(localUID !== roomOwner){ showToast("Only room creator can reset"); return; }
+  await set(ref(db, `rooms/${roomId}`), emptyRoom({ owner: localUID }));
+  showToast("Board reset");
+};
+leaveBtn.onclick = () => leaveRoom();
+
+function genCode(){ return Math.random().toString(36).slice(2,8).toUpperCase(); }
+function emptyRoom(extra={}){ return Object.assign({ createdAt: Date.now(), size: SIZE, turn: "black", players: {}, moves: {} }, extra); }
+
+async function createRoom(id){
+  const rRef = ref(db, `rooms/${id}`);
+  const snap = await get(rRef);
+  if(snap.exists()){
+    showToast("Room exists, joining…");
+  } else {
+    // set owner here so we know who can reset
+    await set(rRef, emptyRoom({ owner: localUID }));
+    showToast("Room created");
+  }
+  await joinRoom(id);
+}
+
+async function joinRoom(id){
+  if(!localUID){ showToast("Not authenticated yet"); return; }
+  roomId = id;
+  const playersRef = ref(db, `rooms/${roomId}/players`);
+  let assigned = "spectator";
+  await runTransaction(playersRef, p => {
+    if(!p) p = {};
+    if(!p.black){ p.black = localUID; assigned = "black"; }
+    else if(!p.white && p.black !== localUID){ p.white = localUID; assigned = "white"; }
+    else if(p.black === localUID) assigned = "black";
+    else if(p.white === localUID) assigned = "white";
+    else assigned = "spectator";
+    return p;
+  });
+  role = assigned;
+  if(role === "black" || role === "white") onDisconnect(ref(db, `rooms/${roomId}/players/${role}`)).remove();
+
+  // unsubscribe previous
+  if(unsubscribeRoom){ off(ref(db, `rooms/${roomId}`)); unsubscribeRoom = null; }
+
+  // listen to room
+  onValue(ref(db, `rooms/${roomId}`), snap => applyUpdate(snap.val()));
+  status = "playing";
+  updateStatus();
+  renderBoard();
+  showToast(`Joined as ${role}`);
+  // UI toggle
+  initialButtons.style.display = "none";
+  inRoomButtons.style.display = "flex";
+  fitBoardToViewport();
+}
+
+/* ---------- FIXED leaveRoom: use set(..., null) instead of update(..., null) ---------- */
+async function leaveRoom(){
+  if(!roomId) return;
+  const thisRoom = roomId;
+
+  // If player occupied a slot, attempt to clear it (use set(..., null) which is valid).
+  try{
+    if(role === "black" || role === "white"){
+      await set(ref(db, `rooms/${thisRoom}/players/${role}`), null);
+    }
+  }catch(err){
+    console.error("Failed to clear player slot on leave:", err);
+  }
+
+  // Remove realtime listener for this room
+  off(ref(db, `rooms/${thisRoom}`));
+
+  // Reset local state and UI (ONLY UI & local state changes — game & other firebase logic untouched)
+  roomId = null;
+  role = null;
+  status = "idle";
+  roomOwner = null;
+
+  // Clear local board and re-render empty board
+  board = Array(SIZE).fill(null).map(()=>Array(SIZE).fill(null));
+  renderBoard();
+  updateStatus();
+
+  // Reset UI controls to initial view
+  initialButtons.style.display = "flex";
+  inRoomButtons.style.display = "none";
+
+  // Disable reset (no active room)
+  resetBtn.disabled = true;
+
+  // Clear inputs / indicators
+  roomInput.value = "";
+  playersEl.textContent = "Players: -";
+  turnEl.textContent = "Turn: —";
+  youEl.textContent = "You: —";
+  statusEl.textContent = "Not connected";
+
+  showToast("Left room");
+}
+
+/* ---------- Apply room updates from firebase (kept game logic) ---------- */
+async function applyUpdate(data){
+  if(!data) return;
+  // set owner if present
+  if(data.owner) roomOwner = data.owner;
+  else roomOwner = data.createdBy || null;
+
+  // reset local board and load moves
+  board = Array(SIZE).fill(null).map(()=>Array(SIZE).fill(null));
+  if(data.moves){
+    // sort by ts to maintain order
+    Object.values(data.moves).sort((a,b)=>a.ts-b.ts).forEach(m=>{
+      if(m && m.r!=null && !board[m.r][m.c]) board[m.r][m.c] = m.color;
+    });
+  }
+  // set turn from DB or derive
+  turn = data.turn || getTurn(data.moves);
+  // set local status to DB status if any (this allows blocking after a win)
+  status = data.status || "playing";
+  // update players text
+  const p = data.players || {};
+  playersEl.textContent = `Players: black=${p.black||"—"} white=${p.white||"—"}`;
+
+  // update owner-based reset button visibility/enabled
+  if(roomOwner && localUID){
+    resetBtn.disabled = (localUID !== roomOwner);
+  } else {
+    resetBtn.disabled = true;
+  }
+
+  renderBoard();
+
+  // process latest move for win detection and turn updates (kept unchanged)
+  const movesArr = data.moves ? Object.values(data.moves).sort((a,b)=>a.ts-b.ts) : [];
+  if(movesArr.length){
+    const last = movesArr[movesArr.length-1];
+    // check for win using local board state
+    const win = checkWin(board, last.r, last.c, last.color);
+    if(win && (!data.status || !data.status.endsWith("-won"))){
+      // update DB status and winner (original code did this)
+      await update(ref(db, `rooms/${roomId}`), { status: last.color + "-won", winner: last.color });
+      showToast(`🏆 ${last.color.toUpperCase()} wins!`);
+    } else if(!win){
+      const next = last.color === "black" ? "white" : "black";
+      // keep turn consistent in DB
+      if(data.turn !== next){
+        await update(ref(db, `rooms/${roomId}`), { turn: next }).catch(()=>{});
+      }
+      if(localUID && role === next) showToast("Your turn!");
+    }
+  }
+  updateStatus();
+}
+
+/* ---------- helper functions (kept intact) ---------- */
+function getTurn(m){ if(!m) return "black"; const n = Object.keys(m).length; return n%2===0?"black":"white"; }
+function checkWin(bd, r, c, color){ if(!color) return false;
+  const dirs = [[1,0],[0,1],[1,1],[1,-1]];
+  for(const [dR,dC] of dirs){ let n = 1; n += count(bd,r,c,dR,dC,color); n += count(bd,r,c,-dR,-dC,color); if(n >= 5) return true; }
+  return false;
+}
+function count(bd, r, c, dR, dC, color){
+  let i = 1, n = 0;
+  while(true){
+    const nr = r + dR * i, nc = c + dC * i;
+    if(nr < 0 || nr >= SIZE || nc < 0 || nc >= SIZE || bd[nr][nc] !== color) break;
+    n++; i++;
+  }
+  return n;
+}
+
+/* Update status text */
+function updateStatus(){
+  statusEl.textContent = (status === "playing") ? "In Room" : (status && status.endsWith("-won") ? `Ended: ${status.replace("-won"," won")}` : "Not connected");
+  // if ended, disable local placing via class toggling on board intersections happens in renderBoard
+}
+
+/* initial render */
+renderBoard();
+fitBoardToViewport();
+
+</script>
 
 </body>
 </html>
-
