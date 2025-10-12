@@ -1076,10 +1076,12 @@
   </div>
 </div>
 
-<div class="floating-emojis" id="emojis-container"></div>
+<div class="floating-emojis" id="coin-emojis-container"></div>
 
 <!-- Game App (Hidden by default) -->
 <div id="game-app">
+  <div class="floating-emojis" id="game-emojis-container"></div>
+
   <!-- Redesigned back button -->
   <button class="back-btn" id="back-btn" aria-label="Go back to coin app">
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#fff8e7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18">
@@ -1303,20 +1305,30 @@ document.addEventListener('DOMContentLoaded', function() {
   // --- COIN FLIP ---
   let isFlipping = false, aCounter = 0, bCounter = 0, totalFlips = 0;
   
-  const cuteEmojis=['❤️','✨','🌟','🥰','😊','🌸','💫','🎀','💖','🦋','🐰','🐱','🐶','🌈','🎈','🎵','💕','💝','💘','💓','💗','💞','💟','❣️','⭐','🌺','🌷','💐','🌼','🦄','🍀','🎂','🍬','🍭','🎁','🎀','👑','💎','🔮','🎵'];
+  function createEmojis() {
+    const containers = [
+        document.getElementById('coin-emojis-container'),
+        document.getElementById('game-emojis-container')
+    ];
+    
+    const cuteEmojis = ['❤️','✨','🌟','🥰','😊','🌸','💫','🎀','💖','🦋','🐰','🐱','🐶','🌈','🎈','🎵','💕','💝','💘','💓','💗','💞','💟','❣️','⭐','🌺','🌷','💐','🌼','🦄','🍀','🎂','🍬','🍭','🎁','🎀','👑','💎','🔮','🎵'];
 
-    function createEmojis(){
-        for(let i=0;i<25;i++){
-            const emoji=document.createElement('div');
-            emoji.className='emoji';
-            emoji.innerHTML=cuteEmojis[Math.floor(Math.random()*cuteEmojis.length)];
-            emoji.style.left=Math.random()*100+'vw';
-            emoji.style.animationDelay=Math.random()*8+'s';
-            emoji.style.fontSize=(Math.random()*20+15)+'px';
-            emoji.style.animation=`float ${8+Math.random()*6}s linear infinite`;
-            emojisContainer.appendChild(emoji);
+    containers.forEach(container => {
+        if (!container) return;
+        container.innerHTML = '';
+        
+        for(let i = 0; i < 25; i++) {
+            const emoji = document.createElement('div');
+            emoji.className = 'emoji';
+            emoji.innerHTML = cuteEmojis[Math.floor(Math.random() * cuteEmojis.length)];
+            emoji.style.left = Math.random() * 100 + 'vw';
+            emoji.style.animationDelay = Math.random() * 8 + 's';
+            emoji.style.fontSize = (Math.random() * 20 + 15) + 'px';
+            emoji.style.animation = `float ${8 + Math.random() * 6}s linear infinite`;
+            container.appendChild(emoji);
         }
-    }
+    });
+}
   createEmojis();
 
   const canvas = document.getElementById('splash-particles');
