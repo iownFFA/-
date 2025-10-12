@@ -583,7 +583,7 @@
   
   #game-app label { 
     font-size: 13px; 
-    color: rgba(255,255,255,0.9); 
+    color: rgba(255, 248, 231,0.9); 
     display: block; 
   }
   
@@ -598,6 +598,26 @@
     font-size: 16px;
     outline: none;
   }
+
+  #game-app input::placeholder {
+    color: rgba(255, 248, 231, 0.7); /* White with some transparency */
+  }
+
+  #game-app input::-webkit-input-placeholder { /* WebKit browsers */
+    color: rgba(255, 248, 231, 0.7);
+  }
+
+  #game-app input::-moz-placeholder { /* Mozilla Firefox */
+    color: rgba(255, 248, 231, 0.7);
+  }
+
+  #game-app input:-ms-input-placeholder { /* Internet Explorer */
+    color: rgba(255, 248, 231, 0.7);
+  }
+
+  #game-app input:-moz-placeholder { /* Older Firefox */
+    color: rgba(255, 248, 231, 0.7);
+  }
   
   #game-app .btn-row { 
     display: flex; 
@@ -610,8 +630,8 @@
     border-radius: 10px;
     border: none;
     cursor: pointer;
-    background: linear-gradient(90deg, rgba(255,255,255,0.95), rgba(240,240,240,0.95));
-    color: #12213a;
+    background: linear-gradient(90deg, rgba(255, 255, 255, 0), rgba(240, 240, 240, 0));
+    color: #fff8e7;
     box-shadow: 0 6px 16px rgba(0,0,0,0.22);
     transition: transform .12s ease, box-shadow .12s ease;
     flex: 1 1 auto;
@@ -752,11 +772,11 @@
     gap: 10px; 
     align-items: center; 
     font-size: 13px; 
-    color: rgba(255,255,255,0.95); 
+    color: rgba(255,248,231,0.95); 
   }
   
   #game-app .muted { 
-    color: rgba(255,255,255,0.78); 
+    color: rgba(255,248,231,0.78); 
     font-size: 12px; 
   }
   
@@ -766,7 +786,7 @@
     bottom: 18px;
     transform: translateX(-50%) translateY(8px);
     padding: 10px 14px;
-    border-radius: 12px;
+    border-radius: 8px;
     background: rgba(255,255,255,0.08);
     backdrop-filter: blur(8px) saturate(120%);
     -webkit-backdrop-filter: blur(8px) saturate(120%);
@@ -787,9 +807,9 @@
   
   /* Undo button styles */
   #game-app .undo-btn {
-    background: linear-gradient(90deg, rgba(255,255,255,0.95), rgba(240,240,240,0.95));
-    color: #12213a;
-    padding: 8px 12px;
+    background: transparent;
+    color: #fff8e7;
+    padding: 8px 8px;
     border-radius: 10px;
     border: none;
     cursor: pointer;
@@ -805,8 +825,9 @@
   #game-app .undo-btn:disabled {
     opacity: 0.5;
     cursor: not-allowed;
-    background: rgba(255,255,255,0.3);
-    color: rgba(18, 33, 58, 0.5);
+    background: transparent;
+    box-shadow: 0 6px 16px rgba(0,0,0,0.22);
+    color: #fff8e7;
   }
   
   #game-app .undo-btn:not(:disabled):hover {
