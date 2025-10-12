@@ -11,6 +11,7 @@
 <title>郭彤彤</title>
 <link href="https://cdn.jsdelivr.net/npm/lxgw-wenkai-webfont@1.7.0/lxgwwenkai-regular.min.css" rel="stylesheet">
 <link rel="preload" as="audio" href="coin-flip-shimmer-85750.mp3" type="audio/mpeg">
+<link rel="preload" as="audio" href="tap.mp3" type="audio/mpeg">
 
 <style>
   /* === iOS-compatible dimming overlay === */
@@ -1154,12 +1155,18 @@
   <div id="undoOverlay" class="undo-overlay" style="display: none;"></div>
 </div>
 
+<!-- Audio elements -->
 <audio id="flip-sound" preload="auto">
   <source src="coin-flip-shimmer-85750.mp3" type="audio/mpeg">
 </audio>
 
 <audio id="bgm" loop preload="auto">
   <source src="S.mp3" type="audio/mpeg">
+</audio>
+
+<!-- Stone placement sound -->
+<audio id="stone-sound" preload="auto">
+  <source src="tap.mp3" type="audio/mpeg">
 </audio>
 
 <script>
@@ -1172,6 +1179,7 @@ document.addEventListener('DOMContentLoaded', function() {
   const totalCount = document.getElementById('total-count');
   const emojisContainer = document.getElementById('emojis-container');
   const flipSound = document.getElementById('flip-sound');
+  const stoneSound = document.getElementById('stone-sound');
   const muteBtn = document.getElementById('mute-btn');
   const muteIcon = document.getElementById('mute-icon');
   const unmuteIcon = document.getElementById('unmute-icon');
@@ -1196,6 +1204,7 @@ document.addEventListener('DOMContentLoaded', function() {
   let effectsEnabled = true; // start OFF every time
   let isMuted = true;
   flipSound.muted = true;
+  stoneSound.muted = true;
   bgm.muted = true;
   muteIcon.style.display = 'block';
   unmuteIcon.style.display = 'none';
@@ -1248,6 +1257,7 @@ document.addEventListener('DOMContentLoaded', function() {
     unmuteIcon.style.display = isMuted ? 'none' : 'block';
     muteBtn.classList.toggle('active', !isMuted);
     flipSound.muted = isMuted;
+    stoneSound.muted = isMuted;
     bgm.muted = isMuted;
   }
 
@@ -1365,10 +1375,8 @@ document.addEventListener('DOMContentLoaded', function() {
     result.textContent = "翻转中...";
 
     if (!isMuted) {
-      flipSound.pause();
-      flipSound.currentTime = 0;
-      // Force a small reflow tick to ensure reset on iOS
-      requestAnimationFrame(() => flipSound.play().catch(()=>{}));
+      // Play coin flip sound immediately with no delay
+      playSoundImmediately(flipSound);
     }
 
     const isA = Math.random() < 0.5;
@@ -1417,6 +1425,28 @@ document.addEventListener('DOMContentLoaded', function() {
     lastTouchEnd = now;
   }, false);
 });
+
+// Function to play sound immediately with no delay
+function playSoundImmediately(sound) {
+  // Stop and reset the sound
+  sound.pause();
+  sound.currentTime = 0;
+  
+  // Create a promise to play the sound
+  const playPromise = sound.play();
+  
+  // If the promise fails, try to handle it
+  if (playPromise !== undefined) {
+    playPromise.catch(error => {
+      console.log("Audio play failed:", error);
+      // Try again with a small delay
+      setTimeout(() => {
+        sound.currentTime = 0;
+        sound.play().catch(e => console.log("Second attempt failed:", e));
+      }, 100);
+    });
+  }
+}
 
 // Game initialization function
 function initGame() {
@@ -1490,6 +1520,7 @@ let turn = "black", status = "idle";
 let roomOwner = null;
 let lastMoveId = null; // Track the last move for undo functionality
 let undoRequested = false; // Track if an undo request is active
+let lastProcessedMoveId = null; // Track the last move we've processed for sound
 
 /* ---------- Authentication ---------- */
 signInAnonymously(auth).catch(console.error);
@@ -1593,6 +1624,13 @@ function onCellClick(e){
   }
   if(role !== turn){ showToast("还没轮到宝宝呢"); return; }
   if(board[r][c]) return;
+  
+  // Play stone placement sound immediately
+  const stoneSound = document.getElementById('stone-sound');
+  if (!stoneSound.muted) {
+    playSoundImmediately(stoneSound);
+  }
+  
   const path = `rooms/${roomId}/moves`;
   const moveRef = push(ref(db, path));
   const moveId = moveRef.key;
@@ -1851,6 +1889,7 @@ async function leaveRoom(){
   roomOwner = null;
   lastMoveId = null;
   undoRequested = false;
+  lastProcessedMoveId = null;
 
   // Clear local board and re-render empty board
   board = Array(SIZE).fill(null).map(()=>Array(SIZE).fill(null));
@@ -1898,11 +1937,20 @@ async function applyUpdate(data){
     if (moves.length > 0) {
       const lastMove = moves[moves.length - 1];
       lastMoveId = { r: lastMove.r, c: lastMove.c, id: Object.keys(data.moves)[moves.length - 1] };
+      
+      // Play sound for opponent's moves
+      const stoneSound = document.getElementById('stone-sound');
+      if (lastMove.by !== localUID && lastMoveId.id !== lastProcessedMoveId && !stoneSound.muted) {
+        playSoundImmediately(stoneSound);
+        lastProcessedMoveId = lastMoveId.id;
+      }
     } else {
       lastMoveId = null;
+      lastProcessedMoveId = null;
     }
   } else {
     lastMoveId = null;
+    lastProcessedMoveId = null;
   }
   
   // set turn from DB or derive
