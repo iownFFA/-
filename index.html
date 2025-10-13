@@ -906,6 +906,30 @@
     background: rgba(0, 0, 0, 0.6);
     z-index: 9999;
   }
+
+  /* Winning stones glow effect */
+#game-app .stone.winning-stone {
+  box-shadow: 
+    inset 0 -6px 12px rgba(0,0,0,0.25), 
+    0 2px 6px rgba(0,0,0,0.18),
+    0 0 12px 6px rgba(255, 255, 0, 0.8);
+  animation: pulse-glow-win 1.5s infinite alternate;
+}
+
+@keyframes pulse-glow-win {
+  from { 
+    box-shadow: 
+      inset 0 -6px 12px rgba(0,0,0,0.25), 
+      0 2px 6px rgba(0,0,0,0.18),
+      0 0 12px 6px rgba(255, 255, 0, 0.8); 
+  }
+  to { 
+    box-shadow: 
+      inset 0 -6px 12px rgba(0,0,0,0.25), 
+      0 2px 6px rgba(0,0,0,0.18),
+      0 0 20px 10px rgba(255, 255, 0, 1); 
+  }
+}
   
   @media (max-width: 900px) {
     #game-app .app { 
@@ -1521,6 +1545,9 @@ let roomOwner = null;
 let lastMoveId = null; // Track the last move for undo functionality
 let undoRequested = false; // Track if an undo request is active
 let lastProcessedMoveId = null; // Track the last move we've processed for sound
+let autoResetTimer = null; // Timer for automatic reset
+let lastWinner = null; // Track the last winner
+let winningStones = []; // Track the winning stones
 
 /* ---------- Authentication ---------- */
 signInAnonymously(auth).catch(console.error);
@@ -1586,6 +1613,11 @@ function renderBoard() {
           s.classList.add("last-move");
         }
         
+        // Add winning-stone class to all winning stones
+        if (winningStones.some(stone => stone.r === r && stone.c === c)) {
+          s.classList.add("winning-stone");
+        }
+        
         intersection.appendChild(s);
         intersection.classList.add("disabled");
       }
@@ -1598,6 +1630,31 @@ function renderBoard() {
   
   // Update undo button state
   updateUndoButton();
+  
+  // Update reset button state - disable if game is over
+  updateResetButton();
+}
+
+/* ---------- Update reset button state ---------- */
+function updateResetButton() {
+  // Enable reset button only if:
+  // 1. We're in a room
+  // 2. We're a player (black or white)
+  // 3. Game is still playing (not ended)
+  const isPlayer = role === "black" || role === "white";
+  const isGameOver = status && status.endsWith("-won");
+  const canReset = roomId && isPlayer && !isGameOver;
+  
+  resetBtn.disabled = !canReset;
+  
+  // Visual feedback for disabled state
+  if (resetBtn.disabled) {
+    resetBtn.style.opacity = "0.5";
+    resetBtn.style.cursor = "not-allowed";
+  } else {
+    resetBtn.style.opacity = "1";
+    resetBtn.style.cursor = "pointer";
+  }
 }
 
 /* ---------- Update undo button state ---------- */
@@ -1609,7 +1666,8 @@ function updateUndoButton() {
   // 4. No undo request is currently active
   const movesExist = lastMoveId !== null;
   const isOurTurn = role === turn;
-  const canUndo = roomId && status === "playing" && !isOurTurn && movesExist && !undoRequested;
+  const isGameOver = status && status.endsWith("-won");
+  const canUndo = roomId && !isGameOver && status === "playing" && !isOurTurn && movesExist && !undoRequested;
   
   undoBtn.disabled = !canUndo;
 }
@@ -1781,28 +1839,135 @@ async function checkAndCleanupRoom(roomIdToCheck) {
   }
 }
 
+/* ---------- Update local role based on player assignments ---------- */
+function updateLocalRole(players) {
+  if (!players || !localUID) return;
+  
+  if (players.black === localUID) {
+    role = "black";
+  } else if (players.white === localUID) {
+    role = "white";
+  } else {
+    role = "spectator";
+  }
+  
+  console.log("Updated local role to:", role);
+  youEl.textContent = "You: " + role;
+}
+
+/* ---------- Automatic reset function ---------- */
+async function scheduleAutoReset(winnerColor) {
+  console.log("Scheduling auto reset for winner:", winnerColor);
+  
+  // Clear any existing timer
+  if (autoResetTimer) {
+    clearTimeout(autoResetTimer);
+  }
+  
+  // Store the winner
+  lastWinner = winnerColor;
+  
+  // Set new timer for 3 seconds
+  autoResetTimer = setTimeout(async () => {
+    if (!roomId) {
+      console.log("No room ID, cannot reset");
+      return;
+    }
+    
+    // Get current room data
+    const roomRef = ref(db, `rooms/${roomId}`);
+    const roomSnap = await get(roomRef);
+    if (!roomSnap.exists()) {
+      console.log("Room no longer exists");
+      return;
+    }
+    
+    const roomData = roomSnap.val();
+    const players = roomData.players || {};
+    
+    console.log("Current players:", players);
+    console.log("Last winner:", lastWinner);
+    
+    // Determine new player assignments
+    let newBlackPlayer, newWhitePlayer;
+    
+    if (lastWinner === "black") {
+      // Black won - black stays black, white stays white
+      newBlackPlayer = players.black;
+      newWhitePlayer = players.white;
+      console.log("Black won - keeping same roles");
+    } else {
+      // White won - swap roles: white becomes black, black becomes white
+      newBlackPlayer = players.white;
+      newWhitePlayer = players.black;
+      console.log("White won - swapping roles");
+    }
+    
+    console.log("New assignments - Black:", newBlackPlayer, "White:", newWhitePlayer);
+    
+    // Reset the room with new player assignments
+    const newRoomData = {
+      createdAt: Date.now(),
+      size: SIZE,
+      turn: "black", // Winner (new black) goes first
+      players: {
+        black: newBlackPlayer,
+        white: newWhitePlayer
+      },
+      moves: {},
+      undoRequests: {},
+      owner: roomData.owner || localUID,
+      status: "playing" // Reset status to playing
+    };
+    
+    console.log("Resetting room with data:", newRoomData);
+    
+    await set(roomRef, newRoomData);
+    
+    // Update local role immediately
+    updateLocalRole(newRoomData.players);
+    
+    // Clear winning stones
+    winningStones = [];
+    
+    showToast("新游戏开始！胜利者执黑先行");
+  }, 3000); // 3 seconds
+}
+
 /* ---------- Room lifecycle ---------- */
 createBtn.onclick = async () => { const id = genCode(); roomInput.value = id; await createRoom(id); };
 joinBtn.onclick = async () => { const id = roomInput.value.trim(); if(!id){ showToast("Enter a room code"); return;} await joinRoom(id); };
 resetBtn.onclick = async () => {
   if(!roomId){ showToast("No active room"); return; }
-  if(localUID !== roomOwner){ showToast("Only room creator can reset"); return; }
-  await set(ref(db, `rooms/${roomId}`), emptyRoom({ owner: localUID }));
-  showToast("Board reset");
+  if (status && status.endsWith("-won")) { 
+    showToast("游戏已结束，即将自动重置"); 
+    return; 
+  }
+  
+  // Get current players
+  const roomRef = ref(db, `rooms/${roomId}`);
+  const roomSnap = await get(roomRef);
+  if (!roomSnap.exists()) return;
+  
+  const roomData = roomSnap.val();
+  const players = roomData.players || {};
+  
+  // Reset room but keep current player assignments
+  await set(roomRef, {
+    createdAt: Date.now(),
+    size: SIZE,
+    turn: "black",
+    players: players,
+    moves: {},
+    undoRequests: {},
+    owner: localUID,
+    status: "playing"
+  });
+  showToast("棋盘已重置");
 };
 leaveBtn.onclick = () => leaveRoom();
 
 function genCode(){ return Math.random().toString(36).slice(2,8).toUpperCase(); }
-function emptyRoom(extra={}){ 
-  return Object.assign({ 
-    createdAt: Date.now(), 
-    size: SIZE, 
-    turn: "black", 
-    players: {}, 
-    moves: {},
-    undoRequests: {} // Add undoRequests to room structure
-  }, extra); 
-}
 
 async function createRoom(id){
   const rRef = ref(db, `rooms/${id}`);
@@ -1810,7 +1975,16 @@ async function createRoom(id){
   if(snap.exists()){
     showToast("房间已存在，正在加入…");
   } else {
-    await set(rRef, emptyRoom({ owner: localUID }));
+    await set(rRef, {
+      createdAt: Date.now(),
+      size: SIZE,
+      turn: "black",
+      players: {},
+      moves: {},
+      undoRequests: {},
+      owner: localUID,
+      status: "playing"
+    });
     showToast("房间创建成功");
   }
   await joinRoom(id);
@@ -1890,6 +2064,14 @@ async function leaveRoom(){
   lastMoveId = null;
   undoRequested = false;
   lastProcessedMoveId = null;
+  lastWinner = null;
+  winningStones = [];
+  
+  // Clear auto reset timer
+  if (autoResetTimer) {
+    clearTimeout(autoResetTimer);
+    autoResetTimer = null;
+  }
 
   // Clear local board and re-render empty board
   board = Array(SIZE).fill(null).map(()=>Array(SIZE).fill(null));
@@ -1908,6 +2090,34 @@ async function leaveRoom(){
   statusEl.textContent = "宝宝我爱你";
 
   showToast("Left room");
+}
+
+/* ---------- Enhanced checkWin function to return winning stones ---------- */
+function checkWin(bd, r, c, color){ 
+  if(!color) return false;
+  const dirs = [[1,0],[0,1],[1,1],[1,-1]];
+  for(const [dR,dC] of dirs){ 
+    let stones = [{r, c}]; // Start with the current stone
+    stones = stones.concat(countStones(bd, r, c, dR, dC, color));
+    stones = stones.concat(countStones(bd, r, c, -dR, -dC, color));
+    if(stones.length >= 5) {
+      // Store the winning stones (take first 5)
+      winningStones = stones.slice(0, 5);
+      return true; 
+    }
+  }
+  return false;
+}
+
+function countStones(bd, r, c, dR, dC, color){
+  let i = 1, stones = [];
+  while(true){
+    const nr = r + dR * i, nc = c + dC * i;
+    if(nr < 0 || nr >= SIZE || nc < 0 || nc >= SIZE || bd[nr][nc] !== color) break;
+    stones.push({r: nr, c: nc});
+    i++;
+  }
+  return stones;
 }
 
 /* ---------- Apply room updates from firebase ---------- */
@@ -1963,12 +2173,8 @@ async function applyUpdate(data){
   const p = data.players || {};
   playersEl.textContent = `Players: black=${p.black||"—"} white=${p.white||"—"}`;
 
-  // update owner-based reset button visibility/enabled
-  if(roomOwner && localUID){
-    resetBtn.disabled = (localUID !== roomOwner);
-  } else {
-    resetBtn.disabled = true;
-  }
+  // Update local role based on current player assignments
+  
 
   renderBoard();
 
@@ -1978,8 +2184,16 @@ async function applyUpdate(data){
     const last = movesArr[movesArr.length-1];
     const win = checkWin(board, last.r, last.c, last.color);
     if(win && (!data.status || !data.status.endsWith("-won"))){
+      console.log("Game won by:", last.color);
+      console.log("Winning stones:", winningStones);
       await update(ref(db, `rooms/${roomId}`), { status: last.color + "-won", winner: last.color });
       showToast(`🏆 ${last.color.toUpperCase()} wins!`);
+      
+      // Re-render board to show winning stones
+      renderBoard();
+      
+      // Schedule automatic reset after 3 seconds
+      scheduleAutoReset(last.color);
     } else if(!win){
       const next = last.color === "black" ? "white" : "black";
       if(data.turn !== next){
@@ -1989,24 +2203,11 @@ async function applyUpdate(data){
     }
   }
   updateStatus();
+  updateResetButton(); // Update reset button state
 }
 
 /* ---------- helper functions ---------- */
 function getTurn(m){ if(!m) return "black"; const n = Object.keys(m).length; return n%2===0?"black":"white"; }
-function checkWin(bd, r, c, color){ if(!color) return false;
-  const dirs = [[1,0],[0,1],[1,1],[1,-1]];
-  for(const [dR,dC] of dirs){ let n = 1; n += count(bd,r,c,dR,dC,color); n += count(bd,r,c,-dR,-dC,color); if(n >= 5) return true; }
-  return false;
-}
-function count(bd, r, c, dR, dC, color){
-  let i = 1, n = 0;
-  while(true){
-    const nr = r + dR * i, nc = c + dC * i;
-    if(nr < 0 || nr >= SIZE || nc < 0 || nc >= SIZE || bd[nr][nc] !== color) break;
-    n++; i++;
-  }
-  return n;
-}
 
 /* Update status text */
 function updateStatus(){
