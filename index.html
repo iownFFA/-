@@ -494,7 +494,7 @@
     .stats { padding: 10px; }
     .stat-value { font-size: 1.6rem; }
     .emoji { font-size: 18px; }
-    #game-app :root { --cell-size: 24px; }
+    #game-app :root { ---size: 24px; }
   }
   
   /* === Confetti animation === */
@@ -665,8 +665,8 @@
   
   #game-app .board-container {
     position: relative;
-    width: calc(var(--cell-size) * (var(--board-size) - 1));
-    height: calc(var(--cell-size) * (var(--board-size) - 1));
+    width: calc(var(---size) * (var(--board-size) - 1));
+    height: calc(var(---size) * (var(--board-size) - 1));
     background-color: var(--board-color);
     margin: 0 auto;
     border-radius: 6px;
@@ -699,10 +699,10 @@
   
   #game-app .intersections {
     display: grid;
-    grid-template-columns: repeat(var(--board-size), var(--cell-size));
-    grid-template-rows: repeat(var(--board-size), var(--cell-size));
-    margin-left: calc(var(--cell-size) / -2);
-    margin-top: calc(var(--cell-size) / -2);
+    grid-template-columns: repeat(var(--board-size), var(---size));
+    grid-template-rows: repeat(var(--board-size), var(---size));
+    margin-left: calc(var(---size) / -2);
+    margin-top: calc(var(---size) / -2);
   }
   
   #game-app .intersection {
@@ -1574,7 +1574,7 @@ function fitBoardToViewport(){
   const availableW = Math.max(120, safeW - controlsW - 40);
   const availableH = safeH - 120;
   const avail = Math.min(availableW, availableH);
-  const cell = Math.floor(avail / (SIZE - 1));
+  const cell = Math.floor(avail / (SIZE));
   const finalCell = Math.max(12, Math.min(32, cell));
   document.documentElement.style.setProperty('--cell-size', finalCell + 'px');
 }
@@ -2222,3 +2222,4 @@ fitBoardToViewport();
 
 </body>
 </html>
+
