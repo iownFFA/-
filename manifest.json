@@ -9,20 +9,21 @@
   "theme_color": "#1a2a6c",
   "icons": [
     {
-      "src": "icon-192.png",
+      "src": "ChatGPT Image Oct 5, 2025, 12_37_25 AM.png",
       "sizes": "192x192",
       "type": "image/png"
     },
     {
-      "src": "icon-512.png",
+      "src": "ChatGPT Image Oct 5, 2025, 12_37_25 AM.png",
       "sizes": "512x512",
       "type": "image/png"
     },
     {
-      "src": "icon-maskable.png",
+      "src": "ChatGPT Image Oct 5, 2025, 12_37_25 AM.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
     }
   ]
 }
+
