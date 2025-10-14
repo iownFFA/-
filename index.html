@@ -1574,7 +1574,7 @@ function fitBoardToViewport(){
   const availableW = Math.max(120, safeW - controlsW - 40);
   const availableH = safeH - 120;
   const avail = Math.min(availableW, availableH);
-  const cell = Math.floor(avail / (SIZE - 1));
+  const cell = Math.floor(avail / (SIZE - 2));
   const finalCell = Math.max(12, Math.min(32, cell));
   document.documentElement.style.setProperty('--cell-size', finalCell + 'px');
 }
@@ -2222,5 +2222,6 @@ fitBoardToViewport();
 
 </body>
 </html>
+
 
 
