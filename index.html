@@ -2092,6 +2092,23 @@ async function createRoom(id){
 async function joinRoom(id){
   if(!localUID){ showToast("Not authenticated yet"); return; }
   roomId = id;
+  const rRef = ref(db, `rooms/${roomId}`);
+  const snap = await get(rRef);
+  if(!snap.exists()){
+    // Room doesn't exist, initialize it like createRoom
+    await set(rRef, {
+      createdAt: Date.now(),
+      size: SIZE,
+      turn: "black",
+      players: {},
+      moves: {},
+      undoRequests: {},
+      owner: localUID,
+      status: "playing"
+    });
+    showToast("房间创建成功");
+  }
+  
   const playersRef = ref(db, `rooms/${roomId}/players`);
   let assigned = "spectator";
   await runTransaction(playersRef, p => {
@@ -2321,7 +2338,3 @@ fitBoardToViewport();
 
 </body>
 </html>
-
-
-
-
