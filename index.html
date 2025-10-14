@@ -2,9 +2,9 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="theme-color" content="#1a2a6c">
-<link rel="apple-touch-icon" href="ChatGPT Image Oct 5, 2025, 12_37_25 AM.png">
+<link rel="apple-touch-icon" href="dog">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="GTT">
@@ -33,25 +33,25 @@
   }
   
   #splash-particles {
-  position: fixed;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
-  z-index: 9998;
-  pointer-events: none;
-  opacity: 0.4;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 9998;
+    pointer-events: none;
+    opacity: 0.4;
   }
-  /* Reset */
+  
+  /* ===== RESET & BASE STYLES ===== */
   * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
   }
 
-  /* Background fix for iOS */
   html {
     height: 100%;
     width: 100%;
-    background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+    background: linear-gradient(135deg, #1a2a6c, #6f5d7a, #25f37b);
     background-size: 400% 400%;
     animation: gradientShift 15s ease infinite;
     margin: 0;
@@ -59,170 +59,110 @@
     padding-bottom: env(safe-area-inset-bottom);
     padding-left: env(safe-area-inset-left);
     padding-right: env(safe-area-inset-right);
+    min-height: 100vh; /* Fallback for dynamic viewport */
+    min-height: calc(102% + env(safe-area-inset-bottom)); /* Extend to cover bottom safe area */
   }
 
   body {
-    height: 100%;
-    width: 100%;
-    background: transparent !important;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-family: 'LXGW WenKai', 'Inter', 'PingFang SC', sans-serif;
-    overflow: hidden;
-    margin: 0;
-    -webkit-touch-callout: none;
-    -webkit-text-size-adjust: 100%;
-  }
-
-  /* Frosted panel */
-  .container {
-    text-align: center;
-    max-width: 350px;
-    width: 100%;
-    background: rgba(255, 255, 255, 0.12);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border-radius: 20px;
-    padding: 30px 20px;
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    position: relative;
-    z-index: 1;
-  }
-  .container::before {
-    content: '';
-    position: absolute;
-    top: -50%;
-    left: -50%;
-    width: 200%;
-    height: 200%;
-    background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0) 70%);
-    z-index: -1;
-  }
-
-  /* Game button */
-  .game-btn {
-    position: absolute;
-    top: 10px;
-    left: 12px;
-    background: transparent;
-    border: none;
-    padding: 6px;
-    border-radius: 8px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.25s ease;
-    -webkit-tap-highlight-color: transparent;
-  }
-  .game-btn:hover {
-    background: rgba(255, 255, 255, 0.15);
-    transform: scale(1.05);
-  }
-  .game-btn svg {
-    transition: opacity 0.25s ease;
-  }
-  .game-btn.active {
-    background: rgba(255, 255, 255, 0.2);
-    box-shadow: 0 0 6px rgba(255, 255, 255, 0.6);
-  }
-
-  .mute-btn {
-    position: absolute;
-    top: 10px;
-    right: 12px;
-    background: transparent;
-    border: none;
-    padding: 6px;
-    border-radius: 8px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.25s ease;
-    -webkit-tap-highlight-color: transparent;
-  }
-  .mute-btn:hover {
-    background: rgba(255, 255, 255, 0.15);
-    transform: scale(1.05);
-  }
-  .mute-btn svg {
-    transition: opacity 0.25s ease;
-  }
-  .mute-btn.active {
-  background: rgba(255, 255, 255, 0.2);
-  box-shadow: 0 0 6px rgba(255, 255, 255, 0.6);
-  }
-
-  .effect-btn {
-  position: absolute;
-  top: 10px;
-  right: 50px; /* sits left of mute button */
-  background: transparent;
-  border: none;
-  padding: 6px;
-  border-radius: 8px;
-  cursor: pointer;
+  height: 100%;
+  width: 100%;
+  background: inherit; /* Inherit the gradient from html instead of forcing transparent */
   display: flex;
-  align-items: center;
   justify-content: center;
-  transition: all 0.25s ease;
-  -webkit-tap-highlight-color: transparent;
-  }
-  .effect-btn:hover {
-  background: rgba(255, 255, 255, 0.12);
-  transform: scale(1.05);
-  }
-  .effect-btn.active {
-  background: rgba(255, 255, 255, 0.2);
-  box-shadow: 0 0 6px rgba(255, 255, 255, 0.6);
+  align-items: center;
+  font-family: 'LXGW WenKai', 'Inter', 'PingFang SC', sans-serif;
+  overflow: hidden;
+  margin: 0;
+  -webkit-touch-callout: none;
+  -webkit-text-size-adjust: 100%;
+  color: #fff8e7;
+}
+
+  /* ===== MAIN CONTAINER ===== */
+  .main-container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    padding: 20px;
   }
 
-  /* Creamy glowy text */
-  h1,
-  .subtitle,
-  .result-text,
-  .stat-value,
-  .stat-label,
-  .coin-letter {
+  /* ===== CARD COMPONENT ===== */
+  .card {
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-radius: 24px;
+    padding: 32px 24px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    max-width: 420px;
+    width: 100%;
+    text-align: center;
+    position: relative;
+    z-index: 10;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2);
+  }
+
+  /* ===== HEADER STYLES ===== */
+  .header {
+    margin-bottom: 24px;
+  }
+
+  .title {
+    font-size: 2.2rem;
+    font-weight: 500;
+    margin-bottom: 12px;
     color: #fff8e7;
-    text-shadow: 0 0 2px rgba(255, 248, 231, 0.3),
-                 0 0 4px rgba(255, 248, 231, 0.2),
-                 0 0 6px rgba(255, 248, 231, 0.15);
-  }
-  .subtitle,
-  .stat-label {
-    text-shadow: 0 0 1px rgba(255, 248, 231, 0.2);
+    text-shadow: 0 0 10px rgba(255, 248, 231, 0.3);
+    letter-spacing: 0.5px;
   }
 
-  /* Subtitle */
   .subtitle {
     font-size: 1rem;
-    margin-bottom: 25px;
-    line-height: 1.5;
+    line-height: 1.6;
+    opacity: 0.9;
     font-weight: 300;
+    max-width: 320px;
+    margin: 0 auto;
   }
 
-  /* Enhanced Coin Design */
+  /* ===== COIN STYLES ===== */
+  .coin-section {
+    margin: 24px 0 32px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
   .coin-container {
     perspective: 1000px;
-    width: 150px;
-    height: 150px;
-    margin: 0 auto 20px;
+    width: 160px;
+    height: 160px;
+    margin-bottom: 24px;
     position: relative;
   }
+
   .coin {
     width: 100%;
     height: 100%;
     position: relative;
     transform-style: preserve-3d;
-    transition: transform 1.5s ease-in-out;
+    transition: transform 1.8s cubic-bezier(0.23, 1, 0.32, 1);
   }
+
   .coin.flipping {
-    animation: flip 1.5s ease-in-out;
+    animation: flip 1.8s cubic-bezier(0.23, 1, 0.32, 1);
   }
+
   .coin-face {
     position: absolute;
     width: 100%;
@@ -231,29 +171,26 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 3.5rem;
-    font-weight: bold;
     overflow: hidden;
     backface-visibility: hidden;
     -webkit-backface-visibility: hidden;
     
-    /* Enhanced metallic look with better shine */
+    /* Enhanced metallic gradient */
     background: radial-gradient(circle at 30% 30%, 
                 #f9f9f9 0%, 
                 #e8e8e8 15%, 
                 #c9c9c9 40%, 
                 #a8a8a8 70%, 
                 #8a8a8a 100%);
-    border: 6px solid #d4d4d4;
+    border: 8px solid #d4d4d4;
     
-    /* Enhanced shadows for more depth */
+    /* Enhanced shadows */
     box-shadow:
-      0 12px 30px rgba(0, 0, 0, 0.4),
-      inset 0 -10px 20px rgba(0, 0, 0, 0.5),
-      inset 0 10px 20px rgba(255, 255, 255, 0.6);
+      0 15px 35px rgba(0, 0, 0, 0.4),
+      inset 0 -12px 25px rgba(0, 0, 0, 0.5),
+      inset 0 12px 25px rgba(255, 255, 255, 0.6);
   }
 
-  /* Enhanced gleam effect */
   .coin-face::before {
     content: '';
     position: absolute;
@@ -293,18 +230,15 @@
     z-index: 2;
   }
 
-  @keyframes spinGleam {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
-  }
-
   .coin-front {
     transform: rotateY(0deg);
     z-index: 2;
   }
+
   .coin-back {
     transform: rotateY(180deg);
   }
+
   .coin-image-container {
     width: 100%;
     height: 100%;
@@ -314,6 +248,7 @@
     z-index: 3;
     box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.3);
   }
+
   .coin-image {
     width: 100%;
     height: 100%;
@@ -321,60 +256,70 @@
     display: block;
   }
 
-  /* Fallback coin design if images don't load */
   .coin-fallback {
     display: flex;
     justify-content: center;
     align-items: center;
     width: 100%;
     height: 100%;
-    font-size: 2.5rem;
+    font-size: 3rem;
     color: #1a2a6c;
     font-weight: bold;
     text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
   }
 
-  /* Result */
-  .result {
-    font-size: 1.8rem;
-    margin: 20px 0;
-    min-height: 60px;
+  /* ===== RESULT DISPLAY ===== */
+  .result-section {
+    margin-bottom: 28px;
+    min-height: 70px;
     display: flex;
     justify-content: center;
     align-items: center;
   }
+
   .result-text {
-    background: rgba(255, 255, 255, 0.15);
-    padding: 10px 20px;
+    background: rgba(255, 255, 255, 0.12);
+    padding: 14px 28px;
     border-radius: 50px;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-    backdrop-filter: blur(5px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    backdrop-filter: blur(10px);
     border: 1px solid rgba(255, 255, 255, 0.1);
+    font-size: 1.4rem;
+    font-weight: 500;
     transition: all 0.3s ease;
-  }
-  .result-text.celebrate {
-    animation: celebrate 0.5s ease;
-    background: rgba(255, 255, 255, 0.25);
+    max-width: 280px;
+    width: 100%;
   }
 
-  /* Button */
-  button {
+  .result-text.celebrate {
+    animation: celebrate 0.5s ease;
+    background: rgba(255, 255, 255, 0.2);
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+  }
+
+  /* ===== BUTTON STYLES ===== */
+  .btn {
     background: linear-gradient(to right, #fff, #f0f0f0);
     color: #1a2a6c;
     border: none;
-    padding: 12px 35px;
-    font-size: 1rem;
+    padding: 14px 40px;
+    font-size: 1.1rem;
     font-weight: 500;
     border-radius: 50px;
     cursor: pointer;
     transition: all 0.3s ease;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
     position: relative;
     overflow: hidden;
     letter-spacing: 0.5px;
     -webkit-tap-highlight-color: transparent;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
   }
-  button::before {
+
+  .btn::before {
     content: '';
     position: absolute;
     top: 0;
@@ -384,39 +329,57 @@
     background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
     transition: 0.5s;
   }
-  button:hover {
+
+  .btn:hover {
     transform: translateY(-3px);
-    box-shadow: 0 12px 25px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.25);
   }
-  button:hover::before {
+
+  .btn:hover::before {
     left: 100%;
   }
-  button:active {
+
+  .btn:active {
     transform: translateY(1px);
   }
-  button:disabled {
-    opacity: 0.7;
+
+  .btn:disabled {
+    opacity: 0.6;
     cursor: not-allowed;
     transform: none;
   }
 
-  /* Stats */
-  .stats {
+  .btn-secondary {
+    background: transparent;
+    color: #fff8e7;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  }
+
+  .btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.1);
+  }
+
+  /* ===== STATS STYLES ===== */
+  .stats-section {
     display: flex;
     justify-content: space-around;
-    margin-top: 15px;
-    background: rgba(255, 255, 255, 0.08);
-    padding: 15px;
-    border-radius: 18px;
+    margin-top: 24px;
+    background: rgba(255, 255, 255, 0.06);
+    padding: 20px;
+    border-radius: 20px;
     width: 100%;
-    backdrop-filter: blur(5px);
+    backdrop-filter: blur(10px);
     border: 1px solid rgba(255, 255, 255, 0.05);
   }
+
   .stat {
     text-align: center;
     position: relative;
-    padding: 0 10px;
+    padding: 0 15px;
+    flex: 1;
   }
+
   .stat::after {
     content: '';
     position: absolute;
@@ -424,24 +387,67 @@
     top: 20%;
     height: 60%;
     width: 1px;
-    background: rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.15);
   }
+
   .stat:last-child::after {
     display: none;
   }
+
   .stat-value {
-    font-size: 2rem;
+    font-size: 2.2rem;
     font-weight: bold;
     margin-bottom: 5px;
+    color: #fff8e7;
+    text-shadow: 0 0 8px rgba(255, 248, 231, 0.3);
   }
+
   .stat-label {
     font-size: 0.9rem;
     opacity: 0.8;
     letter-spacing: 0.5px;
   }
 
-  /* Floating emojis */
-  .floating-emojis {
+  /* ===== CONTROL BAR ===== */
+  .control-bar {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    display: flex;
+    gap: 10px;
+    z-index: 100;
+  }
+
+  .icon-btn {
+    background: transparent;
+    border: none;
+    padding: 10px;
+    border-radius: 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.25s ease;
+    -webkit-tap-highlight-color: transparent;
+    color: #fff8e7;
+  }
+
+  .icon-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: scale(1.05);
+  }
+
+  .icon-btn.active {
+    background: rgba(255, 255, 255, 0.15);
+    box-shadow: 0 0 8px rgba(255, 255, 255, 0.4);
+  }
+
+  .icon-btn svg {
+    transition: opacity 0.25s ease;
+  }
+
+  /* ===== FLOATING ELEMENTS ===== */
+  .floating-elements {
     position: fixed;
     width: 100%;
     height: 100%;
@@ -451,52 +457,50 @@
     z-index: 0;
     opacity: 0.7;
   }
-  .emoji {
+
+  .floating-element {
     position: absolute;
     font-size: 24px;
     opacity: 0;
     animation: float 8s linear infinite;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
   }
-  .emoji:nth-child(3n) { animation-duration: 10s; }
-  .emoji:nth-child(3n+1) { animation-duration: 12s; }
-  .emoji:nth-child(3n+2) { animation-duration: 14s; }
 
-  /* Animations */
+  .floating-element:nth-child(3n) { animation-duration: 10s; }
+  .floating-element:nth-child(3n+1) { animation-duration: 12s; }
+  .floating-element:nth-child(3n+2) { animation-duration: 14s; }
+
+  /* ===== ANIMATIONS ===== */
   @keyframes flip {
     0% { transform: rotateY(0); }
     50% { transform: rotateY(1800deg); }
     100% { transform: rotateY(1980deg); }
   }
+
   @keyframes gradientShift {
     0% { background-position: 0% 50%; }
     50% { background-position: 100% 50%; }
     100% { background-position: 0% 50%; }
   }
+
   @keyframes float {
     0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
     10% { opacity: 0.8; }
     90% { opacity: 0.8; }
     100% { transform: translateY(-100px) rotate(360deg); opacity: 0; }
   }
+
   @keyframes celebrate {
     0% { transform: scale(1); }
     50% { transform: scale(1.1); }
     100% { transform: scale(1); }
   }
 
-  /* Mobile adjustments */
-  @media (max-width: 500px) {
-    .container { padding: 25px 15px; }
-    h1 { font-size: 2rem; }
-    .coin-container { width: 120px; height: 120px; }
-    .coin-face { font-size: 2.5rem; }
-    .stats { padding: 10px; }
-    .stat-value { font-size: 1.6rem; }
-    .emoji { font-size: 18px; }
-    #game-app :root { --cell-size: 24px; }
+  @keyframes spinGleam {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
   }
-  
+
   /* === Confetti animation === */
   .confetti {
     position: fixed;
@@ -518,7 +522,7 @@
     }
   }
 
-  /* === Raindrops (reverted to original) === */
+  /* === Raindrops === */
   .raindrop {
     position: fixed;
     top: -20px;
@@ -544,185 +548,139 @@
     height: 100%;
     z-index: 1000;
     display: none;
-    background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+    background: linear-gradient(135deg, #1a2a6c, #6f5d7a, #25f37b);
     background-size: 400% 400%;
     animation: gradientShift 15s ease infinite;
     padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
   }
-  
-  #game-app .app {
+
+  .game-header {
     display: flex;
-    gap: 16px;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  /* Add a frosted container just for the title area */
+.game-title-container {
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-radius: 16px;
+    padding: 3px 15px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.game-title {
+    font-size: 1.8rem;
+    font-weight: 500;
+    color: #fff8e7;
+    text-shadow: 0 0 10px rgba(255, 248, 231, 0.3);
+    margin: 0; /* Remove default margins */
+}
+
+  .game-content {
+    display: flex;
+    gap: 20px;
     align-items: flex-start;
     justify-content: center;
     width: 100%;
     max-width: 1100px;
-    padding: 12px;
+    padding: 0 20px;
     margin: 0 auto;
-    height: 100%;
+    height: calc(100% - 80px);
   }
-  
-  #game-app .panel {
-    background: rgba(255,255,255,0.08);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border-radius: 16px;
-    padding: 10px;
-    box-shadow: 0 14px 30px rgba(0,0,0,0.25);
-    border: 1px solid rgba(255,255,255,0.06);
+
+  .game-panel {
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-radius: 20px;
+    padding: 20px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.12);
     color: #fff8e7;
   }
-  
-  #game-app .controls {
-    width: 220px;
-    min-width: 160px;
+
+  .controls-panel {
+    width: 240px;
+    min-width: 200px;
     display: flex;
     flex-direction: column;
-    gap: 10px;
-    align-items: stretch;
-  }
-  
-  #game-app label { 
-    font-size: 13px; 
-    color: rgba(255, 248, 231,0.9); 
-    display: block; 
-  }
-  
-  #game-app input[type="text"], 
-  #game-app input[type="tel"], 
-  #game-app input {
-    padding: 8px 10px;
-    border-radius: 10px;
-    border: 1px solid rgba(255,255,255,0.06);
-    background: rgba(255,255,255,0.03);
-    color: #fff8e7;
-    font-size: 16px;
-    outline: none;
+    gap: 15px;
   }
 
-  #game-app input::placeholder {
-    color: rgba(255, 248, 231, 0.7); /* White with some transparency */
-  }
-
-  #game-app input::-webkit-input-placeholder { /* WebKit browsers */
-    color: rgba(255, 248, 231, 0.7);
-  }
-
-  #game-app input::-moz-placeholder { /* Mozilla Firefox */
-    color: rgba(255, 248, 231, 0.7);
-  }
-
-  #game-app input:-ms-input-placeholder { /* Internet Explorer */
-    color: rgba(255, 248, 231, 0.7);
-  }
-
-  #game-app input:-moz-placeholder { /* Older Firefox */
-    color: rgba(255, 248, 231, 0.7);
-  }
-  
-  #game-app .btn-row { 
-    display: flex; 
-    gap: 8px; 
-  }
-  
-  #game-app button {
-    padding: 8px 12px;
-    font-size: 13px;
-    border-radius: 10px;
-    border: none;
-    cursor: pointer;
-    background: linear-gradient(90deg, rgba(255, 255, 255, 0), rgba(240, 240, 240, 0));
-    color: #fff8e7;
-    box-shadow: 0 6px 16px rgba(0,0,0,0.22);
-    transition: transform .12s ease, box-shadow .12s ease;
-    flex: 1 1 auto;
-  }
-  
-  #game-app button.small {
-    padding: 6px 10px;
-    font-size: 12px;
-    border-radius: 8px;
-  }
-  
-  #game-app button:active { 
-    transform: translateY(1px); 
-    box-shadow: 0 4px 10px rgba(0,0,0,0.2); 
-  }
-  
-  #game-app button:disabled { 
-    opacity: 0.6; 
-    cursor: not-allowed; 
-    transform: none; 
-    box-shadow: none; 
-  }
-  
-  #game-app .board-panel {
+  .board-panel {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 8px;
+    gap: 15px;
+    flex: 1;
   }
-  
-  #game-app .board-container {
+
+  .board-container {
     position: relative;
     width: calc(var(--cell-size) * (var(--board-size) - 1));
     height: calc(var(--cell-size) * (var(--board-size) - 1));
     background-color: var(--board-color);
     margin: 0 auto;
-    border-radius: 6px;
-    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.3);
+    border-radius: 10px;
+    box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.3);
   }
-  
-  #game-app .grid-lines, 
-  #game-app .intersections {
+
+  .grid-lines, 
+  .intersections {
     position: absolute;
     top: 0; 
     left: 0;
     width: 100%; 
     height: 100%;
   }
-  
-  #game-app .grid-line { 
+
+  .grid-line { 
     position: absolute; 
     background-color: var(--grid-color); 
   }
-  
-  #game-app .grid-line.horizontal { 
+
+  .grid-line.horizontal { 
     width: 100%; 
     height: 1px; 
   }
-  
-  #game-app .grid-line.vertical { 
+
+  .grid-line.vertical { 
     height: 100%; 
     width: 1px; 
   }
-  
-  #game-app .intersections {
+
+  .intersections {
     display: grid;
     grid-template-columns: repeat(var(--board-size), var(--cell-size));
     grid-template-rows: repeat(var(--board-size), var(--cell-size));
     margin-left: calc(var(--cell-size) / -2);
     margin-top: calc(var(--cell-size) / -2);
   }
-  
-  #game-app .intersection {
+
+  .intersection {
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    transition: transform 0.08s ease;
+    transition: transform 0.1s ease;
   }
-  
-  #game-app .intersection:hover:not(.disabled) { 
+
+  .intersection:hover:not(.disabled) { 
     transform: scale(1.1); 
   }
-  
-  #game-app .intersection.disabled { 
+
+  .intersection.disabled { 
     pointer-events: none; 
     opacity: 0.95; 
   }
-  
-  #game-app .stone {
+
+  .stone {
     width: calc(var(--cell-size) * 0.82);
     height: calc(var(--cell-size) * 0.82);
     border-radius: 50%;
@@ -730,24 +688,23 @@
     box-shadow: inset 0 -6px 12px rgba(0,0,0,0.25), 0 2px 6px rgba(0,0,0,0.18);
     transition: box-shadow 0.3s ease;
   }
-  
-  #game-app .stone.black { 
+
+  .stone.black { 
     background: radial-gradient(circle at 30% 30%, #444, #000); 
   }
-  
-  #game-app .stone.white { 
+
+  .stone.white { 
     background: radial-gradient(circle at 30% 30%, #fff, #ccc); 
   }
-  
-  /* Yellow glow effect for last placed stone */
-  #game-app .stone.last-move {
+
+  .stone.last-move {
     box-shadow: 
       inset 0 -6px 12px rgba(0,0,0,0.25), 
       0 2px 6px rgba(0,0,0,0.18),
       0 0 12px 6px rgba(255, 255, 0, 0.6);
     animation: pulse-glow 2s infinite alternate;
   }
-  
+
   @keyframes pulse-glow {
     from { box-shadow: 
       inset 0 -6px 12px rgba(0,0,0,0.25), 
@@ -758,30 +715,93 @@
       0 2px 6px rgba(0,0,0,0.18),
       0 0 16px 8px rgba(255, 255, 0, 0.8); }
   }
-  
-  #game-app .star-point {
+
+  .star-point {
     position: absolute;
     width: var(--star-point-size);
     height: var(--star-point-size);
-    background: #000;
+    background: #566a88;
     border-radius: 50%;
     z-index: 1;
   }
-  
-  #game-app .status-row { 
-    display: flex; 
-    gap: 10px; 
-    align-items: center; 
-    font-size: 13px; 
-    color: rgba(255,248,231,0.95); 
+
+  .game-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
   }
-  
-  #game-app .muted { 
-    color: rgba(255,248,231,0.78); 
-    font-size: 12px; 
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
   }
-  
-  #game-app #toast {
+
+  .form-label {
+    font-size: 14px;
+    font-weight: 500;
+  }
+
+  .form-input {
+    padding: 12px 16px;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.05);
+    color: #fff8e7;
+    font-size: 16px;
+    outline: none;
+    transition: all 0.2s ease;
+  }
+
+  .form-input:focus {
+    border-color: rgba(255, 255, 255, 0.3);
+    background: rgba(255, 255, 255, 0.08);
+  }
+
+  .form-input::placeholder {
+    color: rgba(255, 248, 231, 0.6);
+  }
+
+  .btn-group {
+    display: flex;
+    gap: 10px;
+  }
+
+  .btn-small {
+    padding: 10px 16px;
+    font-size: 14px;
+    border-radius: 10px;
+    flex: 1;
+  }
+
+  .game-status {
+    margin-top: 15px;
+    padding: 15px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    font-size: 14px;
+  }
+
+  .status-item {
+    margin-bottom: 8px;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .status-item:last-child {
+    margin-bottom: 0;
+  }
+
+  .status-label {
+    opacity: 0.8;
+  }
+
+  .status-value {
+    font-weight: 500;
+  }
+
+  /* Toast and undo notification styles */
+  #toast {
     position: fixed;
     left: 50%;
     bottom: 18px;
@@ -800,48 +820,13 @@
     z-index: 9999;
   }
   
-  #game-app #toast.show { 
+  #toast.show { 
     opacity: 1; 
     transform: translateX(-50%) translateY(0); 
     pointer-events: auto; 
   }
   
-  /* Undo button styles */
-  #game-app .undo-btn {
-    background: transparent;
-    color: #fff8e7;
-    padding: 8px 8px;
-    border-radius: 10px;
-    border: none;
-    cursor: pointer;
-    font-size: 13px;
-    box-shadow: 0 6px 16px rgba(0,0,0,0.22);
-    transition: all 0.3s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 5px;
-  }
-  
-  #game-app .undo-btn:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-    background: transparent;
-    box-shadow: 0 6px 16px rgba(0,0,0,0.22);
-    color: #fff8e7;
-  }
-  
-  #game-app .undo-btn:not(:disabled):hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(0,0,0,0.3);
-  }
-  
-  #game-app .undo-btn:not(:disabled):active {
-    transform: translateY(1px);
-  }
-  
-  /* Undo notification styles */
-  #game-app .undo-notification {
+  .undo-notification {
     position: fixed;
     top: 50%;
     left: 50%;
@@ -860,24 +845,24 @@
     width: 90%;
   }
   
-  #game-app .undo-notification h3 {
+  .undo-notification h3 {
     margin-bottom: 15px;
     font-size: 18px;
   }
   
-  #game-app .undo-notification p {
+  .undo-notification p {
     margin-bottom: 20px;
     font-size: 14px;
     line-height: 1.4;
   }
   
-  #game-app .undo-notification-buttons {
+  .undo-notification-buttons {
     display: flex;
     gap: 10px;
     justify-content: center;
   }
   
-  #game-app .undo-notification button {
+  .undo-notification button {
     padding: 8px 16px;
     border-radius: 8px;
     border: none;
@@ -886,18 +871,18 @@
     transition: all 0.2s ease;
   }
   
-  #game-app .undo-notification .accept-btn {
+  .undo-notification .accept-btn {
     background: linear-gradient(90deg, #4CAF50, #45a049);
     color: white;
   }
   
-  #game-app .undo-notification .decline-btn {
+  .undo-notification .decline-btn {
     background: linear-gradient(90deg, #f44336, #d32f2f);
     color: white;
   }
   
   /* Overlay for undo notification */
-  #game-app .undo-overlay {
+  .undo-overlay {
     position: fixed;
     top: 0;
     left: 0;
@@ -908,104 +893,127 @@
   }
 
   /* Winning stones glow effect */
-#game-app .stone.winning-stone {
-  box-shadow: 
-    inset 0 -6px 12px rgba(0,0,0,0.25), 
-    0 2px 6px rgba(0,0,0,0.18),
-    0 0 12px 6px rgba(255, 255, 0, 0.8);
-  animation: pulse-glow-win 1.5s infinite alternate;
-}
-
-@keyframes pulse-glow-win {
-  from { 
+  .stone.winning-stone {
     box-shadow: 
       inset 0 -6px 12px rgba(0,0,0,0.25), 
       0 2px 6px rgba(0,0,0,0.18),
-      0 0 12px 6px rgba(255, 255, 0, 0.8); 
+      0 0 12px 6px rgba(255, 255, 0, 0.8);
+    animation: pulse-glow-win 1.5s infinite alternate;
   }
-  to { 
-    box-shadow: 
-      inset 0 -6px 12px rgba(0,0,0,0.25), 
-      0 2px 6px rgba(0,0,0,0.18),
-      0 0 20px 10px rgba(255, 255, 0, 1); 
-  }
-}
-  
-  @media (max-width: 900px) {
-    #game-app .app { 
-      flex-direction: column; 
-      align-items: center; 
-      gap: 12px; 
-      padding: 8px; 
-    }
-    
-    #game-app .controls { 
-      width: 100%; 
-      max-width: 420px; 
-    }
-    
-    #game-app .panel { 
-      width: 100%; 
-      max-width: 420px; 
-    }
-  }
-  
-  @media (max-width: 420px) {
-    #game-app :root { 
-      --star-point-size: 3px; 
-    }
-    
-    #game-app .controls { 
-      gap: 8px; 
-    }
-    
-    #game-app input, 
-    #game-app button { 
-      font-size: 13px; 
-    }
-  }
-  
-  /* Redesigned back button for game */
-  .back-btn {
-    position: absolute;
-    top: 60px;
-    left: 10px; /* sits left of mute button */
-    background: transparent;
-    border: none;
-    padding: 6px;
-    border-radius: 8px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.25s ease;
-    -webkit-tap-highlight-color: transparent;
-}
 
-.back-btn:hover {
-    background: rgba(255, 255, 255, 0.12); /* Reduced from 0.18 to 0.12 */
-    transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
-}
-  
-  .back-btn:active {
-    transform: translateY(0);
+  @keyframes pulse-glow-win {
+    from { 
+      box-shadow: 
+        inset 0 -6px 12px rgba(0,0,0,0.25), 
+        0 2px 6px rgba(0,0,0,0.18),
+        0 0 12px 6px rgba(255, 255, 0, 0.8); 
+    }
+    to { 
+      box-shadow: 
+        inset 0 -6px 12px rgba(0,0,0,0.25), 
+        0 2px 6px rgba(0,0,0,0.18),
+        0 0 20px 10px rgba(255, 255, 0, 1); 
+    }
   }
   
-  /* Game controls in game app - removed effects and volume buttons */
-  .game-controls {
-    position: fixed;
-    top: 10px;
-    right: 12px;
-    display: flex;
-    gap: 8px;
-    z-index: 1001;
+  /* ===== RESPONSIVE STYLES ===== */
+  @media (max-width: 768px) {
+    .card {
+      padding: 24px 16px;
+      max-width: 90%;
+    }
+    
+    .title {
+      font-size: 1.8rem;
+    }
+    
+    .coin-container {
+      width: 140px;
+      height: 140px;
+    }
+    
+    .result-text {
+      font-size: 1.2rem;
+      padding: 12px 20px;
+    }
+    
+    .btn {
+      padding: 12px 30px;
+      font-size: 1rem;
+    }
+    
+    .stats-section {
+      padding: 16px;
+    }
+    
+    .stat-value {
+      font-size: 1.8rem;
+    }
+    
+    .game-content {
+      flex-direction: column;
+      align-items: center;
+      padding: 0 10px;
+    }
+    
+    .controls-panel {
+      width: 100%;
+      max-width: 400px;
+    }
+    
+    .board-panel {
+      width: 100%;
+      padding: 10px 0;
+    }
+    
+    .game-panel {
+      padding: 15px;
+    }
   }
-  
-  /* Hide the effects and volume buttons in game app */
-  #game-app .effect-btn,
-  #game-app .mute-btn {
-    display: none;
+
+  @media (max-width: 480px) {
+    .card {
+      padding: 20px 12px;
+    }
+    
+    .title {
+      font-size: 1.6rem;
+    }
+    
+    .subtitle {
+      font-size: 0.9rem;
+    }
+    
+    .coin-container {
+      width: 120px;
+      height: 120px;
+    }
+    
+    .result-text {
+      font-size: 1.1rem;
+    }
+    
+    .btn {
+      padding: 10px 24px;
+      font-size: 0.9rem;
+    }
+    
+    .stats-section {
+      padding: 12px;
+    }
+    
+    .stat {
+      padding: 0 10px;
+    }
+    
+    .stat-value {
+      font-size: 1.6rem;
+    }
+    
+    .control-bar {
+      top: 10px;
+      right: 10px;
+    }
   }
 </style>
 </head>
@@ -1013,157 +1021,173 @@
 <body>
 <div id="dim-overlay"></div>
 <canvas id="splash-particles"></canvas>
-<div class="container">
-  <!-- Game Button -->
-  <button class="game-btn" id="game-btn" aria-label="Play Gomoku game">
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#fff8e7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="22" height="22">
-      <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
-      <line x1="3" y1="9" x2="21" y2="9"></line>
-      <line x1="9" y1="21" x2="9" y2="9"></line>
-    </svg>
-  </button>
 
-  <!-- Effect Toggle Button -->
-  <button class="effect-btn" id="effect-btn" aria-label="Toggle visual effects">
-    <!-- Cloud OFF (outline) -->
-    <svg id="effect-off" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
-         fill="none" stroke="#fff8e7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-         width="22" height="22" style="display:block;">
-      <path d="M17.5 19a4.5 4.5 0 0 0 0-9 5.5 5.5 0 0 0-10.9 1A4 4 0 0 0 7 19h10.5z"/>
-    </svg>
-
-    <!-- Cloud ON (filled + glow) -->
-    <svg id="effect-on" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
-         fill="#fff8e7" stroke="#fff8e7" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"
-         width="22" height="22" style="display:none; filter: drop-shadow(0 0 6px rgba(255,255,255,0.8));">
-      <path d="M17.5 19a4.5 4.5 0 0 0 0-9 5.5 5.5 0 0 0-10.9 1A4 4 0 0 0 7 19h10.5z"/>
-    </svg>
-  </button>
-
-  <button class="mute-btn" id="mute-btn" aria-label="Toggle sound">
-    
-    <svg id="mute-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#fff8e7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="22" height="22" style="display:none;">
-      <path d="M11 5L6 9H2V15H6L11 19V5Z" />
-      <line x1="23" y1="9" x2="17" y2="15" />
-      <line x1="17" y1="9" x2="23" y2="15" />
-    </svg>
-    
-    <svg id="unmute-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#fff8e7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="22" height="22" style="display:block;">
-      <path d="M11 5L6 9H2V15H6L11 19V5Z" />
-      <path d="M15.54 8.46C16.4774 9.39764 17.004 10.6692 17.004 12C17.004 13.3308 16.4774 14.6024 15.54 15.54" />
-      <path d="M19.07 4.93C20.9447 6.80528 21.9979 9.34836 21.9979 12C21.9979 14.6516 20.9447 17.1947 19.07 19.07" />
-    </svg>
-    
-  </button>
+<div class="main-container">
+  <!-- Floating Elements -->
+  <div class="floating-elements" id="floating-elements"></div>
   
-
-  <h1>欢迎小宝宝！</h1>
-  <p class="subtitle">
-    这只是一件平常的小事，并不会决定你的运气宝宝。但如果它能给你一点点激励，那就是我最大的心愿。
-    不管怎样，你永远是最棒的郭彤彤。我爱你。
-  </p>
-
-  <div class="coin-container">
-    <div class="coin" id="coin">
-      <div class="coin-face coin-front">
-        <div class="coin-image-container">
-          <img src="A.png" class="coin-image" alt="A Side" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-          <div class="coin-fallback" style="display:none;">A</div>
+  <!-- Control Bar -->
+  <div class="control-bar">
+    <button class="icon-btn" id="game-btn" aria-label="Play Gomoku game">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="22" height="22">
+        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+        <line x1="3" y1="9" x2="21" y2="9"></line>
+        <line x1="9" y1="21" x2="9" y2="9"></line>
+      </svg>
+    </button>
+    
+    <button class="icon-btn" id="effect-btn" aria-label="Toggle visual effects">
+      <svg id="effect-off" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+           fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+           width="22" height="22" style="display:block;">
+        <path d="M17.5 19a4.5 4.5 0 0 0 0-9 5.5 5.5 0 0 0-10.9 1A4 4 0 0 0 7 19h10.5z"/>
+      </svg>
+      <svg id="effect-on" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+           fill="currentColor" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"
+           width="22" height="22" style="display:none;">
+        <path d="M17.5 19a4.5 4.5 0 0 0 0-9 5.5 5.5 0 0 0-10.9 1A4 4 0 0 0 7 19h10.5z"/>
+      </svg>
+    </button>
+    
+    <button class="icon-btn" id="mute-btn" aria-label="Toggle sound">
+      <svg id="mute-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="22" height="22" style="display:none;">
+        <path d="M11 5L6 9H2V15H6L11 19V5Z" />
+        <line x1="23" y1="9" x2="17" y2="15" />
+        <line x1="17" y1="9" x2="23" y2="15" />
+      </svg>
+      <svg id="unmute-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="22" height="22" style="display:block;">
+        <path d="M11 5L6 9H2V15H6L11 19V5Z" />
+        <path d="M15.54 8.46C16.4774 9.39764 17.004 10.6692 17.004 12C17.004 13.3308 16.4774 14.6024 15.54 15.54" />
+        <path d="M19.07 4.93C20.9447 6.80528 21.9979 9.34836 21.9979 12C21.9979 14.6516 20.9447 17.1947 19.07 19.07" />
+      </svg>
+    </button>
+  </div>
+  
+  <!-- Main Card -->
+  <div class="card">
+    <div class="header">
+      <h1 class="title">欢迎小宝宝！</h1>
+      <p class="subtitle">
+        这只是一件平常的小事，并不会决定你的运气宝宝。但如果它能给你一点点激励，那就是我最大的心愿。
+        不管怎样，你永远是最棒的郭彤彤。我爱你。
+      </p>
+    </div>
+    
+    <div class="coin-section">
+      <div class="coin-container">
+        <div class="coin" id="coin">
+          <div class="coin-face coin-front">
+            <div class="coin-image-container">
+              <img src="A.png" class="coin-image" alt="A Side" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+              <div class="coin-fallback" style="display:none;">A</div>
+            </div>
+          </div>
+          <div class="coin-face coin-back">
+            <div class="coin-image-container">
+              <img src="B.png" class="coin-image" alt="B Side" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+              <div class="coin-fallback" style="display:none;">B</div>
+            </div>
+          </div>
         </div>
       </div>
-      <div class="coin-face coin-back">
-        <div class="coin-image-container">
-          <img src="B.png" class="coin-image" alt="B Side" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-          <div class="coin-fallback" style="display:none;">B</div>
-        </div>
+      
+      <div class="result-section">
+        <div class="result-text" id="result">宝宝开始吧！</div>
       </div>
+      
+      <button class="btn" id="flip-button">
+        翻转硬币
+      </button>
     </div>
-  </div>
-
-  <div class="result">
-    <div class="result-text" id="result">宝宝开始吧！</div>
-  </div>
-  <button id="flip-button">翻转硬币</button>
-
-  <div class="stats">
-    <div class="stat">
-      <div class="stat-value" id="a-count">0</div>
-      <div class="stat-label">A面次数</div>
-    </div>
-    <div class="stat">
-      <div class="stat-value" id="total-count">0</div>
-      <div class="stat-label">总次数</div>
-    </div>
-    <div class="stat">
-      <div class="stat-value" id="b-count">0</div>
-      <div class="stat-label">B面次数</div>
+    
+    <div class="stats-section">
+      <div class="stat">
+        <div class="stat-value" id="a-count">0</div>
+        <div class="stat-label">A面次数</div>
+      </div>
+      <div class="stat">
+        <div class="stat-value" id="total-count">0</div>
+        <div class="stat-label">总次数</div>
+      </div>
+      <div class="stat">
+        <div class="stat-value" id="b-count">0</div>
+        <div class="stat-label">B面次数</div>
+      </div>
     </div>
   </div>
 </div>
 
-<div class="floating-emojis" id="coin-emojis-container"></div>
-
 <!-- Game App (Hidden by default) -->
 <div id="game-app">
-  <div class="floating-emojis" id="game-emojis-container"></div>
-
-  <!-- Redesigned back button -->
-  <button class="back-btn" id="back-btn" aria-label="Go back to coin app">
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#fff8e7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18">
-      <line x1="19" y1="12" x2="5" y2="12"></line>
-      <polyline points="12 19 5 12 12 5"></polyline>
-    </svg>
-  </button>
+  <div class="floating-elements" id="game-floating-elements"></div>
   
-  <!-- Game controls - removed effects and volume buttons -->
-  <div class="game-controls">
-    <!-- Undo button will be added here programmatically -->
-  </div>
-
-  <div class="app" id="appRoot">
-    <!-- Controls Panel -->
-    <div class="panel controls" id="controlsPanel">
-      <label for="roomId">房间代码</label>
-      <input id="roomId" placeholder="创建或粘贴房间代码" type="text" autocomplete="off" inputmode="text" />
-      <div class="btn-row" id="initialButtons">
-        <button id="createBtn" class="small">创建房间</button>
-        <button id="joinBtn" class="small"> 加入房间</button>
-      </div>
-
-      <!-- shown only when in-room -->
-      <div class="btn-row" id="inRoomButtons" style="display:none">
-        <button id="resetBtn" class="small">重置棋盘</button>
-        <button id="leaveBtn" class="small">离开房间</button>
-        <!-- Undo button added here -->
-        <button id="undoBtn" class="small undo-btn" disabled>
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M3 7v6h6"/>
-            <path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13"/>
-          </svg>
-          撤销
-        </button>
-      </div>
-
-      <div style="height:6px"></div>
-      <div class="status-row">
-        <div id="status">未连接</div>
-      </div>
-      <div style="height:6px"></div>
-      <div class="muted" id="players">玩家: -</div>
-      <div style="height:8px"></div>
-      <div class="muted" id="turnIndicator">回合: —</div>
-      <div class="muted" id="youIndicator">你的角色: —</div>
+  <div class="game-header">
+    <div class="game-title-container">
+        <h1 class="game-title">小宝宝的五子棋</h1>
     </div>
-
-    <!-- Board Panel -->
-    <div class="panel board-panel" id="boardPanel">
+    <button class="btn btn-secondary" id="back-btn">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="19" y1="12" x2="5" y2="12"></line>
+        <polyline points="12 19 5 12 12 5"></polyline>
+      </svg>
+      返回
+    </button>
+  </div>
+  
+  <div class="game-content">
+    <div class="game-panel controls-panel">
+      <div class="game-controls">
+        <div class="form-group">
+          <label class="form-label" for="roomId">房间代码</label>
+          <input class="form-input" id="roomId" placeholder="创建或粘贴房间代码" type="text" autocomplete="off" inputmode="text" />
+        </div>
+        
+        <div class="btn-group" id="initialButtons">
+          <button class="btn btn-small" id="createBtn">创建房间</button>
+          <button class="btn btn-small btn-secondary" id="joinBtn">加入房间</button>
+        </div>
+        
+        <div class="btn-group" id="inRoomButtons" style="display:none">
+          <button class="btn btn-small btn-secondary" id="resetBtn">重置棋盘</button>
+          <button class="btn btn-small btn-secondary" id="leaveBtn">离开房间</button>
+          <button class="btn btn-small" id="undoBtn" disabled>
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 7v6h6"/>
+              <path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13"/>
+            </svg>
+            撤销
+          </button>
+        </div>
+        
+        <div class="game-status">
+          <div class="status-item">
+            <span class="status-label">状态:</span>
+            <span class="status-value" id="status">未连接</span>
+          </div>
+          <div class="status-item">
+            <span class="status-label">玩家:</span>
+            <span class="status-value" id="players">-</span>
+          </div>
+          <div class="status-item">
+            <span class="status-label">回合:</span>
+            <span class="status-value" id="turnIndicator">—</span>
+          </div>
+          <div class="status-item">
+            <span class="status-label">你的角色:</span>
+            <span class="status-value" id="youIndicator">—</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="game-panel board-panel">
       <div class="board-container" id="boardContainer">
         <div class="grid-lines" id="gridLines"></div>
         <div class="intersections" id="board"></div>
       </div>
     </div>
   </div>
-
+  
   <!-- Toast -->
   <div id="toast" role="status" aria-live="polite"></div>
   
@@ -1188,12 +1212,12 @@
   <source src="S.mp3" type="audio/mpeg">
 </audio>
 
-<!-- Stone placement sound -->
 <audio id="stone-sound" preload="auto">
   <source src="tap.mp3" type="audio/mpeg">
 </audio>
 
 <script>
+// Your original JavaScript code goes here with minimal changes
 document.addEventListener('DOMContentLoaded', function() {
   const coin = document.getElementById('coin');
   const flipButton = document.getElementById('flip-button');
@@ -1201,7 +1225,7 @@ document.addEventListener('DOMContentLoaded', function() {
   const aCount = document.getElementById('a-count');
   const bCount = document.getElementById('b-count');
   const totalCount = document.getElementById('total-count');
-  const emojisContainer = document.getElementById('emojis-container');
+  const floatingElements = document.getElementById('floating-elements');
   const flipSound = document.getElementById('flip-sound');
   const stoneSound = document.getElementById('stone-sound');
   const muteBtn = document.getElementById('mute-btn');
@@ -1243,6 +1267,8 @@ document.addEventListener('DOMContentLoaded', function() {
     if (typeof initGame === 'function') {
       initGame();
     }
+    // Refit board after showing app
+    setTimeout(fitBoardToViewport, 100);
   });
 
   backBtn.addEventListener('click', () => {
@@ -1339,10 +1365,10 @@ document.addEventListener('DOMContentLoaded', function() {
   // --- COIN FLIP ---
   let isFlipping = false, aCounter = 0, bCounter = 0, totalFlips = 0;
   
-  function createEmojis() {
+  function createFloatingElements() {
     const containers = [
-        document.getElementById('coin-emojis-container'),
-        document.getElementById('game-emojis-container')
+        document.getElementById('floating-elements'),
+        document.getElementById('game-floating-elements')
     ];
     
     const cuteEmojis = ['❤️','✨','🌟','🥰','😊','🌸','💫','🎀','💖','🦋','🐰','🐱','🐶','🌈','🎈','🎵','💕','💝','💘','💓','💗','💞','💟','❣️','⭐','🌺','🌷','💐','🌼','🦄','🍀','🎂','🍬','🍭','🎁','🎀','👑','💎','🔮','🎵'];
@@ -1352,18 +1378,18 @@ document.addEventListener('DOMContentLoaded', function() {
         container.innerHTML = '';
         
         for(let i = 0; i < 25; i++) {
-            const emoji = document.createElement('div');
-            emoji.className = 'emoji';
-            emoji.innerHTML = cuteEmojis[Math.floor(Math.random() * cuteEmojis.length)];
-            emoji.style.left = Math.random() * 100 + 'vw';
-            emoji.style.animationDelay = Math.random() * 8 + 's';
-            emoji.style.fontSize = (Math.random() * 20 + 15) + 'px';
-            emoji.style.animation = `float ${8 + Math.random() * 6}s linear infinite`;
-            container.appendChild(emoji);
+            const element = document.createElement('div');
+            element.className = 'floating-element';
+            element.innerHTML = cuteEmojis[Math.floor(Math.random() * cuteEmojis.length)];
+            element.style.left = Math.random() * 100 + 'vw';
+            element.style.animationDelay = Math.random() * 8 + 's';
+            element.style.fontSize = (Math.random() * 20 + 15) + 'px';
+            element.style.animation = `float ${8 + Math.random() * 6}s linear infinite`;
+            container.appendChild(element);
         }
     });
-}
-  createEmojis();
+  }
+  createFloatingElements();
 
   const canvas = document.getElementById('splash-particles');
   const ctx = canvas.getContext('2d');
@@ -1379,7 +1405,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
   function drawParticles() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.fillStyle = 'rgba(255,255,255,0.7)';
+    ctx.fillStyle = 'rgba(236, 191, 255,0.7)';
     for (let p of particles) {
       ctx.beginPath();
       ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
@@ -1391,7 +1417,57 @@ document.addEventListener('DOMContentLoaded', function() {
     requestAnimationFrame(drawParticles);
   }
   drawParticles();
+
+  flipButton.addEventListener('touchstart', function(e) {
+  if (isFlipping) return;
   
+  // Prevent any default zoom/scroll on tap (safe in PWA)
+  e.preventDefault();
+  
+  // Trigger the flip logic (same as your original click handler)
+  isFlipping = true;
+  flipButton.disabled = true;
+  result.textContent = "翻转中...";
+
+  if (!isMuted) {
+    playSoundImmediately(flipSound);
+  }
+
+  const isA = Math.random() < 0.5;
+  const fullSpins = 5;
+  const finalAngle = isA ? 0 : 180;
+  const totalRotation = 360 * fullSpins + finalAngle;
+  coin.style.transition = 'transform 2s cubic-bezier(0.25, 1, 0.5, 1)';
+  coin.style.transform = `rotateY(${totalRotation}deg)`;
+
+  setTimeout(() => {
+    coin.style.transition = 'none';
+    coin.style.transform = `rotateY(${finalAngle}deg)`;
+    if (isA) {
+      result.innerHTML = "是 <strong>A</strong>！";
+      aCounter++; aCount.textContent = aCounter;
+      if (effectsEnabled) createConfetti();
+    } else {
+      result.innerHTML = "是 <strong>傻B :(</strong>";
+      bCounter++; bCount.textContent = bCounter;
+      if (effectsEnabled) createRainScene();
+    }
+    result.classList.add('celebrate');
+    setTimeout(() => result.classList.remove('celebrate'), 500);
+    totalFlips++; totalCount.textContent = totalFlips;
+
+    if (!effectsEnabled) {
+      isFlipping = false;
+      flipButton.disabled = false;
+    } else {
+      setTimeout(() => {
+        isFlipping = false;
+        flipButton.disabled = false;
+      }, 3000);
+    }
+  }, 2000);
+}, { passive: false });
+
   flipButton.addEventListener('click', function() {
     if (isFlipping) return;
     isFlipping = true;
@@ -1439,15 +1515,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }, 3000); // Wait longer for effects to finish
   }
 }, 2000);
-  });
-
-  // --- Prevent iOS double-tap zoom ---
-  let lastTouchEnd = 0;
-  document.addEventListener('touchend', function(event) {
-    const now = (new Date()).getTime();
-    if (now - lastTouchEnd <= 300) event.preventDefault();
-    lastTouchEnd = now;
-  }, false);
+  });d
 });
 
 // Function to play sound immediately with no delay
@@ -1475,10 +1543,9 @@ function playSoundImmediately(sound) {
 // Game initialization function
 function initGame() {
   // Set CSS variables for the game
-  document.documentElement.style.setProperty('--cell-size', '28px');
   document.documentElement.style.setProperty('--board-size', '15');
-  document.documentElement.style.setProperty('--grid-color', '#6d4c2b');
-  document.documentElement.style.setProperty('--board-color', '#e2c49f');
+  document.documentElement.style.setProperty('--grid-color', 'rgba(67, 133, 224, 0.4)');
+  document.documentElement.style.setProperty('--board-color', 'rgba(255, 255, 255, 0.7)');
   document.documentElement.style.setProperty('--star-point-size', '4px');
   document.documentElement.style.setProperty('--panel-pad', '10px');
   document.documentElement.style.setProperty('--control-w', '220px');
@@ -1487,10 +1554,12 @@ function initGame() {
   // This would contain the entire Gomoku game code from your original file
   // For brevity, I'm not including the full Firebase integration here
   // but it would be placed in this function
+  console.log("Game initialized");
 }
 </script>
 
-<!-- Firebase and Gomoku game script -->
+<!-- Firebase and Gomoku game script would go here -->
+
 <script type="module">
 // Firebase imports
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
@@ -1567,16 +1636,29 @@ function showToast(msg, time=2200){
 
 /* ---------- Responsive cell size calculation ---------- */
 function fitBoardToViewport(){
-  const safeW = window.innerWidth - 24;
-  const safeH = window.innerHeight - 24;
-  const controlsRect = document.querySelector('.controls').getBoundingClientRect();
-  const controlsW = (window.innerWidth > 900) ? controlsRect.width + 24 : 0;
-  const availableW = Math.max(120, safeW - controlsW - 40);
-  const availableH = safeH - 120;
-  const avail = Math.min(availableW, availableH);
-  const cell = Math.floor(avail / (SIZE - 1));
-  const finalCell = Math.max(12, Math.min(32, cell));
+  const headerEl = document.querySelector('.game-header');
+  const headerHeight = headerEl ? headerEl.offsetHeight : 80;
+  const contentPadding = window.innerWidth <= 768 ? 20 : 40; // Adjusted for mobile
+  const footerPadding = 40;
+  const availableW = Math.max(120, window.innerWidth - contentPadding);
+  const availableH = Math.max(120, window.innerHeight - headerHeight - footerPadding);
+  let avail = Math.min(availableW, availableH);
+
+  if (window.innerWidth > 900) {
+    const controlsPanel = document.querySelector('.controls-panel');
+    if (controlsPanel) {
+      const controlsW = controlsPanel.offsetWidth + 40; // gap + padding
+      avail = Math.min(avail, window.innerWidth - controlsW - contentPadding);
+    }
+  }
+
+  const cell = Math.floor(avail / (SIZE ));
+  const finalCell = Math.max(16, Math.min(36, cell)); // Adjusted range for better mobile scaling
   document.documentElement.style.setProperty('--cell-size', finalCell + 'px');
+
+  // Adjust star point size proportionally
+  const starSize = Math.max(3, Math.floor(finalCell * 0.15));
+  document.documentElement.style.setProperty('--star-point-size', starSize + 'px');
 }
 window.addEventListener('resize', fitBoardToViewport);
 window.addEventListener('orientationchange', fitBoardToViewport);
@@ -1597,34 +1679,42 @@ function renderBoard() {
   boardEl.innerHTML = "";
   const stars=[[3,3],[3,11],[7,7],[11,3],[11,11]];
   for(let r=0;r<SIZE;r++){
-    for(let c=0;c<SIZE;c++){
-      const intersection=document.createElement("div");
-      intersection.className="intersection"; intersection.dataset.r=r; intersection.dataset.c=c;
-      if(stars.some(([rr,cc])=>rr===r&&cc===c)){
-        const sp=document.createElement("div"); sp.className="star-point"; intersection.appendChild(sp);
-      }
-      const val=board[r][c];
-      if(val){
-        const s=document.createElement("div"); 
-        s.className="stone " + val;
-        
-        // Add last-move class to the most recent stone
-        if (lastMoveId && r === lastMoveId.r && c === lastMoveId.c) {
-          s.classList.add("last-move");
-        }
-        
-        // Add winning-stone class to all winning stones
-        if (winningStones.some(stone => stone.r === r && stone.c === c)) {
-          s.classList.add("winning-stone");
-        }
-        
-        intersection.appendChild(s);
-        intersection.classList.add("disabled");
-      }
-      intersection.addEventListener("click",onCellClick);
-      boardEl.appendChild(intersection);
+  for(let c=0;c<SIZE;c++){
+    const intersection=document.createElement("div");
+    intersection.className="intersection"; intersection.dataset.r=r; intersection.dataset.c=c;
+    if(stars.some(([rr,cc])=>rr===r&&cc===c)){
+      const sp=document.createElement("div"); sp.className="star-point"; intersection.appendChild(sp);
     }
+    const val=board[r][c];
+    if(val){
+      const s=document.createElement("div"); 
+      s.className="stone " + val;
+      
+      // Add last-move class to the most recent stone
+      if (lastMoveId && r === lastMoveId.r && c === lastMoveId.c) {
+        s.classList.add("last-move");
+      }
+      
+      // Add winning-stone class to all winning stones
+      if (winningStones.some(stone => stone.r === r && stone.c === c)) {
+        s.classList.add("winning-stone");
+      }
+      
+      intersection.appendChild(s);
+      intersection.classList.add("disabled");
+    }
+    
+    // Add touchend + click listeners here
+    const handleCellTap = function(e) {
+      e.preventDefault();
+      onCellClick(e);
+    };
+    intersection.addEventListener('touchend', handleCellTap, { passive: false });
+    intersection.addEventListener("click", onCellClick);
+    
+    boardEl.appendChild(intersection);
   }
+}
   turnEl.textContent="Turn: "+(turn||"—");
   youEl.textContent="You: "+(role||"—");
   
@@ -1856,6 +1946,8 @@ function updateLocalRole(players) {
 }
 
 /* ---------- Automatic reset function ---------- */
+/* ---------- Automatic reset function ---------- */
+/* ---------- Automatic reset function ---------- */
 async function scheduleAutoReset(winnerColor) {
   console.log("Scheduling auto reset for winner:", winnerColor);
   
@@ -1885,7 +1977,7 @@ async function scheduleAutoReset(winnerColor) {
     const roomData = roomSnap.val();
     const players = roomData.players || {};
     
-    console.log("Current players:", players);
+    console.log("Current players before reset:", players);
     console.log("Last winner:", lastWinner);
     
     // Determine new player assignments
@@ -1897,10 +1989,10 @@ async function scheduleAutoReset(winnerColor) {
       newWhitePlayer = players.white;
       console.log("Black won - keeping same roles");
     } else {
-      // White won - swap roles: white becomes black, black becomes white
-      newBlackPlayer = players.white;
-      newWhitePlayer = players.black;
-      console.log("White won - swapping roles");
+      // White won - swap roles: winner (white) becomes black, loser (black) becomes white
+      newBlackPlayer = players.white;  // Winner becomes black
+      newWhitePlayer = players.black;  // Loser becomes white
+      console.log("White won - swapping roles: winner becomes black");
     }
     
     console.log("New assignments - Black:", newBlackPlayer, "White:", newWhitePlayer);
@@ -2187,7 +2279,7 @@ async function applyUpdate(data){
       console.log("Game won by:", last.color);
       console.log("Winning stones:", winningStones);
       await update(ref(db, `rooms/${roomId}`), { status: last.color + "-won", winner: last.color });
-      showToast(`🏆 ${last.color.toUpperCase()} wins!`);
+      showToast(`🏆 ${last.color.toUpperCase()} 胜利了！`);
       
       // Re-render board to show winning stones
       renderBoard();
@@ -2199,7 +2291,7 @@ async function applyUpdate(data){
       if(data.turn !== next){
         await update(ref(db, `rooms/${roomId}`), { turn: next }).catch(()=>{});
       }
-      if(localUID && role === next) showToast("Your turn!");
+      if(localUID && role === next) showToast("轮到宝宝下棋啦！");
     }
   }
   updateStatus();
@@ -2222,5 +2314,3 @@ fitBoardToViewport();
 
 </body>
 </html>
-
-
