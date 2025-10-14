@@ -636,6 +636,7 @@
     margin: 0 auto;
     border-radius: 10px;
     box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.3);
+    touch-action: none;
   }
 
   .grid-lines, 
@@ -668,6 +669,7 @@
     grid-template-rows: repeat(var(--board-size), var(--cell-size));
     margin-left: calc(var(--cell-size) / -2);
     margin-top: calc(var(--cell-size) / -2);
+    touch-action: none;
   }
 
   .intersection {
@@ -676,6 +678,7 @@
     justify-content: center;
     cursor: pointer;
     transition: transform 0.1s ease;
+    touch-action: none;
   }
 
   .intersection:hover:not(.disabled) { 
@@ -1711,12 +1714,12 @@ function renderBoard() {
       intersection.classList.add("disabled");
     }
     
-    // Add touchend + click listeners here
+    // Add touchstart + click listeners here for better iOS responsiveness
     const handleCellTap = function(e) {
       e.preventDefault();
       onCellClick(e);
     };
-    intersection.addEventListener('touchend', handleCellTap, { passive: false });
+    intersection.addEventListener('touchstart', handleCellTap, { passive: false });
     intersection.addEventListener("click", onCellClick);
     
     boardEl.appendChild(intersection);
