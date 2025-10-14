@@ -177,18 +177,25 @@
     
     /* Enhanced metallic gradient */
     background: radial-gradient(circle at 30% 30%, 
-                #f9f9f9 0%, 
-                #e8e8e8 15%, 
-                #c9c9c9 40%, 
-                #a8a8a8 70%, 
-                #8a8a8a 100%);
-    border: 8px solid #d4d4d4;
+              rgba(255, 255, 255, 0.25) 0%, 
+              rgba(255, 255, 255, 0.15) 15%, 
+              rgba(255, 255, 255, 0.08) 40%, 
+              rgba(255, 255, 255, 0.04) 70%, 
+              transparent 100%);
+  
+  /* Subtle glowing border */
+  border: 2px solid rgba(255, 255, 255, 0.3);
     
+  
     /* Enhanced shadows */
     box-shadow:
-      0 15px 35px rgba(0, 0, 0, 0.4),
-      inset 0 -12px 25px rgba(0, 0, 0, 0.5),
-      inset 0 12px 25px rgba(255, 255, 255, 0.6);
+      /* Outer glow */
+    0 0 30px rgba(255, 255, 255, 0.4),
+    0 0 60px rgba(9, 194, 123, 0.2), /* Tie into page's green accent */
+    /* Subtle depth shadows */
+    0 8px 20px rgba(0, 0, 0, 0.2),
+    inset 0 -8px 20px rgba(0, 0, 0, 0.1),
+    inset 0 8px 20px rgba(255, 255, 255, 0.2);
   }
 
   .coin-face::before {
@@ -2314,6 +2321,7 @@ fitBoardToViewport();
 
 </body>
 </html>
+
 
 
 
