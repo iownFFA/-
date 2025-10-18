@@ -10,8 +10,8 @@
 <meta name="apple-mobile-web-app-title" content="GTT">
 <title>郭彤彤</title>
 <link href="https://cdn.jsdelivr.net/npm/lxgw-wenkai-webfont@1.7.0/lxgwwenkai-regular.min.css" rel="stylesheet">
-<link rel="preload" as="audio" href="coin-flip-shimmer-85750.mp3" type="audio/mpeg">
-<link rel="preload" as="audio" href="tap.mp3" type="audio/mpeg">
+<link rel="preload" href="coin-flip-shimmer-85750.mp3" as="audio" type="audio/mpeg" crossorigin>
+<link rel="preload" href="tap.mp3" as="audio" type="audio/mpeg" crossorigin>
 
 <style>
   /* === iOS-compatible dimming overlay === */
@@ -1684,7 +1684,7 @@ function renderBoard() {
     v.className="grid-line vertical"; v.style.left=`calc(${i} * var(--cell-size))`;
     gridLinesEl.appendChild(v);
   }
-
+  console.log(`Rendering board - Turn: ${turn}, Role: ${role}, Status: ${status}`);
   boardEl.innerHTML = "";
   const stars=[[3,3],[3,11],[7,7],[11,3],[11,11]];
   for(let r=0;r<SIZE;r++){
@@ -1713,19 +1713,17 @@ function renderBoard() {
       intersection.classList.add("disabled");
     }
     
-    // Add touchstart + click listeners here for better iOS responsiveness
-    const handleCellTap = function(e) {
-      e.preventDefault();
-      onCellClick(e);
-    };
-    intersection.addEventListener('touchstart', handleCellTap, { passive: false });
-    intersection.addEventListener("click", onCellClick);
-    
     boardEl.appendChild(intersection);
   }
 }
-  turnEl.textContent="Turn: "+(turn||"—");
-  youEl.textContent="You: "+(role||"—");
+  
+  // Set up event handlers after creating the board
+  setTimeout(() => {
+    setupCellEventHandlers();
+  }, 0);
+  
+  turnEl.textContent="回合: "+(turn||"—");
+  youEl.textContent="你的角色: "+(role||"—");
   
   // Update undo button state
   updateUndoButton();
@@ -1772,15 +1770,56 @@ function updateUndoButton() {
 }
 
 /* ---------- Cell click handler ---------- */
-function onCellClick(e){
+/* ---------- Enhanced Cell Event Handlers for iOS ---------- */
+function setupCellEventHandlers() {
+  const intersections = document.querySelectorAll('.intersection');
+  
+  intersections.forEach(intersection => {
+    // Remove existing listeners to avoid duplicates
+    intersection.removeEventListener('touchstart', handleCellTap);
+    intersection.removeEventListener('click', handleCellClick);
+    
+    // Add new listeners
+    intersection.addEventListener('touchstart', handleCellTap, { passive: false });
+    intersection.addEventListener('click', handleCellClick);
+  });
+}
+
+function handleCellTap(e) {
+  e.preventDefault();
+  e.stopPropagation();
+  
+  // For iOS, we need to trigger the click programmatically
+  const clickEvent = new MouseEvent('click', {
+    view: window,
+    bubbles: true,
+    cancelable: true
+  });
+  e.target.dispatchEvent(clickEvent);
+}
+
+function handleCellClick(e) {
   const r = +e.currentTarget.dataset.r, c = +e.currentTarget.dataset.c;
+  
   if(status !== "playing"){ 
-    if(status && status.endsWith("-won")) showToast("Game over — reset to play again");
+    if(status && status.endsWith("-won")) showToast("游戏已结束 — 重置棋盘继续游戏");
     else showToast("请先加入或创建房间"); 
     return; 
   }
-  if(role !== turn){ showToast("还没轮到宝宝呢"); return; }
-  if(board[r][c]) return;
+  
+  // CRITICAL: Double-check turn synchronization
+  const movesCount = getCurrentMovesCount();
+  const currentTurn = movesCount % 2 === 0 ? "black" : "white";
+  
+  if(role !== currentTurn){ 
+    showToast(`还没轮到宝宝呢 (当前回合: ${currentTurn === 'black' ? '黑棋' : '白棋'})`); 
+    return; 
+  }
+  
+  if(board[r][c]) {
+    showToast("这个位置已经有棋子了");
+    return;
+  }
   
   // Play stone placement sound immediately
   const stoneSound = document.getElementById('stone-sound');
@@ -1791,13 +1830,42 @@ function onCellClick(e){
   const path = `rooms/${roomId}/moves`;
   const moveRef = push(ref(db, path));
   const moveId = moveRef.key;
-  set(moveRef, { r, c, color: role, by: localUID, ts: Date.now() });
   
-  // Store the last move ID for potential undo
-  lastMoveId = { r, c, id: moveId };
+  // Add a unique timestamp to prevent Firebase deduplication
+  const timestamp = Date.now();
   
-  // Update undo button state
+  set(moveRef, { 
+    r, 
+    c, 
+    color: role, 
+    by: localUID, 
+    ts: timestamp 
+  }).catch(error => {
+    console.error("Error placing move:", error);
+    showToast("下棋失败，请重试");
+  });
+  
+  // REMOVED: Don't update lastMoveId locally here
+  // Let applyUpdate handle it from Firebase data
+  
+  // Update undo button state immediately
   updateUndoButton();
+  
+  console.log(`Move placed by ${role} at (${r}, ${c}), turn should switch to: ${role === 'black' ? 'white' : 'black'}`);
+}
+
+// Helper function to get current moves count
+function getCurrentMovesCount() {
+  if (!roomId) return 0;
+  // This would need access to the current moves data
+  // For now, we'll calculate from the board state
+  let count = 0;
+  for (let r = 0; r < SIZE; r++) {
+    for (let c = 0; c < SIZE; c++) {
+      if (board[r][c]) count++;
+    }
+  }
+  return count;
 }
 
 /* ---------- Undo functionality ---------- */
@@ -1951,7 +2019,7 @@ function updateLocalRole(players) {
   }
   
   console.log("Updated local role to:", role);
-  youEl.textContent = "You: " + role;
+  youEl.textContent = "你的角色: " + role;
 }
 
 /* ---------- Automatic reset function ---------- */
@@ -2005,7 +2073,7 @@ async function scheduleAutoReset() {
       // Reset the room with new player assignments
       roomData.createdAt = Date.now();
       roomData.size = SIZE;
-      roomData.turn = "black"; // Winner (new black) goes first
+      // No turn field - derived from moves
       roomData.players = {
         black: newBlackPlayer,
         white: newWhitePlayer
@@ -2051,11 +2119,10 @@ resetBtn.onclick = async () => {
   const roomData = roomSnap.val();
   const players = roomData.players || {};
   
-  // Reset room but keep current player assignments
+  // Reset room but keep current player assignments (no turn field)
   await set(roomRef, {
     createdAt: Date.now(),
     size: SIZE,
-    turn: "black",
     players: players,
     moves: {},
     undoRequests: {},
@@ -2077,7 +2144,6 @@ async function createRoom(id){
     await set(rRef, {
       createdAt: Date.now(),
       size: SIZE,
-      turn: "black",
       players: {},
       moves: {},
       undoRequests: {},
@@ -2090,12 +2156,14 @@ async function createRoom(id){
 }
 
 async function joinRoom(id){
-  if(!localUID){ showToast("Not authenticated yet"); return; }
+  if(!localUID){ showToast("尚未验证身份"); return; }
+  
   roomId = id;
   const rRef = ref(db, `rooms/${roomId}`);
   const snap = await get(rRef);
+  
   if(!snap.exists()){
-    // Room doesn't exist, initialize it like createRoom
+    // Room doesn't exist, initialize it
     await set(rRef, {
       createdAt: Date.now(),
       size: SIZE,
@@ -2109,56 +2177,9 @@ async function joinRoom(id){
     showToast("房间创建成功");
   }
 
-
-  // Keyboard handling for iOS PWA
-let initialHeight = window.innerHeight;
-const roomInput = document.getElementById('roomId');
-const gameApp = document.getElementById('game-app');
-const gameContent = document.querySelector('.game-content');
-
-function adjustForKeyboard() {
-  if (!window.visualViewport) return; // Fallback for older browsers
-
-  const vh = window.visualViewport.height;
-  const isKeyboardOpen = vh < initialHeight * 0.9; // Detect if height reduced >10% (keyboard threshold)
-
-  if (isKeyboardOpen) {
-    // Resize content to fit above keyboard
-    gameApp.style.height = `${vh}px`;
-    gameContent.style.height = `calc(${vh}px - 80px - env(safe-area-inset-top))`; // Adjust for header
-    // Scroll input into view if needed
-    roomInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
-  } else {
-    // Reset to full height
-    gameApp.style.height = '100%';
-    gameContent.style.height = 'calc(100% - 80px)';
-  }
-}
-
-// Listen for viewport changes (keyboard open/close)
-window.visualViewport.addEventListener('resize', adjustForKeyboard);
-window.visualViewport.addEventListener('scroll', adjustForKeyboard);
-
-// Also handle input focus/blur for smoother detection
-roomInput.addEventListener('focus', () => {
-  initialHeight = window.innerHeight;
-  setTimeout(adjustForKeyboard, 150); // Small delay for keyboard animation
-});
-roomInput.addEventListener('blur', () => {
-  setTimeout(() => {
-    if (window.visualViewport.height >= initialHeight) {
-      adjustForKeyboard();
-    }
-  }, 150);
-});
-
-// Initial setup
-adjustForKeyboard();
-
-
-  
   const playersRef = ref(db, `rooms/${roomId}/players`);
   let assigned = "spectator";
+  
   await runTransaction(playersRef, p => {
     if(!p) p = {};
     if(!p.black){ p.black = localUID; assigned = "black"; }
@@ -2168,22 +2189,31 @@ adjustForKeyboard();
     else assigned = "spectator";
     return p;
   });
+  
   role = assigned;
+  console.log(`Assigned role: ${role}`);
   
   // Set up disconnect cleanup for player slots
   if(role === "black" || role === "white") {
     onDisconnect(ref(db, `rooms/${roomId}/players/${role}`)).remove();
   }
 
-  // unsubscribe previous
-  if(unsubscribeRoom){ off(ref(db, `rooms/${roomId}`)); unsubscribeRoom = null; }
+  // Unsubscribe previous
+  if(unsubscribeRoom){ 
+    off(ref(db, `rooms/${roomId}`)); 
+    unsubscribeRoom = null; 
+  }
 
-  // listen to room
-  unsubscribeRoom = onValue(ref(db, `rooms/${roomId}`), snap => applyUpdate(snap.val()));
+  // Listen to room
+  unsubscribeRoom = onValue(ref(db, `rooms/${roomId}`), snap => {
+    console.log("Room data updated");
+    applyUpdate(snap.val());
+  });
+  
   status = "playing";
   updateStatus();
   renderBoard();
-  showToast(`Joined as ${role}`);
+  showToast(`已加入房间，身份: ${role === 'black' ? '黑棋' : role === 'white' ? '白棋' : '观察者'}`);
   
   // Setup undo listeners
   setupUndoListener();
@@ -2193,6 +2223,9 @@ adjustForKeyboard();
   initialButtons.style.display = "none";
   inRoomButtons.style.display = "flex";
   fitBoardToViewport();
+  
+  // Debug
+  debugGameState();
 }
 
 /* ---------- Enhanced leaveRoom with automatic cleanup ---------- */
@@ -2255,21 +2288,75 @@ async function leaveRoom(){
   showToast("Left room");
 }
 
-/* ---------- Enhanced checkWin function to return winning stones ---------- */
-function checkWin(bd, r, c, color){ 
-  if(!color) return false;
+/* ---------- Enhanced checkWin function ---------- */
+/* ---------- Enhanced checkWin function that checks entire board ---------- */
+function checkWin(bd, lastMove) {
+  if (!lastMove || !lastMove.color) return false;
+  
+  const { r, c, color } = lastMove;
+  
+  // Clear previous winning stones
+  winningStones = [];
+  
   const dirs = [[1,0],[0,1],[1,1],[1,-1]];
   for(const [dR,dC] of dirs){ 
-    let stones = [{r, c}]; // Start with the current stone
+    let stones = [{r, c}];
     stones = stones.concat(countStones(bd, r, c, dR, dC, color));
     stones = stones.concat(countStones(bd, r, c, -dR, -dC, color));
+    
+    console.log(`Direction [${dR},${dC}]: Found ${stones.length} consecutive ${color} stones`);
+    
     if(stones.length >= 5) {
       // Store the winning stones (take first 5)
       winningStones = stones.slice(0, 5);
+      console.log("Winning stones found:", winningStones);
       return true; 
     }
   }
   return false;
+}
+
+/* ---------- Enhanced win detection that checks all potential wins ---------- */
+function checkAllWins(bd) {
+  // Check entire board for any 5 in a row
+  for (let r = 0; r < SIZE; r++) {
+    for (let c = 0; c < SIZE; c++) {
+      const color = bd[r][c];
+      if (!color) continue;
+      
+      // Check all four directions from this stone
+      const dirs = [[1,0],[0,1],[1,1],[1,-1]];
+      for(const [dR,dC] of dirs){ 
+        let stones = [{r, c}];
+        stones = stones.concat(countStones(bd, r, c, dR, dC, color));
+        stones = stones.concat(countStones(bd, r, c, -dR, -dC, color));
+        
+        if(stones.length >= 5) {
+          winningStones = stones.slice(0, 5);
+          console.log(`Found winning ${color} stones at (${r},${c}) direction [${dR},${dC}]`);
+          console.log("Winning stones:", winningStones);
+          return color;
+        }
+      }
+    }
+  }
+  return null;
+}
+
+// Add this debug function to help track the board state
+function debugBoardState() {
+  console.log("=== BOARD STATE ===");
+  for (let r = 0; r < SIZE; r++) {
+    let row = "";
+    for (let c = 0; c < SIZE; c++) {
+      const stone = board[r][c];
+      if (stone === 'black') row += "B ";
+      else if (stone === 'white') row += "W ";
+      else row += ". ";
+    }
+    console.log(row);
+  }
+  console.log("===================");
 }
 
 function countStones(bd, r, c, dR, dC, color){
@@ -2284,32 +2371,52 @@ function countStones(bd, r, c, dR, dC, color){
 }
 
 /* ---------- Apply room updates from firebase ---------- */
+/* ---------- Enhanced Apply Room Updates ---------- */
+/* ---------- Enhanced Apply Room Updates with Better Turn Sync ---------- */
+/* ---------- Enhanced Apply Room Updates with Better Win Detection ---------- */
+/* ---------- Enhanced Apply Room Updates with Proper Last Move Tracking ---------- */
+/* ---------- Fixed Apply Room Updates with Correct Last Move Tracking ---------- */
 async function applyUpdate(data){
   if(!data) {
-    // Room was deleted (probably by cleanup)
     if (roomId) {
-      showToast("Room has been closed");
-      leaveRoom(); // Clean up local state
+      showToast("房间已关闭");
+      leaveRoom();
     }
     return;
   }
   
-  // set owner if present
+  // Set owner if present
   if(data.owner) roomOwner = data.owner;
   else roomOwner = data.createdBy || null;
 
-  // reset local board and load moves
+  // Reset local board and load moves
   board = Array(SIZE).fill(null).map(()=>Array(SIZE).fill(null));
+  
   if(data.moves){
-    const moves = Object.values(data.moves).sort((a,b)=>a.ts-b.ts);
-    moves.forEach(m=>{
-      if(m && m.r!=null && !board[m.r][m.c]) board[m.r][m.c] = m.color;
+    const moveKeys = Object.keys(data.moves).sort(); // push keys sort chronologically
+    console.log(`Processing ${moveKeys.length} moves from Firebase`);
+    
+    moveKeys.forEach(key => {
+      const m = data.moves[key];
+      if(m && m.r!=null && !board[m.r][m.c]) {
+        board[m.r][m.c] = m.color;
+        console.log(`Loaded move: ${m.color} at (${m.r}, ${m.c}) by ${m.by}`);
+      }
     });
     
-    // Update last move ID
-    if (moves.length > 0) {
-      const lastMove = moves[moves.length - 1];
-      lastMoveId = { r: lastMove.r, c: lastMove.c, id: Object.keys(data.moves)[moves.length - 1] };
+    // FIXED: Properly get the last move with its key
+    if (moveKeys.length > 0) {
+      const lastKey = moveKeys[moveKeys.length - 1];
+      const lastMove = data.moves[lastKey];
+      
+      lastMoveId = { 
+        r: lastMove.r, 
+        c: lastMove.c, 
+        id: lastKey,
+        color: lastMove.color
+      };
+      
+      console.log(`Last move updated: ${lastMove.color} at (${lastMove.r}, ${lastMove.c}) with key: ${lastKey}`);
       
       // Play sound for opponent's moves
       const stoneSound = document.getElementById('stone-sound');
@@ -2326,47 +2433,67 @@ async function applyUpdate(data){
     lastProcessedMoveId = null;
   }
   
-  // set turn from DB or derive
-  turn = data.turn || getTurn(data.moves);
+  // Rest of the function remains the same...
+  const movesCount = data.moves ? Object.keys(data.moves).length : 0;
+  turn = movesCount % 2 === 0 ? "black" : "white";
   
-  // set local status to DB status if any
+  console.log(`Moves count: ${movesCount}, Current turn: ${turn}, Local role: ${role}, Last move: ${lastMoveId ? `${lastMoveId.color} at (${lastMoveId.r},${lastMoveId.c})` : 'none'}`);
+  
   status = data.status || "playing";
   
-  // update players text
   const p = data.players || {};
-  playersEl.textContent = `Players: black=${p.black||"—"} white=${p.white||"—"}`;
+  playersEl.textContent = `玩家: 黑=${p.black?"已加入":"—"} 白=${p.white?"已加入":"—"}`;
 
-  // Update local role based on current player assignments
   updateLocalRole(p);
 
   renderBoard();
 
-  // process latest move for win detection and turn updates
-  const movesArr = data.moves ? Object.values(data.moves).sort((a,b)=>a.ts-b.ts) : [];
-  if(movesArr.length){
-    const last = movesArr[movesArr.length-1];
-    const win = checkWin(board, last.r, last.c, last.color);
-    if(win && (!data.status || !data.status.endsWith("-won"))){
-      console.log("Game won by:", last.color);
-      console.log("Winning stones:", winningStones);
-      await update(ref(db, `rooms/${roomId}`), { status: last.color + "-won" });
-      showToast(`🏆 ${last.color.toUpperCase()} 胜利了！`);
-      
-      // Re-render board to show winning stones
+  // Win detection logic remains the same...
+  const movesArr = data.moves ? Object.keys(data.moves).sort().map(k => data.moves[k]) : [];
+  if(movesArr.length > 0){
+    const lastMove = movesArr[movesArr.length-1];
+    
+    debugBoardState();
+    
+    if(data.status && data.status.endsWith("-won")){
+      console.log(`Game already ended: ${data.status}`);
+      const winnerColor = data.status.split('-')[0];
+      checkAllWins(board);
       renderBoard();
+    } 
+    else if(status === "playing") {
+      console.log("Checking for wins...");
+      const winner = checkAllWins(board);
       
-      // Schedule automatic reset after 3 seconds
-      scheduleAutoReset();
-    } else if(!win){
-      const next = last.color === "black" ? "white" : "black";
-      if(data.turn !== next){
-        await update(ref(db, `rooms/${roomId}`), { turn: next }).catch(()=>{});
+      if(winner){
+        console.log(`游戏胜利: ${winner}`);
+        
+        try {
+          await update(ref(db, `rooms/${roomId}`), { 
+            status: winner + "-won",
+            turn: null
+          });
+          showToast(`🏆 ${winner === 'black' ? '黑棋' : '白棋'} 胜利了！`);
+          renderBoard();
+          scheduleAutoReset();
+        } catch (error) {
+          console.error("Error updating game status:", error);
+        }
+      } else {
+        if(localUID && role === turn) {
+          showToast("轮到宝宝下棋啦！");
+        }
       }
-      if(localUID && role === next) showToast("轮到宝宝下棋啦！");
+    }
+  } else {
+    if(localUID && role === "black") {
+      showToast("黑棋先行！");
     }
   }
+  
   updateStatus();
-  updateResetButton(); // Update reset button state
+  updateResetButton();
+  updateUndoButton();
 }
 
 /* ---------- helper functions ---------- */
