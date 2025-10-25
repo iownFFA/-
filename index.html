@@ -2194,9 +2194,9 @@ async function joinRoom(id){
   console.log(`Assigned role: ${role}`);
   
   // Set up disconnect cleanup for player slots
-  if(role === "black" || role === "white") {
-    onDisconnect(ref(db, `rooms/${roomId}/players/${role}`)).remove();
-  }
+  //if(role === "black" || role === "white") {
+  //  onDisconnect(ref(db, `rooms/${roomId}/players/${role}`)).remove();
+  //}
 
   // Unsubscribe previous
   if(unsubscribeRoom){ 
@@ -2512,4 +2512,5 @@ fitBoardToViewport();
 
 </body>
 </html>
+
 
